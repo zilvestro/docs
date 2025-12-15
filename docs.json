@@ -81,7 +81,8 @@
             "pages": [
               "webhooks/events/affiliate",
               "webhooks/events/referral",
-              "webhooks/events/transaction"
+              "webhooks/events/transaction",
+              "webhooks/events/payout"
             ]
           },
           {
@@ -109,7 +110,7 @@
         {
           "anchor": "Help Center",
           "href": "https://affonso.io/help",
-          "icon": "question-mark"
+          "icon": "book-open-cover"
         }
       ]
     }
@@ -128,7 +129,7 @@
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://affonso.io"
+      "href": "https://affonso.io/app"
     }
   },
   "contextual": {

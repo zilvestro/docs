@@ -1,0 +1,145 @@
+---
+title: 'Referral Events'
+description: 'Webhook events for referral tracking and conversions'
+---
+
+## Overview
+
+Referral events track the customer journey from initial click to conversion. Use these webhooks to monitor affiliate performance, trigger marketing automation, or sync referral data with your analytics platform.
+
+## Events
+
+<AccordionGroup>
+  <Accordion title="referral.updated" icon="arrows-rotate">
+    Triggered whenever a referral is created or updated. This is a universal event that fires for all referral changes, making it ideal for keeping systems in sync.
+
+    ```json
+    {
+      "id": "evt_abc123",
+      "type": "referral.updated",
+      "createdAt": "2024-01-15T10:30:00.000Z",
+      "data": {
+        "referralId": "ref_xyz789",
+        "affiliateId": "aff_abc123",
+        "affiliateProgramId": "prog_def456",
+        "trackingId": "john-doe",
+        "status": "LEAD",
+        "email": "customer@example.com",
+        "customerId": "cus_stripe123",
+        "ip": "192.168.1.1",
+        "referrer": "https://blog.example.com/review"
+      }
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="referral.lead" icon="user-tag">
+    Triggered when a referral transitions to a lead state (e.g., user signs up but hasn't purchased yet).
+
+    ```json
+    {
+      "id": "evt_abc123",
+      "type": "referral.lead",
+      "createdAt": "2024-01-15T10:30:00.000Z",
+      "data": {
+        "referralId": "ref_xyz789",
+        "affiliateId": "aff_abc123",
+        "affiliateProgramId": "prog_def456",
+        "trackingId": "john-doe",
+        "status": "LEAD",
+        "email": "customer@example.com",
+        "customerId": null,
+        "ip": "192.168.1.1",
+        "referrer": "https://blog.example.com/review"
+      }
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="referral.converted" icon="circle-check">
+    Triggered when a referral converts to a paying customer. This indicates a successful sale attributed to an affiliate.
+
+    ```json
+    {
+      "id": "evt_abc123",
+      "type": "referral.converted",
+      "createdAt": "2024-01-15T10:30:00.000Z",
+      "data": {
+        "referralId": "ref_xyz789",
+        "affiliateId": "aff_abc123",
+        "affiliateProgramId": "prog_def456",
+        "trackingId": "john-doe",
+        "status": "CUSTOMER",
+        "email": "customer@example.com",
+        "customerId": "cus_stripe123",
+        "ip": "192.168.1.1",
+        "referrer": "https://blog.example.com/review"
+      }
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="referral.deleted" icon="trash">
+    Triggered when a referral is deleted from the system.
+
+    ```json
+    {
+      "id": "evt_abc123",
+      "type": "referral.deleted",
+      "createdAt": "2024-01-15T10:30:00.000Z",
+      "data": {
+        "referralId": "ref_xyz789",
+        "affiliateId": "aff_abc123",
+        "affiliateProgramId": "prog_def456",
+        "trackingId": "john-doe",
+        "status": "CUSTOMER",
+        "email": "customer@example.com"
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Payload Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `referralId` | string | Unique identifier for the referral |
+| `affiliateId` | string | The affiliate who referred this customer |
+| `affiliateProgramId` | string | The program this referral belongs to |
+| `trackingId` | string | The affiliate's tracking code used |
+| `status` | string | Referral status (see below) |
+| `email` | string \| null | Referred customer's email |
+| `customerId` | string \| null | Customer ID from your payment provider |
+| `ip` | string \| null | IP address of the referral click |
+| `referrer` | string \| null | The referring URL |
+
+## Referral Statuses
+
+| Status | Description |
+|--------|-------------|
+| `CLICK` | Initial click tracked, no further action yet |
+| `LEAD` | User signed up but hasn't purchased |
+| `TRIALING` | Customer is in a trial period |
+| `CUSTOMER` | Customer made a one-time purchase |
+| `ACTIVE` | Customer has an active subscription |
+| `CANCELED` | Customer canceled their subscription |
+| `REJECTED` | Referral was rejected (fraud, policy violation) |
+
+## Common Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Lead Nurturing" icon="seedling">
+    Trigger email sequences when `referral.lead` fires
+  </Card>
+  <Card title="Conversion Tracking" icon="chart-line">
+    Update analytics dashboards on `referral.converted`
+  </Card>
+  <Card title="Affiliate Notifications" icon="bell">
+    Notify affiliates in real-time about their conversions
+  </Card>
+  <Card title="Fraud Detection" icon="shield">
+    Monitor referral patterns for suspicious activity
+  </Card>
+</CardGroup>
+

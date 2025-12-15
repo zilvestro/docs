@@ -1,0 +1,251 @@
+---
+title: 'Webhook Setup'
+description: 'Configure webhook endpoints in your Affonso dashboard'
+---
+
+## Prerequisites
+
+Before setting up webhooks, ensure you have:
+
+- An active Affonso account with an affiliate program
+- A publicly accessible HTTPS endpoint to receive webhooks
+- The ability to verify webhook signatures (recommended)
+
+## Creating a Webhook Endpoint
+
+<Steps>
+  <Step title="Navigate to Webhooks">
+    Go to your Affonso dashboard and select **Settings** → **Webhooks** from the sidebar.
+  </Step>
+  
+  <Step title="Add New Endpoint">
+    Click **Add Endpoint** and enter your webhook URL:
+    
+    ```
+    https://your-app.com/api/webhooks/affonso
+    ```
+    
+    <Warning>
+      Your endpoint must use HTTPS. HTTP endpoints are not supported for security reasons.
+    </Warning>
+  </Step>
+  
+  <Step title="Select Events">
+    Choose which events you want to receive. You can select:
+    - **All events** - Receive every webhook event
+    - **Specific events** - Only receive selected event types
+    
+    <Tip>
+      Start with specific events you need. You can always add more later.
+    </Tip>
+  </Step>
+  
+  <Step title="Copy Signing Secret">
+    After creating the endpoint, copy your **Signing Secret**. You'll need this to verify webhook signatures.
+    
+    ```
+    whsec_abc123xyz...
+    ```
+    
+    <Warning>
+      Store this secret securely. It's only shown once!
+    </Warning>
+  </Step>
+</Steps>
+
+## Verifying Webhook Signatures
+
+Always verify webhook signatures to ensure requests are from Affonso.
+
+### Signature Header
+
+Each webhook request includes a signature header:
+
+```
+X-Affonso-Signature: t=1704067200,v1=abc123...
+```
+
+The header contains:
+- `t` - Unix timestamp of when the signature was generated
+- `v1` - The HMAC-SHA256 signature
+
+### Verification Process
+
+<CodeGroup>
+
+```typescript TypeScript
+import crypto from 'crypto';
+
+function verifyWebhookSignature(
+  payload: string,
+  signature: string,
+  secret: string
+): boolean {
+  const [timestampPart, signaturePart] = signature.split(',');
+  const timestamp = timestampPart.replace('t=', '');
+  const expectedSignature = signaturePart.replace('v1=', '');
+  
+  // Check timestamp is within 5 minutes
+  const currentTime = Math.floor(Date.now() / 1000);
+  if (Math.abs(currentTime - parseInt(timestamp)) > 300) {
+    return false;
+  }
+  
+  // Compute expected signature
+  const signedPayload = `${timestamp}.${payload}`;
+  const computedSignature = crypto
+    .createHmac('sha256', secret)
+    .update(signedPayload)
+    .digest('hex');
+  
+  return crypto.timingSafeEqual(
+    Buffer.from(expectedSignature),
+    Buffer.from(computedSignature)
+  );
+}
+```
+
+```python Python
+import hmac
+import hashlib
+import time
+
+def verify_webhook_signature(payload: str, signature: str, secret: str) -> bool:
+    parts = signature.split(',')
+    timestamp = parts[0].replace('t=', '')
+    expected_signature = parts[1].replace('v1=', '')
+    
+    # Check timestamp is within 5 minutes
+    current_time = int(time.time())
+    if abs(current_time - int(timestamp)) > 300:
+        return False
+    
+    # Compute expected signature
+    signed_payload = f"{timestamp}.{payload}"
+    computed_signature = hmac.new(
+        secret.encode(),
+        signed_payload.encode(),
+        hashlib.sha256
+    ).hexdigest()
+    
+    return hmac.compare_digest(expected_signature, computed_signature)
+```
+
+```go Go
+package main
+
+import (
+    "crypto/hmac"
+    "crypto/sha256"
+    "encoding/hex"
+    "strconv"
+    "strings"
+    "time"
+)
+
+func verifyWebhookSignature(payload, signature, secret string) bool {
+    parts := strings.Split(signature, ",")
+    timestamp := strings.TrimPrefix(parts[0], "t=")
+    expectedSignature := strings.TrimPrefix(parts[1], "v1=")
+    
+    // Check timestamp is within 5 minutes
+    ts, _ := strconv.ParseInt(timestamp, 10, 64)
+    if abs(time.Now().Unix()-ts) > 300 {
+        return false
+    }
+    
+    // Compute expected signature
+    signedPayload := timestamp + "." + payload
+    h := hmac.New(sha256.New, []byte(secret))
+    h.Write([]byte(signedPayload))
+    computedSignature := hex.EncodeToString(h.Sum(nil))
+    
+    return hmac.Equal([]byte(expectedSignature), []byte(computedSignature))
+}
+```
+
+</CodeGroup>
+
+## Responding to Webhooks
+
+Your endpoint must respond correctly for webhooks to be considered delivered.
+
+### Success Response
+
+Return a `2xx` status code to acknowledge receipt:
+
+```json
+{
+  "received": true
+}
+```
+
+### Response Time
+
+Your endpoint should respond within **30 seconds**. If processing takes longer:
+
+1. Acknowledge the webhook immediately
+2. Process the event asynchronously
+3. Use a job queue for heavy processing
+
+```typescript
+// Good: Acknowledge immediately, process async
+app.post('/webhooks/affonso', async (req, res) => {
+  // Verify signature first
+  if (!verifySignature(req)) {
+    return res.status(401).send('Invalid signature');
+  }
+  
+  // Acknowledge immediately
+  res.status(200).json({ received: true });
+  
+  // Process asynchronously
+  await queue.add('process-webhook', req.body);
+});
+```
+
+## Testing Webhooks
+
+### Test Events
+
+Use the **Send Test Event** button in your dashboard to send a test webhook to your endpoint.
+
+### Local Development
+
+For local development, use a tunneling service:
+
+<CodeGroup>
+
+```bash ngrok
+ngrok http 3000
+# Use the HTTPS URL as your webhook endpoint
+```
+
+```bash localtunnel
+lt --port 3000
+# Use the HTTPS URL as your webhook endpoint
+```
+
+</CodeGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Webhook not receiving events">
+    - Verify your endpoint URL is correct and publicly accessible
+    - Check that your endpoint returns a 2xx status code
+    - Ensure you've selected the correct events to receive
+  </Accordion>
+  
+  <Accordion title="Signature verification failing">
+    - Ensure you're using the raw request body, not parsed JSON
+    - Check that your signing secret is correct
+    - Verify the timestamp is within 5 minutes
+  </Accordion>
+  
+  <Accordion title="Receiving duplicate events">
+    - Implement idempotency using the event `id` field
+    - Store processed event IDs and skip duplicates
+  </Accordion>
+</AccordionGroup>
+

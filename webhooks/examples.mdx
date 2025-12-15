@@ -1,0 +1,424 @@
+---
+title: 'Code Examples'
+description: 'Implementation examples for handling Affonso webhooks'
+---
+
+## Complete Webhook Handler
+
+Full examples of webhook handlers in various languages and frameworks.
+
+<CodeGroup>
+
+```typescript Next.js (App Router)
+// app/api/webhooks/affonso/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
+
+const WEBHOOK_SECRET = process.env.AFFONSO_WEBHOOK_SECRET!;
+
+function verifySignature(payload: string, signature: string): boolean {
+  const [timestampPart, signaturePart] = signature.split(',');
+  const timestamp = timestampPart.replace('t=', '');
+  const expectedSignature = signaturePart.replace('v1=', '');
+  
+  const currentTime = Math.floor(Date.now() / 1000);
+  if (Math.abs(currentTime - parseInt(timestamp)) > 300) {
+    return false;
+  }
+  
+  const signedPayload = `${timestamp}.${payload}`;
+  const computedSignature = crypto
+    .createHmac('sha256', WEBHOOK_SECRET)
+    .update(signedPayload)
+    .digest('hex');
+  
+  return crypto.timingSafeEqual(
+    Buffer.from(expectedSignature),
+    Buffer.from(computedSignature)
+  );
+}
+
+export async function POST(req: NextRequest) {
+  const payload = await req.text();
+  const signature = req.headers.get('x-affonso-signature');
+  
+  if (!signature || !verifySignature(payload, signature)) {
+    return NextResponse.json(
+      { error: 'Invalid signature' },
+      { status: 401 }
+    );
+  }
+  
+  const event = JSON.parse(payload);
+  
+  switch (event.type) {
+    case 'affiliate.created':
+      await handleAffiliateCreated(event.data);
+      break;
+    case 'referral.converted':
+      await handleReferralConverted(event.data);
+      break;
+    case 'transaction.paid':
+      await handleTransactionPaid(event.data);
+      break;
+    case 'payout.paid':
+      await handlePayoutPaid(event.data);
+      break;
+    default:
+      console.log(`Unhandled event type: ${event.type}`);
+  }
+  
+  return NextResponse.json({ received: true });
+}
+
+async function handleAffiliateCreated(data: any) {
+  // Send welcome email
+  await sendEmail({
+    to: data.email,
+    subject: 'Welcome to our affiliate program!',
+    template: 'affiliate-welcome',
+    data: { name: data.name, trackingId: data.trackingId }
+  });
+}
+
+async function handleReferralConverted(data: any) {
+  // Update analytics
+  await analytics.track('referral_converted', {
+    affiliateId: data.affiliateId,
+    referralId: data.referralId
+  });
+}
+
+async function handleTransactionPaid(data: any) {
+  // Notify affiliate
+  await notifyAffiliate(data.affiliateId, {
+    type: 'commission_paid',
+    amount: data.commissionAmount,
+    currency: data.commissionCurrency
+  });
+}
+
+async function handlePayoutPaid(data: any) {
+  // Create accounting entry
+  await createAccountingEntry({
+    type: 'affiliate_payout',
+    amount: data.amount,
+    affiliateId: data.affiliateId,
+    invoiceNumber: data.invoiceNumber
+  });
+}
+```
+
+```python FastAPI
+# webhooks.py
+from fastapi import FastAPI, Request, HTTPException
+import hmac
+import hashlib
+import time
+import json
+
+app = FastAPI()
+WEBHOOK_SECRET = os.environ.get('AFFONSO_WEBHOOK_SECRET')
+
+def verify_signature(payload: str, signature: str) -> bool:
+    parts = signature.split(',')
+    timestamp = parts[0].replace('t=', '')
+    expected_signature = parts[1].replace('v1=', '')
+    
+    current_time = int(time.time())
+    if abs(current_time - int(timestamp)) > 300:
+        return False
+    
+    signed_payload = f"{timestamp}.{payload}"
+    computed_signature = hmac.new(
+        WEBHOOK_SECRET.encode(),
+        signed_payload.encode(),
+        hashlib.sha256
+    ).hexdigest()
+    
+    return hmac.compare_digest(expected_signature, computed_signature)
+
+@app.post("/webhooks/affonso")
+async def handle_webhook(request: Request):
+    payload = await request.body()
+    signature = request.headers.get('x-affonso-signature')
+    
+    if not signature or not verify_signature(payload.decode(), signature):
+        raise HTTPException(status_code=401, detail="Invalid signature")
+    
+    event = json.loads(payload)
+    
+    if event['type'] == 'affiliate.created':
+        await handle_affiliate_created(event['data'])
+    elif event['type'] == 'referral.converted':
+        await handle_referral_converted(event['data'])
+    elif event['type'] == 'transaction.paid':
+        await handle_transaction_paid(event['data'])
+    elif event['type'] == 'payout.paid':
+        await handle_payout_paid(event['data'])
+    
+    return {"received": True}
+
+async def handle_affiliate_created(data):
+    # Your logic here
+    pass
+
+async def handle_referral_converted(data):
+    # Your logic here
+    pass
+
+async def handle_transaction_paid(data):
+    # Your logic here
+    pass
+
+async def handle_payout_paid(data):
+    # Your logic here
+    pass
+```
+
+```go Go (net/http)
+// webhooks.go
+package main
+
+import (
+    "crypto/hmac"
+    "crypto/sha256"
+    "encoding/hex"
+    "encoding/json"
+    "io"
+    "net/http"
+    "os"
+    "strconv"
+    "strings"
+    "time"
+)
+
+var webhookSecret = os.Getenv("AFFONSO_WEBHOOK_SECRET")
+
+func verifySignature(payload, signature string) bool {
+    parts := strings.Split(signature, ",")
+    timestamp := strings.TrimPrefix(parts[0], "t=")
+    expectedSig := strings.TrimPrefix(parts[1], "v1=")
+    
+    ts, _ := strconv.ParseInt(timestamp, 10, 64)
+    if abs(time.Now().Unix()-ts) > 300 {
+        return false
+    }
+    
+    signedPayload := timestamp + "." + payload
+    h := hmac.New(sha256.New, []byte(webhookSecret))
+    h.Write([]byte(signedPayload))
+    computedSig := hex.EncodeToString(h.Sum(nil))
+    
+    return hmac.Equal([]byte(expectedSig), []byte(computedSig))
+}
+
+func webhookHandler(w http.ResponseWriter, r *http.Request) {
+    body, _ := io.ReadAll(r.Body)
+    signature := r.Header.Get("X-Affonso-Signature")
+    
+    if !verifySignature(string(body), signature) {
+        http.Error(w, "Invalid signature", http.StatusUnauthorized)
+        return
+    }
+    
+    var event struct {
+        Type string          `json:"type"`
+        Data json.RawMessage `json:"data"`
+    }
+    json.Unmarshal(body, &event)
+    
+    switch event.Type {
+    case "affiliate.created":
+        handleAffiliateCreated(event.Data)
+    case "referral.converted":
+        handleReferralConverted(event.Data)
+    case "transaction.paid":
+        handleTransactionPaid(event.Data)
+    case "payout.paid":
+        handlePayoutPaid(event.Data)
+    }
+    
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(map[string]bool{"received": true})
+}
+
+func main() {
+    http.HandleFunc("/webhooks/affonso", webhookHandler)
+    http.ListenAndServe(":8080", nil)
+}
+```
+
+</CodeGroup>
+
+## Event-Specific Examples
+
+### Sending Welcome Emails
+
+When a new affiliate joins, send them a welcome email:
+
+```typescript
+async function handleAffiliateCreated(data: {
+  affiliateId: string;
+  email: string;
+  name: string;
+  trackingId: string;
+}) {
+  await resend.emails.send({
+    from: 'affiliates@yourcompany.com',
+    to: data.email,
+    subject: 'Welcome to our Affiliate Program!',
+    react: WelcomeEmail({
+      name: data.name,
+      trackingLink: `https://yoursite.com?ref=${data.trackingId}`,
+      dashboardLink: 'https://affiliates.yoursite.com'
+    })
+  });
+}
+```
+
+### Syncing with CRM
+
+Update your CRM when referrals convert:
+
+```typescript
+async function handleReferralConverted(data: {
+  referralId: string;
+  affiliateId: string;
+  email: string;
+  customerId: string;
+}) {
+  // Update HubSpot contact
+  await hubspot.contacts.update(data.email, {
+    properties: {
+      referred_by: data.affiliateId,
+      referral_id: data.referralId,
+      customer_id: data.customerId,
+      conversion_date: new Date().toISOString()
+    }
+  });
+}
+```
+
+### Slack Notifications
+
+Send Slack alerts for new sales:
+
+```typescript
+async function handleTransactionCreated(data: {
+  transactionId: string;
+  affiliateId: string;
+  saleAmount: number;
+  saleCurrency: string;
+  commissionAmount: number;
+}) {
+  await slack.chat.postMessage({
+    channel: '#affiliate-sales',
+    blocks: [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `🎉 *New Affiliate Sale!*\n` +
+            `Amount: ${data.saleCurrency} ${data.saleAmount}\n` +
+            `Commission: ${data.saleCurrency} ${data.commissionAmount}\n` +
+            `Affiliate: ${data.affiliateId}`
+        }
+      }
+    ]
+  });
+}
+```
+
+### Accounting Integration
+
+Create accounting entries when payouts complete:
+
+```typescript
+async function handlePayoutPaid(data: {
+  payoutId: string;
+  affiliateId: string;
+  amount: number;
+  invoiceNumber: number;
+  paidAt: string;
+}) {
+  // Create expense in QuickBooks
+  await quickbooks.expense.create({
+    amount: data.amount,
+    account: 'Affiliate Commissions',
+    vendor: data.affiliateId,
+    reference: `Payout #${data.invoiceNumber}`,
+    date: new Date(data.paidAt)
+  });
+}
+```
+
+## Idempotency
+
+Ensure you handle duplicate webhooks gracefully:
+
+```typescript
+const processedEvents = new Set<string>();
+
+async function handleWebhook(event: { id: string; type: string; data: any }) {
+  // Check if already processed
+  if (processedEvents.has(event.id)) {
+    console.log(`Event ${event.id} already processed, skipping`);
+    return;
+  }
+  
+  // Or use database for persistence
+  const existing = await db.webhookEvent.findUnique({
+    where: { eventId: event.id }
+  });
+  
+  if (existing) {
+    return; // Already processed
+  }
+  
+  // Process the event
+  await processEvent(event);
+  
+  // Mark as processed
+  await db.webhookEvent.create({
+    data: {
+      eventId: event.id,
+      type: event.type,
+      processedAt: new Date()
+    }
+  });
+}
+```
+
+## Error Handling
+
+Handle errors gracefully without blocking webhook acknowledgment:
+
+```typescript
+app.post('/webhooks/affonso', async (req, res) => {
+  // Always acknowledge quickly
+  res.status(200).json({ received: true });
+  
+  try {
+    await processWebhook(req.body);
+  } catch (error) {
+    // Log error but don't fail the webhook
+    console.error('Webhook processing error:', error);
+    
+    // Queue for retry
+    await retryQueue.add('webhook-retry', {
+      event: req.body,
+      attempt: 1,
+      error: error.message
+    });
+    
+    // Alert your team
+    await alerting.notify({
+      severity: 'warning',
+      message: `Webhook processing failed: ${error.message}`,
+      eventId: req.body.id
+    });
+  }
+});
+```
+
