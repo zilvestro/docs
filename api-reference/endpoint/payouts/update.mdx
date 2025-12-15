@@ -1,0 +1,44 @@
+---
+title: "Update Payout"
+api: "PUT /v1/payouts/{id}"
+description: "Update a payout status"
+---
+
+<ParamField path="id" type="string" required>
+  The unique payout ID
+</ParamField>
+
+<ParamField body="status" type="string">
+  Update status: `pending`, `processing`, `completed`, `failed`, `cancelled`
+</ParamField>
+
+<ParamField body="paymentReference" type="string">
+  External payment reference (e.g., PayPal transaction ID)
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X PUT "https://api.affonso.io/v1/payouts/pay_abc123" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "completed",
+    "paymentReference": "PAYPAL-TXN-123456"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "pay_abc123",
+    "status": "completed",
+    "paymentReference": "PAYPAL-TXN-123456",
+    "processedAt": "2024-01-25T14:30:00Z"
+  }
+}
+```
+</ResponseExample>
+

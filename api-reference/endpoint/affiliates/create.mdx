@@ -1,0 +1,51 @@
+---
+title: "Create Affiliate"
+api: "POST /v1/affiliates"
+description: "Create a new affiliate user"
+---
+
+<ParamField body="email" type="string" required>
+  The affiliate's email address
+</ParamField>
+
+<ParamField body="name" type="string" required>
+  The affiliate's display name
+</ParamField>
+
+<ParamField body="userName" type="string">
+  Optional username for the affiliate
+</ParamField>
+
+<ParamField body="status" type="string" default="pending">
+  Initial status: `pending` or `active`
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST "https://api.affonso.io/v1/affiliates" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "newpartner@example.com",
+    "name": "Jane Smith",
+    "status": "active"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "aff_789ghi",
+    "trackingId": "JANE456",
+    "email": "newpartner@example.com",
+    "name": "Jane Smith",
+    "status": "active",
+    "createdAt": "2024-01-25T09:15:00Z"
+  }
+}
+```
+</ResponseExample>
+

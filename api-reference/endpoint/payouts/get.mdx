@@ -1,0 +1,17 @@
+---
+title: "Get Payout"
+api: "GET /v1/payouts/{id}"
+description: "Retrieve a single payout by ID"
+---
+
+<ParamField path="id" type="string" required>
+  The unique payout ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/payouts/pay_abc123" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+

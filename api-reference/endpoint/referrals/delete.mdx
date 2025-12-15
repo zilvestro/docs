@@ -1,0 +1,17 @@
+---
+title: "Delete Referral"
+api: "DELETE /v1/referrals/{id}"
+description: "Delete a referral"
+---
+
+<ParamField path="id" type="string" required>
+  The unique referral ID to delete
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE "https://api.affonso.io/v1/referrals/ref_abc123" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+

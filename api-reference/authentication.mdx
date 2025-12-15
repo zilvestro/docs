@@ -1,0 +1,83 @@
+---
+title: 'Authentication'
+description: 'How to authenticate with the Affonso API'
+---
+
+## API Keys
+
+All API requests require authentication using an API key. You can generate API keys from your [Affonso Dashboard](https://affonso.io/app/affiliate-program/connect/api).
+
+<Warning>
+  API keys are only shown once when created. Make sure to copy and store your key securely.
+</Warning>
+
+## Using Your API Key
+
+Include your API key in the `Authorization` header as a Bearer token:
+
+```bash
+curl -X GET "https://api.affonso.io/v1/affiliates" \
+  -H "Authorization: Bearer sk_live_your_api_key_here"
+```
+
+## Key Formats
+
+| Prefix | Environment | Description |
+|--------|-------------|-------------|
+| `sk_live_` | Production | Use for live data |
+| `sk_dev_` | Development | Use for testing (coming soon) |
+
+## Permissions
+
+API keys can have different permission levels:
+
+| Permission | Description |
+|------------|-------------|
+| `read:affiliates` | View affiliate data |
+| `write:affiliates` | Create and update affiliates |
+| `read:referrals` | View referral data |
+| `write:referrals` | Create and update referrals |
+| `create:clicks` | Track click events |
+| `read:commissions` | View commission data |
+| `write:commissions` | Create and update commissions |
+| `read:payouts` | View payout data |
+| `write:payouts` | Update payout status |
+
+## Error Responses
+
+| Code | Description |
+|------|-------------|
+| `MISSING_API_KEY` | No API key provided |
+| `INVALID_API_KEY_FORMAT` | Key doesn't match expected format |
+| `INVALID_API_KEY` | Key not found in database |
+| `API_KEY_DISABLED` | Key has been deactivated |
+| `API_KEY_EXPIRED` | Key has expired |
+| `INSUFFICIENT_PERMISSIONS` | Key lacks required permission |
+
+```json Example Error
+{
+  "success": false,
+  "error": {
+    "code": "MISSING_API_KEY",
+    "message": "API key is required. Use Authorization: Bearer <api_key>"
+  }
+}
+```
+
+## Security Best Practices
+
+<AccordionGroup>
+  <Accordion title="Never expose keys in client-side code">
+    API keys should only be used in server-side code. Never include them in JavaScript that runs in the browser.
+  </Accordion>
+  <Accordion title="Use environment variables">
+    Store your API keys in environment variables, not in your codebase.
+  </Accordion>
+  <Accordion title="Rotate keys regularly">
+    Regenerate your API keys periodically and after any potential security incident.
+  </Accordion>
+  <Accordion title="Use minimal permissions">
+    Only grant the permissions your integration actually needs.
+  </Accordion>
+</AccordionGroup>
+

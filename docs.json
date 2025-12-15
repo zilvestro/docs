@@ -8,6 +8,16 @@
     "dark": "#881337"
   },
   "favicon": "/favicon.svg",
+  "openapi": "api-reference/openapi.json",
+  "api": {
+    "baseUrl": "https://api.affonso.io",
+    "auth": {
+      "method": "bearer"
+    },
+    "playground": {
+      "mode": "simple"
+    }
+  },
   "navigation": {
     "tabs": [
       {
@@ -48,21 +58,58 @@
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "API Reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Overview",
             "pages": [
-              "api-reference/introduction"
+              "api-reference/introduction",
+              "api-reference/authentication",
+              "api-reference/rate-limits"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Affiliates",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/endpoint/affiliates/list",
+              "api-reference/endpoint/affiliates/get",
+              "api-reference/endpoint/affiliates/create",
+              "api-reference/endpoint/affiliates/update",
+              "api-reference/endpoint/affiliates/delete"
+            ]
+          },
+          {
+            "group": "Referrals",
+            "pages": [
+              "api-reference/endpoint/referrals/list",
+              "api-reference/endpoint/referrals/get",
+              "api-reference/endpoint/referrals/create",
+              "api-reference/endpoint/referrals/update",
+              "api-reference/endpoint/referrals/delete"
+            ]
+          },
+          {
+            "group": "Clicks",
+            "pages": [
+              "api-reference/endpoint/clicks/create"
+            ]
+          },
+          {
+            "group": "Commissions",
+            "pages": [
+              "api-reference/endpoint/commissions/list",
+              "api-reference/endpoint/commissions/get",
+              "api-reference/endpoint/commissions/create",
+              "api-reference/endpoint/commissions/update",
+              "api-reference/endpoint/commissions/delete"
+            ]
+          },
+          {
+            "group": "Payouts",
+            "pages": [
+              "api-reference/endpoint/payouts/list",
+              "api-reference/endpoint/payouts/get",
+              "api-reference/endpoint/payouts/update"
             ]
           }
         ]

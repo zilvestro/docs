@@ -1,0 +1,54 @@
+---
+title: "Track Click"
+api: "POST /v1/clicks"
+description: "Record a click event for affiliate tracking"
+---
+
+Use this endpoint to track when a visitor clicks an affiliate link. This is useful for server-side tracking implementations.
+
+<ParamField body="affiliateId" type="string" required>
+  The affiliate's ID or tracking code
+</ParamField>
+
+<ParamField body="programId" type="string" required>
+  The affiliate program ID
+</ParamField>
+
+<ParamField body="referrer" type="string">
+  The referring URL
+</ParamField>
+
+<ParamField body="ip" type="string">
+  Visitor's IP address
+</ParamField>
+
+<ParamField body="userAgent" type="string">
+  Visitor's user agent
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST "https://api.affonso.io/v1/clicks" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "affiliateId": "aff_123abc",
+    "programId": "prg_456def",
+    "referrer": "https://partner-blog.com/review"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "clk_xyz789",
+    "affiliateId": "aff_123abc",
+    "createdAt": "2024-01-25T12:00:00Z"
+  }
+}
+```
+</ResponseExample>
+

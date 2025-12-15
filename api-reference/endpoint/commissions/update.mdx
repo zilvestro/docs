@@ -1,0 +1,25 @@
+---
+title: "Update Commission"
+api: "PUT /v1/commissions/{id}"
+description: "Update a commission status"
+---
+
+<ParamField path="id" type="string" required>
+  The unique commission ID
+</ParamField>
+
+<ParamField body="status" type="string">
+  Update status: `pending`, `ready_for_payment`, `paid`, `declined`, `refunded`
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X PUT "https://api.affonso.io/v1/commissions/com_abc123" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "paid"
+  }'
+```
+</RequestExample>
+

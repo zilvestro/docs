@@ -1,0 +1,85 @@
+---
+title: 'Rate Limits'
+description: 'API rate limits and best practices'
+---
+
+## Rate Limit Tiers
+
+Rate limits are based on your Affonso subscription plan:
+
+| Plan | Requests/Minute | Burst/Second |
+|------|-----------------|--------------|
+| Launch | 300 | 10 |
+| Growth | 600 | 20 |
+| Elite | 1,200 | 40 |
+| Enterprise | 3,000 | 100 |
+
+## Response Headers
+
+Every API response includes rate limit information in the headers:
+
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Limit` | Maximum requests allowed per minute |
+| `X-RateLimit-Remaining` | Requests remaining in current window |
+| `X-RateLimit-Reset` | Unix timestamp when limit resets |
+| `Retry-After` | Seconds to wait (only on 429 responses) |
+
+## Handling Rate Limits
+
+When you exceed the rate limit, you'll receive a `429 Too Many Requests` response:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "Too many requests. Please retry after 30 seconds.",
+    "retryAfter": 30
+  }
+}
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Implement exponential backoff">
+    When you receive a 429, wait for the `Retry-After` duration, then retry with exponential backoff.
+  </Accordion>
+  <Accordion title="Cache responses">
+    Cache API responses where appropriate to reduce the number of requests.
+  </Accordion>
+  <Accordion title="Use pagination">
+    Use pagination with reasonable page sizes instead of fetching all records at once.
+  </Accordion>
+  <Accordion title="Batch operations">
+    Where possible, batch multiple operations into fewer API calls.
+  </Accordion>
+</AccordionGroup>
+
+## Example: Handling Rate Limits
+
+```javascript
+async function fetchWithRetry(url, options, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    const response = await fetch(url, options);
+    
+    if (response.status === 429) {
+      const retryAfter = response.headers.get('Retry-After') || 30;
+      console.log(`Rate limited. Retrying in ${retryAfter}s...`);
+      await new Promise(r => setTimeout(r, retryAfter * 1000));
+      continue;
+    }
+    
+    return response;
+  }
+  throw new Error('Max retries exceeded');
+}
+```
+
+## Need Higher Limits?
+
+<Card title="Enterprise Plan" icon="rocket" href="https://affonso.io/pricing">
+  Contact us for custom rate limits on the Enterprise plan
+</Card>
+

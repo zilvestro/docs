@@ -1,33 +1,70 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: 'API Introduction'
+description: 'Build powerful integrations with the Affonso REST API'
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+## Welcome to the Affonso API
 
-## Welcome
+The Affonso API allows you to programmatically manage your affiliate program. You can create affiliates, track referrals, manage commissions, and process payouts.
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/api-reference/authentication">
+    Learn how to authenticate your API requests
+  </Card>
+  <Card title="Rate Limits" icon="gauge" href="/api-reference/rate-limits">
+    Understand API rate limits and best practices
+  </Card>
+</CardGroup>
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+## Base URL
 
-## Authentication
+All API requests should be made to:
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
-
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
 ```
+https://api.affonso.io/v1
+```
+
+## Available Resources
+
+| Resource | Description |
+|----------|-------------|
+| [Affiliates](/api-reference/endpoint/affiliates/list) | Manage your affiliate users |
+| [Referrals](/api-reference/endpoint/referrals/list) | Track referrals and conversions |
+| [Clicks](/api-reference/endpoint/clicks/create) | Record click events |
+| [Commissions](/api-reference/endpoint/commissions/list) | Manage commission transactions |
+| [Payouts](/api-reference/endpoint/payouts/list) | Process affiliate payouts |
+
+## Response Format
+
+All responses are returned in JSON format with the following structure:
+
+```json Success Response
+{
+  "success": true,
+  "data": [...],
+  "pagination": {
+    "page": 1,
+    "limit": 50,
+    "total": 100,
+    "totalPages": 2,
+    "hasNextPage": true,
+    "hasPrevPage": false
+  }
+}
+```
+
+```json Error Response
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid email format"
+  }
+}
+```
+
+## Need Help?
+
+<Card title="Support" icon="envelope" href="mailto:support@affonso.io">
+  Contact our support team for API assistance
+</Card>

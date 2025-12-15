@@ -1,0 +1,17 @@
+---
+title: "Get Referral"
+api: "GET /v1/referrals/{id}"
+description: "Retrieve a single referral by ID"
+---
+
+<ParamField path="id" type="string" required>
+  The unique referral ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/referrals/ref_abc123" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+

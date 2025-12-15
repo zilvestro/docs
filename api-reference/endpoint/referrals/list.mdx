@@ -1,0 +1,39 @@
+---
+title: "List Referrals"
+api: "GET /v1/referrals"
+description: "Get a paginated list of all referrals"
+---
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/referrals?limit=10" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": [
+    {
+      "id": "ref_abc123",
+      "trackingId": "PARTNER123",
+      "affiliateId": "aff_456def",
+      "programId": "prg_789ghi",
+      "email": "customer@example.com",
+      "status": "customer",
+      "country": "US",
+      "createdAt": "2024-01-20T15:30:00Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 25,
+    "totalPages": 3
+  }
+}
+```
+</ResponseExample>
+

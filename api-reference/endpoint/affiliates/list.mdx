@@ -1,0 +1,61 @@
+---
+title: "List Affiliates"
+api: "GET /v1/affiliates"
+description: "Get a paginated list of all affiliates"
+---
+
+## Query Parameters
+
+<ParamField query="page" type="integer" default="1">
+  Page number for pagination
+</ParamField>
+
+<ParamField query="limit" type="integer" default="50">
+  Number of results per page (max 200)
+</ParamField>
+
+<ParamField query="status" type="string">
+  Filter by status: `active`, `pending`, `inactive`, `rejected`, `banned`
+</ParamField>
+
+<ParamField query="search" type="string">
+  Search by name or email
+</ParamField>
+
+<ParamField query="sort" type="string">
+  Sort field and direction (e.g., `createdAt:desc`)
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/affiliates?limit=10&status=active" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": [
+    {
+      "id": "aff_123abc",
+      "trackingId": "PARTNER123",
+      "email": "affiliate@example.com",
+      "name": "John Doe",
+      "status": "active",
+      "createdAt": "2024-01-15T10:30:00Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 50,
+    "totalPages": 5,
+    "hasNextPage": true,
+    "hasPrevPage": false
+  }
+}
+```
+</ResponseExample>
+

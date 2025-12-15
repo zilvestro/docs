@@ -1,0 +1,36 @@
+---
+title: "List Payouts"
+api: "GET /v1/payouts"
+description: "Get a paginated list of all payouts"
+---
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/payouts?limit=10" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": [
+    {
+      "id": "pay_abc123",
+      "affiliateId": "aff_456def",
+      "amount": 150.00,
+      "status": "pending",
+      "paymentMethod": "paypal",
+      "createdAt": "2024-01-25T10:00:00Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 15
+  }
+}
+```
+</ResponseExample>
+

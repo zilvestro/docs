@@ -1,0 +1,36 @@
+---
+title: "Create Commission"
+api: "POST /v1/commissions"
+description: "Create a new commission manually"
+---
+
+<ParamField body="referralId" type="string" required>
+  The referral this commission is for
+</ParamField>
+
+<ParamField body="amount" type="number" required>
+  Sale amount
+</ParamField>
+
+<ParamField body="commissionAmount" type="number" required>
+  Commission amount to award
+</ParamField>
+
+<ParamField body="currency" type="string" default="USD">
+  Currency code (e.g., USD, EUR)
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST "https://api.affonso.io/v1/commissions" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "referralId": "ref_456def",
+    "amount": 99.00,
+    "commissionAmount": 9.90,
+    "currency": "USD"
+  }'
+```
+</RequestExample>
+

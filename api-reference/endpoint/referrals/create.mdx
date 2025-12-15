@@ -1,0 +1,30 @@
+---
+title: "Create Referral"
+api: "POST /v1/referrals"
+description: "Create a new referral"
+---
+
+<ParamField body="affiliateId" type="string" required>
+  The affiliate who referred this customer
+</ParamField>
+
+<ParamField body="email" type="string">
+  Customer's email address
+</ParamField>
+
+<ParamField body="customerId" type="string">
+  Your internal customer ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST "https://api.affonso.io/v1/referrals" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "affiliateId": "aff_123abc",
+    "email": "newcustomer@example.com"
+  }'
+```
+</RequestExample>
+

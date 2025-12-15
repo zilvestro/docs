@@ -1,0 +1,17 @@
+---
+title: "Get Commission"
+api: "GET /v1/commissions/{id}"
+description: "Retrieve a single commission by ID"
+---
+
+<ParamField path="id" type="string" required>
+  The unique commission ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/commissions/com_abc123" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+

@@ -1,0 +1,39 @@
+---
+title: "Get Affiliate"
+api: "GET /v1/affiliates/{id}"
+description: "Retrieve a single affiliate by ID"
+---
+
+<ParamField path="id" type="string" required>
+  The unique affiliate ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/affiliates/aff_123abc" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "aff_123abc",
+    "trackingId": "PARTNER123",
+    "email": "affiliate@example.com",
+    "name": "John Doe",
+    "userName": "johndoe",
+    "status": "active",
+    "avatarUrl": null,
+    "onboardingComplete": true,
+    "source": "SIGNUP",
+    "groupId": "grp_456def",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-20T14:00:00Z"
+  }
+}
+```
+</ResponseExample>
+

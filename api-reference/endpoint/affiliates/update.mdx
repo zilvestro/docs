@@ -1,0 +1,53 @@
+---
+title: "Update Affiliate"
+api: "PUT /v1/affiliates/{id}"
+description: "Update an existing affiliate"
+---
+
+<ParamField path="id" type="string" required>
+  The unique affiliate ID
+</ParamField>
+
+<ParamField body="name" type="string">
+  Update the affiliate's name
+</ParamField>
+
+<ParamField body="userName" type="string">
+  Update the username
+</ParamField>
+
+<ParamField body="status" type="string">
+  Update status: `active`, `pending`, `inactive`, `rejected`, `banned`
+</ParamField>
+
+<ParamField body="groupId" type="string">
+  Move affiliate to a different group
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X PUT "https://api.affonso.io/v1/affiliates/aff_123abc" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "active",
+    "groupId": "grp_premium"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "aff_123abc",
+    "name": "John Doe",
+    "status": "active",
+    "groupId": "grp_premium",
+    "updatedAt": "2024-01-25T10:00:00Z"
+  }
+}
+```
+</ResponseExample>
+

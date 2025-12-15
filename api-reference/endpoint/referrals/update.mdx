@@ -1,0 +1,25 @@
+---
+title: "Update Referral"
+api: "PUT /v1/referrals/{id}"
+description: "Update an existing referral"
+---
+
+<ParamField path="id" type="string" required>
+  The unique referral ID
+</ParamField>
+
+<ParamField body="status" type="string">
+  Update status: `click`, `lead`, `customer`, `active`, `canceled`
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X PUT "https://api.affonso.io/v1/referrals/ref_abc123" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "customer"
+  }'
+```
+</RequestExample>
+
