@@ -1,0 +1,463 @@
+---
+title: "n8n Integration"
+description: "Self-hosted automation with Affonso webhooks using n8n"
+icon: "server"
+---
+
+## Overview
+
+n8n is a powerful, self-hosted workflow automation tool. It's perfect for teams that need full control over their data and want to run automations on their own infrastructure.
+
+<Info>
+  n8n can be self-hosted for complete data privacy or used via n8n Cloud for a managed experience.
+</Info>
+
+## Why Use n8n?
+
+<CardGroup cols={2}>
+  <Card title="Self-Hosted" icon="server">
+    Run on your own servers with complete data control and no external dependencies.
+  </Card>
+  
+  <Card title="Open Source" icon="code">
+    Fully open-source with an active community and extensible architecture.
+  </Card>
+  
+  <Card title="No Operation Limits" icon="infinity">
+    Self-hosted instances have no execution limits — run unlimited workflows.
+  </Card>
+  
+  <Card title="Code When Needed" icon="terminal">
+    Write custom JavaScript/Python code directly in your workflows.
+  </Card>
+</CardGroup>
+
+---
+
+## Setting Up Affonso Webhooks in n8n
+
+### Step 1: Create a New Workflow
+
+1. Open your n8n instance
+2. Click **Add workflow**
+3. Give it a name (e.g., "Affonso Webhook Handler")
+
+### Step 2: Add a Webhook Node
+
+1. Click **+** to add a node
+2. Search for **Webhook**
+3. Configure the webhook:
+
+```
+HTTP Method: POST
+Path: affonso-events
+Authentication: None (use Affonso's signature verification instead)
+```
+
+4. Copy the **Production URL** or **Test URL**
+
+<Frame>
+  <img src="/images/n8n-webhook-node.png" alt="n8n Webhook Node" />
+</Frame>
+
+### Step 3: Configure in Affonso
+
+1. Go to your Affonso dashboard → **Settings** → **Webhooks**
+2. Click **Add Endpoint**
+3. Paste the n8n webhook URL (use Production URL for live workflows)
+4. Select the events you want to receive
+5. Save and activate the endpoint
+
+### Step 4: Test the Webhook
+
+1. In n8n, click **Listen for Test Event**
+2. Trigger a test event in Affonso
+3. n8n will capture the webhook payload
+4. Review the incoming data structure
+
+### Step 5: Build Your Workflow
+
+Add nodes to process the webhook:
+
+- **IF**: Branch based on conditions
+- **Switch**: Route to different paths by event type
+- **Code**: Custom JavaScript processing
+- **HTTP Request**: Call external APIs
+- **Set**: Transform data fields
+
+---
+
+## Example Workflows
+
+### Event Router by Type
+
+Route different webhook events to appropriate handlers.
+
+```
+┌─────────────────────┐
+│     Webhook         │
+│  POST /affonso      │
+└─────────┬───────────┘
+          │
+    ┌─────┴─────┐
+    │  Switch   │
+    │  (event)  │
+    └─────┬─────┘
+          │
+    ┌─────┼──────────────────────────────┐
+    │     │              │               │
+    ▼     ▼              ▼               ▼
+┌───────┐┌───────────┐┌────────────┐┌──────────┐
+│affiliate│ referral  │ transaction││  payout  │
+│.created││.converted ││  .created  ││  .paid   │
+└───┬────┘└─────┬─────┘└─────┬──────┘└────┬─────┘
+    │           │            │            │
+    ▼           ▼            ▼            ▼
+┌───────┐┌───────────┐┌────────────┐┌──────────┐
+│ Slack ││ HubSpot   ││ Airtable   ││ Email    │
+└───────┘└───────────┘└────────────┘└──────────┘
+```
+
+### Signature Verification Workflow
+
+Verify Affonso webhook signatures for security.
+
+```
+┌─────────────────────┐
+│     Webhook         │
+└─────────┬───────────┘
+          │
+    ┌─────┴─────┐
+    │   Code    │
+    │  Verify   │
+    │ Signature │
+    └─────┬─────┘
+          │
+    ┌─────┴─────┐
+    │    IF     │
+    │  Valid?   │
+    └─────┬─────┘
+          │
+    ┌─────┼─────┐
+    │           │
+    ▼           ▼
+┌───────┐ ┌──────────┐
+│Process│ │  Stop    │
+│ Event │ │ (Invalid)│
+└───────┘ └──────────┘
+```
+
+**Signature Verification Code:**
+
+```javascript
+const crypto = require('crypto');
+
+const webhookSecret = $env.AFFONSO_WEBHOOK_SECRET;
+const signature = $input.first().headers['x-affonso-signature'];
+const timestamp = $input.first().headers['x-affonso-timestamp'];
+const body = JSON.stringify($input.first().body);
+
+// Reconstruct the signed payload
+const signedPayload = `${timestamp}.${body}`;
+
+// Calculate expected signature
+const expectedSignature = crypto
+  .createHmac('sha256', webhookSecret)
+  .update(signedPayload)
+  .digest('hex');
+
+// Verify signature
+const isValid = crypto.timingSafeEqual(
+  Buffer.from(signature),
+  Buffer.from(expectedSignature)
+);
+
+// Check timestamp (prevent replay attacks - 5 minute window)
+const timestampAge = Math.floor(Date.now() / 1000) - parseInt(timestamp);
+const isRecent = timestampAge < 300;
+
+return [{
+  json: {
+    isValid: isValid && isRecent,
+    event: $input.first().body.event,
+    data: $input.first().body.data
+  }
+}];
+```
+
+### Commission Tracking with Database
+
+Store all transactions in PostgreSQL for reporting.
+
+```
+┌─────────────────────┐
+│     Webhook         │
+│ (transaction.*)     │
+└─────────┬───────────┘
+          │
+    ┌─────┴─────┐
+    │    Set    │
+    │  Format   │
+    │   Data    │
+    └─────┬─────┘
+          │
+    ┌─────┴─────┐
+    │ Postgres  │
+    │  Upsert   │
+    └─────┬─────┘
+          │
+    ┌─────┴─────┐
+    │    IF     │
+    │amount>100?│
+    └─────┬─────┘
+          │
+    ┌─────┴─────┐
+    │           │
+    ▼           ▼
+┌───────┐ ┌──────────┐
+│ Slack │ │  (Skip)  │
+│ Alert │ │          │
+└───────┘ └──────────┘
+```
+
+**PostgreSQL Insert:**
+
+```sql
+INSERT INTO affiliate_transactions (
+  transaction_id,
+  affiliate_id,
+  sale_amount,
+  commission_amount,
+  status,
+  created_at,
+  updated_at
+) VALUES (
+  $1, $2, $3, $4, $5, $6, $7
+)
+ON CONFLICT (transaction_id) 
+DO UPDATE SET
+  status = EXCLUDED.status,
+  updated_at = EXCLUDED.updated_at;
+```
+
+---
+
+## Working with Webhook Data
+
+### Accessing Payload Fields
+
+In n8n, access webhook data using expressions:
+
+```javascript
+// In expression fields
+{{ $json.event }}                    // "transaction.created"
+{{ $json.timestamp }}                // "2024-01-15T10:30:00.000Z"
+{{ $json.data.transactionId }}       // "tx_abc123"
+{{ $json.data.affiliateId }}         // "aff_xyz789"
+{{ $json.data.commissionAmount }}    // 50.00
+{{ $json.data.commissionStatus }}    // "READY_FOR_PAYMENT"
+
+// In Code node
+const event = $input.first().json.event;
+const data = $input.first().json.data;
+const amount = data.commissionAmount;
+```
+
+### Data Transformation with Set Node
+
+Transform webhook data for downstream nodes:
+
+```json
+{
+  "affiliate_id": "={{ $json.data.affiliateId }}",
+  "transaction_date": "={{ DateTime.fromISO($json.timestamp).toFormat('yyyy-MM-dd') }}",
+  "commission_usd": "={{ Number($json.data.commissionAmount).toFixed(2) }}",
+  "status_emoji": "={{ $json.data.commissionStatus === 'PAID' ? '✅' : '⏳' }}"
+}
+```
+
+### Custom Code Processing
+
+Use the Code node for complex logic:
+
+```javascript
+// Process all items
+const results = [];
+
+for (const item of $input.all()) {
+  const event = item.json.event;
+  const data = item.json.data;
+  
+  // Calculate commission percentage
+  const commissionPercent = (data.commissionAmount / data.saleAmount * 100).toFixed(2);
+  
+  // Determine priority
+  let priority = 'normal';
+  if (data.commissionAmount > 100) priority = 'high';
+  if (data.commissionAmount > 500) priority = 'urgent';
+  
+  results.push({
+    json: {
+      ...data,
+      event,
+      commissionPercent: `${commissionPercent}%`,
+      priority,
+      processedAt: new Date().toISOString()
+    }
+  });
+}
+
+return results;
+```
+
+---
+
+## Advanced Patterns
+
+### Retry Failed Webhooks
+
+Handle temporary failures with retry logic:
+
+```
+┌─────────────────────┐
+│     Webhook         │
+└─────────┬───────────┘
+          │
+    ┌─────┴─────┐
+    │   HTTP    │
+    │  Request  │◄─────────┐
+    └─────┬─────┘          │
+          │                │
+    ┌─────┴─────┐    ┌─────┴─────┐
+    │  Error?   │───►│   Wait    │
+    └─────┬─────┘    │  (retry)  │
+          │          └───────────┘
+          ▼
+    ┌───────────┐
+    │  Success  │
+    └───────────┘
+```
+
+### Batch Processing
+
+Collect webhooks and process in batches:
+
+```
+Workflow 1 (Webhook):
+  Webhook → Redis (store event)
+
+Workflow 2 (Scheduled - every hour):
+  Redis (get all) → Process Batch → Clear Redis
+```
+
+### Environment-Based Configuration
+
+Use environment variables for configuration:
+
+```javascript
+// Access in Code node
+const slackChannel = $env.SLACK_AFFILIATE_CHANNEL;
+const webhookSecret = $env.AFFONSO_WEBHOOK_SECRET;
+const apiKey = $env.INTERNAL_API_KEY;
+
+// Use in HTTP Request node
+// URL: {{ $env.API_BASE_URL }}/endpoint
+// Header: Authorization: Bearer {{ $env.API_KEY }}
+```
+
+---
+
+## Docker Deployment
+
+Self-host n8n with Docker for production use:
+
+```yaml
+# docker-compose.yml
+version: '3.8'
+
+services:
+  n8n:
+    image: n8nio/n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_PASSWORD}
+      - N8N_HOST=${N8N_HOST}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - WEBHOOK_URL=https://${N8N_HOST}/
+      - GENERIC_TIMEZONE=UTC
+      # Affonso secrets
+      - AFFONSO_WEBHOOK_SECRET=${AFFONSO_WEBHOOK_SECRET}
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  n8n_data:
+```
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Webhook not triggering">
+    - Use the **Test URL** first, then switch to **Production URL**
+    - Ensure your n8n instance is publicly accessible
+    - Check firewall rules allow incoming connections
+    - Verify the workflow is **Active**
+  </Accordion>
+  
+  <Accordion title="Data not appearing in nodes">
+    - Click **Execute Workflow** while listening for test events
+    - Check the webhook path matches exactly
+    - Review the **Executions** tab for detailed logs
+  </Accordion>
+  
+  <Accordion title="Self-hosted connectivity issues">
+    - Ensure your server has a valid SSL certificate
+    - Use a reverse proxy (nginx/Caddy) for HTTPS
+    - Check `WEBHOOK_URL` environment variable is set correctly
+  </Accordion>
+  
+  <Accordion title="High memory usage">
+    - Enable execution data pruning in settings
+    - Process large payloads in batches
+    - Use the Split In Batches node for bulk operations
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use Error Workflow" icon="triangle-exclamation">
+    Set up a global error workflow to catch and notify on failures across all workflows.
+  </Card>
+  
+  <Card title="Version Control" icon="code-branch">
+    Export workflows as JSON and store in Git for version control and backup.
+  </Card>
+  
+  <Card title="Use Sub-Workflows" icon="sitemap">
+    Break complex logic into reusable sub-workflows for maintainability.
+  </Card>
+  
+  <Card title="Monitor Resources" icon="gauge-high">
+    Set up monitoring for your n8n instance CPU/memory usage in production.
+  </Card>
+</CardGroup>
+
+---
+
+## Resources
+
+- [n8n Documentation](https://docs.n8n.io/)
+- [n8n Community](https://community.n8n.io/)
+- [n8n GitHub](https://github.com/n8n-io/n8n)
+- [Affonso Webhook Events](/webhooks/events/affiliate)
+

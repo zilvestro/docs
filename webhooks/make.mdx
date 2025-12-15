@@ -1,0 +1,365 @@
+---
+title: "Make (Integromat) Integration"
+description: "Build powerful automations with Affonso webhooks using Make"
+icon: "diagram-project"
+---
+
+## Overview
+
+Make (formerly Integromat) is a powerful automation platform that lets you connect Affonso to hundreds of apps with advanced features like data transformation, conditional routing, and error handling.
+
+<Info>
+  Make offers more flexibility than Zapier with visual scenario builders and complex data manipulation capabilities.
+</Info>
+
+## Setting Up Affonso Webhooks in Make
+
+### Step 1: Create a New Scenario
+
+1. Log into your [Make account](https://make.com)
+2. Click **Create a new scenario**
+3. Click the **+** button to add a module
+
+### Step 2: Add a Webhook Module
+
+1. Search for **Webhooks**
+2. Select **Custom webhook**
+3. Click **Add** to create a new webhook
+4. Give it a name (e.g., "Affonso Events")
+5. Click **Save** — Make will generate a webhook URL
+
+<Frame>
+  <img src="/images/make-webhook-url.png" alt="Make Webhook URL" />
+</Frame>
+
+### Step 3: Configure in Affonso
+
+1. Go to your Affonso dashboard → **Settings** → **Webhooks**
+2. Click **Add Endpoint**
+3. Paste the Make webhook URL
+4. Select the events you want to receive
+5. Save and activate the endpoint
+
+### Step 4: Determine Data Structure
+
+1. In Make, click **Run once** on your scenario
+2. Trigger a test event in Affonso
+3. Make will automatically detect and map the data structure
+4. You'll see all available fields from the webhook payload
+
+### Step 5: Build Your Automation
+
+Add additional modules to process the webhook data:
+
+- **Router**: Split flows based on conditions
+- **Iterator**: Process arrays of data
+- **Aggregator**: Combine multiple items
+- **HTTP**: Call external APIs
+- **Data Store**: Save data for later use
+
+---
+
+## Example Scenarios
+
+### New Affiliate → Multi-Channel Notification
+
+Notify multiple channels when a new affiliate signs up.
+
+```
+┌─────────────────────┐
+│  Webhooks           │
+│  Custom Webhook     │
+│  (affiliate.created)│
+└─────────┬───────────┘
+          │
+    ┌─────┴─────┐
+    │  Router   │
+    └─────┬─────┘
+          │
+    ┌─────┼─────────────────┐
+    │     │                 │
+    ▼     ▼                 ▼
+┌───────┐ ┌───────────┐ ┌──────────┐
+│ Slack │ │ Discord   │ │ Email    │
+│ Send  │ │ Send Msg  │ │ Send     │
+└───────┘ └───────────┘ └──────────┘
+```
+
+### Transaction Created → Conditional Processing
+
+Route transactions based on amount and type.
+
+```
+┌─────────────────────┐
+│  Webhooks           │
+│  Custom Webhook     │
+│  (transaction.created)
+└─────────┬───────────┘
+          │
+    ┌─────┴─────┐
+    │  Router   │
+    └─────┬─────┘
+          │
+    ┌─────┴───────────────────┐
+    │                         │
+    ▼                         ▼
+┌──────────────┐      ┌──────────────┐
+│ If amount    │      │ If amount    │
+│ > $100       │      │ <= $100      │
+└──────┬───────┘      └──────┬───────┘
+       │                     │
+       ▼                     ▼
+┌──────────────┐      ┌──────────────┐
+│ Notify Sales │      │ Log to       │
+│ Team (Slack) │      │ Spreadsheet  │
+└──────────────┘      └──────────────┘
+```
+
+### Payout Processing → Database & Notification
+
+Log payouts and send confirmation emails.
+
+```
+┌─────────────────────┐
+│  Webhooks           │
+│  Custom Webhook     │
+│  (payout.paid)      │
+└─────────┬───────────┘
+          │
+    ┌─────┴─────┐
+    │ Set       │
+    │ Variables │
+    └─────┬─────┘
+          │
+    ┌─────┼─────────────────┐
+    │     │                 │
+    ▼     ▼                 ▼
+┌───────┐ ┌───────────┐ ┌──────────┐
+│Airtable│ │ SendGrid  │ │ HTTP     │
+│Add Row │ │ Send Email│ │ Update   │
+│        │ │           │ │ CRM      │
+└───────┘ └───────────┘ └──────────┘
+```
+
+---
+
+## Working with Webhook Data
+
+### Data Mapping
+
+Make automatically maps the webhook payload. Access fields like:
+
+```javascript
+// Event metadata
+{{1.event}}           // "transaction.created"
+{{1.timestamp}}       // "2024-01-15T10:30:00.000Z"
+
+// Payload data
+{{1.data.transactionId}}      // "tx_abc123"
+{{1.data.affiliateId}}        // "aff_xyz789"  
+{{1.data.commissionAmount}}   // 50.00
+{{1.data.saleAmount}}         // 199.99
+{{1.data.commissionStatus}}   // "READY_FOR_PAYMENT"
+```
+
+### Using Filters
+
+Add filters between modules to control flow:
+
+```
+Filter: Commission Amount Check
+└── Condition: {{1.data.commissionAmount}} > 100
+└── Label: "High-value commission"
+```
+
+### Data Transformation
+
+Use Make's built-in functions:
+
+```javascript
+// Format currency
+{{formatNumber(1.data.commissionAmount; 2; ","; ".")}}
+
+// Format date
+{{formatDate(1.timestamp; "MMMM DD, YYYY")}}
+
+// Conditional text
+{{if(1.data.commissionStatus = "PAID"; "✅ Paid"; "⏳ Pending")}}
+
+// Calculate percentage
+{{round(1.data.commissionAmount / 1.data.saleAmount * 100; 2)}}%
+```
+
+---
+
+## Advanced Features
+
+### Error Handling
+
+Set up error handlers to manage failures:
+
+```
+┌─────────────────────┐
+│  Main Module        │
+└─────────┬───────────┘
+          │
+    ┌─────┴─────┐
+    │  Error    │
+    │  Handler  │
+    └─────┬─────┘
+          │
+          ▼
+┌─────────────────────┐
+│  Slack: Send        │
+│  Error Notification │
+└─────────────────────┘
+```
+
+### Data Stores
+
+Use Make's Data Stores to track webhook history:
+
+```
+┌─────────────────────┐
+│  Webhook Received   │
+└─────────┬───────────┘
+          │
+          ▼
+┌─────────────────────┐
+│  Data Store         │
+│  Add/Update Record  │
+│  Key: transactionId │
+└─────────────────────┘
+```
+
+### Scheduled Processing
+
+Combine webhooks with scheduled scenarios:
+
+```
+Scenario 1 (Instant): Webhook → Data Store
+Scenario 2 (Daily): Data Store → Generate Report → Email
+```
+
+---
+
+## Module Configuration Examples
+
+### Slack Notification
+
+```json
+{
+  "channel": "#affiliate-activity",
+  "text": "New {{1.event}} event",
+  "attachments": [
+    {
+      "color": "#00ff00",
+      "fields": [
+        {
+          "title": "Affiliate",
+          "value": "{{1.data.affiliateId}}",
+          "short": true
+        },
+        {
+          "title": "Amount",
+          "value": "${{1.data.commissionAmount}}",
+          "short": true
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Google Sheets Row
+
+```
+Spreadsheet: Affiliate Transactions
+Worksheet: Transactions
+Values:
+  Column A: {{formatDate(now; "YYYY-MM-DD HH:mm:ss")}}
+  Column B: {{1.data.transactionId}}
+  Column C: {{1.data.affiliateId}}
+  Column D: {{1.data.saleAmount}}
+  Column E: {{1.data.commissionAmount}}
+  Column F: {{1.data.commissionStatus}}
+```
+
+### HTTP Request (Custom API)
+
+```json
+{
+  "url": "https://your-api.com/webhook-handler",
+  "method": "POST",
+  "headers": {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer YOUR_API_KEY"
+  },
+  "body": {
+    "source": "affonso",
+    "event": "{{1.event}}",
+    "data": "{{1.data}}"
+  }
+}
+```
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Webhook not receiving data">
+    - Click **Redetermine data structure** in the webhook module
+    - Verify the endpoint is active in Affonso
+    - Check Make's execution history for errors
+  </Accordion>
+  
+  <Accordion title="Data structure not detected">
+    - Ensure your scenario is in **Run once** mode
+    - Trigger a real event from Affonso
+    - Wait up to 60 seconds for the data to arrive
+  </Accordion>
+  
+  <Accordion title="Scenario stops unexpectedly">
+    - Check your Make plan's operation limits
+    - Review the scenario's error log
+    - Add error handlers to prevent full stops
+  </Accordion>
+  
+  <Accordion title="Duplicate processing">
+    - Use the `eventId` field to deduplicate
+    - Add a Data Store to track processed events
+    - Set up idempotency checks
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use Scenario Blueprints" icon="copy">
+    Save working scenarios as templates for faster setup of similar automations.
+  </Card>
+  
+  <Card title="Monitor Execution History" icon="chart-line">
+    Regularly check execution logs to catch and fix issues early.
+  </Card>
+  
+  <Card title="Set Up Notifications" icon="bell">
+    Configure Make to alert you when scenarios fail or exceed thresholds.
+  </Card>
+  
+  <Card title="Use Variables Module" icon="square-root-variable">
+    Set variables at the start of your scenario for cleaner, more maintainable flows.
+  </Card>
+</CardGroup>
+
+---
+
+## Resources
+
+- [Make Webhooks Documentation](https://www.make.com/en/help/tools/webhooks)
+- [Make Academy](https://academy.make.com/)
+- [Affonso Webhook Events](/webhooks/events/affiliate)
+

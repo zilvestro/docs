@@ -1,0 +1,217 @@
+---
+title: "Zapier Integration"
+description: "Connect Affonso webhooks to thousands of apps using Zapier"
+icon: "bolt"
+---
+
+## Overview
+
+Zapier allows you to connect Affonso with 6,000+ apps without writing any code. When an event occurs in Affonso (like a new affiliate signup or commission), you can automatically trigger actions in other apps.
+
+<Info>
+  Zapier is perfect for non-technical users who want to automate workflows quickly without coding.
+</Info>
+
+## Setting Up Affonso Webhooks in Zapier
+
+### Step 1: Create a New Zap
+
+1. Log into your [Zapier account](https://zapier.com)
+2. Click **Create Zap**
+3. Search for **Webhooks by Zapier** as your trigger app
+
+### Step 2: Configure the Webhook Trigger
+
+1. Select **Catch Hook** as the trigger event
+2. Click **Continue**
+3. Zapier will generate a unique webhook URL — copy this URL
+
+<Frame>
+  <img src="/images/zapier-webhook-url.png" alt="Zapier Webhook URL" />
+</Frame>
+
+### Step 3: Add the Webhook URL in Affonso
+
+1. Go to your Affonso dashboard → **Settings** → **Webhooks**
+2. Click **Add Endpoint**
+3. Paste the Zapier webhook URL
+4. Select the events you want to trigger (e.g., `affiliate.created`, `transaction.created`)
+5. Save the endpoint
+
+### Step 4: Test the Connection
+
+1. In Zapier, click **Test trigger**
+2. Trigger a test event in Affonso (e.g., create a test affiliate)
+3. Zapier should receive the webhook payload
+4. Click **Continue** once the test is successful
+
+### Step 5: Set Up Your Action
+
+Now connect the data to any app:
+
+- **Google Sheets**: Log new affiliates or transactions
+- **Slack**: Send notifications for new signups
+- **Email**: Send custom emails to affiliates
+- **CRM**: Create contacts in HubSpot, Salesforce, etc.
+
+---
+
+## Example Zaps
+
+### New Affiliate → Slack Notification
+
+Notify your team when a new affiliate joins your program.
+
+```
+Trigger: Webhooks by Zapier → Catch Hook
+└── Event: affiliate.created
+
+Action: Slack → Send Channel Message
+└── Channel: #affiliates
+└── Message: "🎉 New affiliate: {{name}} ({{email}})"
+```
+
+### Commission Approved → Google Sheets
+
+Track all approved commissions in a spreadsheet.
+
+```
+Trigger: Webhooks by Zapier → Catch Hook
+└── Event: transaction.approved
+
+Action: Google Sheets → Create Spreadsheet Row
+└── Spreadsheet: Affiliate Commissions
+└── Row Data: Date, Affiliate ID, Commission Amount, Status
+```
+
+### Payout Completed → Email Notification
+
+Send a confirmation email when a payout is processed.
+
+```
+Trigger: Webhooks by Zapier → Catch Hook
+└── Event: payout.paid
+
+Action: Gmail → Send Email
+└── To: {{affiliate_email}}
+└── Subject: "Your payout has been processed!"
+└── Body: "Your payout of ${{amount}} has been sent."
+```
+
+### Referral Converted → HubSpot Contact
+
+Add converted referrals to your CRM.
+
+```
+Trigger: Webhooks by Zapier → Catch Hook
+└── Event: referral.converted
+
+Action: HubSpot → Create Contact
+└── Email: {{email}}
+└── Properties: Source = "Affiliate Referral", Affiliate ID = {{affiliateId}}
+```
+
+---
+
+## Working with Webhook Data
+
+### Accessing Payload Fields
+
+Zapier automatically parses the JSON payload. You can access fields using dot notation:
+
+| Zapier Field | Example Value |
+|-------------|---------------|
+| `data.affiliateId` | `aff_abc123` |
+| `data.email` | `john@example.com` |
+| `data.commissionAmount` | `50.00` |
+| `data.status` | `READY_FOR_PAYMENT` |
+| `timestamp` | `2024-01-15T10:30:00Z` |
+
+### Filtering Events
+
+Use Zapier's **Filter** step to only continue when certain conditions are met:
+
+```
+Filter: Only continue if...
+└── data.commissionAmount > 100
+└── data.status = "READY_FOR_PAYMENT"
+```
+
+### Formatting Data
+
+Use **Formatter by Zapier** to transform data:
+
+- Convert timestamps to readable dates
+- Calculate percentages
+- Format currency values
+- Extract text from fields
+
+---
+
+## Multi-Step Zaps
+
+Create powerful automations by chaining multiple actions:
+
+```
+Trigger: affiliate.created
+
+Step 1: Slack → Send notification to #affiliates
+Step 2: Google Sheets → Add row to "Affiliates" spreadsheet  
+Step 3: Mailchimp → Add subscriber to "Affiliates" list
+Step 4: Notion → Create page in "Affiliate Database"
+```
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Webhook not triggering">
+    - Verify the endpoint is **Active** in Affonso
+    - Check that you've subscribed to the correct events
+    - Look for errors in Affonso's webhook logs
+  </Accordion>
+  
+  <Accordion title="Missing data in Zapier">
+    - Ensure you've tested the trigger with a real event
+    - Check if the field exists in the webhook payload
+    - Use Zapier's **Refresh Fields** option
+  </Accordion>
+  
+  <Accordion title="Zap not running">
+    - Verify your Zap is turned **On**
+    - Check your Zapier plan limits
+    - Review the Zap History for errors
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use Paths for Branching" icon="code-branch">
+    Create different workflows based on event type or data values using Zapier Paths.
+  </Card>
+  
+  <Card title="Enable Error Notifications" icon="bell">
+    Set up Zapier to alert you when a Zap fails so you can fix issues quickly.
+  </Card>
+  
+  <Card title="Test Before Going Live" icon="flask">
+    Always test your Zaps with sample data before enabling them for production.
+  </Card>
+  
+  <Card title="Use Delay Steps Wisely" icon="clock">
+    Add delays when you need to wait for related events or avoid rate limits.
+  </Card>
+</CardGroup>
+
+---
+
+## Resources
+
+- [Zapier Webhooks Documentation](https://zapier.com/apps/webhook/integrations)
+- [Zapier University](https://zapier.com/learn)
+- [Affonso Webhook Events](/webhooks/events/affiliate)
+

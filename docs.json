@@ -91,6 +91,14 @@
               "webhooks/setup",
               "webhooks/examples"
             ]
+          },
+          {
+            "group": "Automation Tools",
+            "pages": [
+              "webhooks/zapier",
+              "webhooks/make",
+              "webhooks/n8n"
+            ]
           }
         ]
       }
