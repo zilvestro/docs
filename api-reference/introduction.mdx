@@ -34,6 +34,17 @@ https://api.affonso.io/v1
 | [Commissions](/api-reference/endpoint/commissions/list) | Manage commission transactions |
 | [Payouts](/api-reference/endpoint/payouts/list) | Process affiliate payouts |
 
+## Partnership Status
+
+The `partnershipStatus` field indicates the relationship status between an affiliate and a program:
+
+- **`APPROVED`** - Affiliate is active and can promote the program
+- **`PENDING`** - Affiliate applied but hasn't been approved yet
+- **`REJECTED`** - Affiliate application was rejected
+- **`null`** - No partnership exists (affiliate hasn't completed onboarding)
+
+**Note:** `partnershipStatus` can be `null` for affiliates who haven't completed their onboarding process yet. The status is only set after the affiliate applies to and gets approved/rejected for a specific program.
+
 ## Response Format
 
 All responses are returned in JSON format with the following structure:
