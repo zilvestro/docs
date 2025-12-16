@@ -39,8 +39,20 @@ curl -X GET "https://api.affonso.io/v1/affiliates/aff_123abc" \
 ```
 
 **With Expand:**
+
+Expand specific fields or combinations:
 ```bash
+# All expandables
 ?expand=promoCodes,commissionOverrides,invoiceDetails,payoutMethod
+
+# Individual expandables
+?expand=promoCodes
+?expand=commissionOverrides
+?expand=invoiceDetails
+?expand=payoutMethod
+
+# Combinations
+?expand=promoCodes,payoutMethod
 ```
 
 ```json Response
@@ -93,6 +105,35 @@ curl -X GET "https://api.affonso.io/v1/affiliates/aff_123abc" \
       "vatId": null,
       "taxId": null
     },
+    "payoutMethod": {
+      "type": "paypal",
+      "details": {
+        "email": "john@example.com"
+      }
+    }
+  }
+}
+```
+
+**Example with single expandable:**
+```bash
+?expand=payoutMethod
+```
+
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "cmj8pptm10002p3010z8mk9ak",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "trackingId": "PARTNER123",
+    "source": "api",
+    "partnershipStatus": "APPROVED",
+    "onboardingCompleted": true,
+    "programId": "cm7xutqbb0001yfkcrnpextmp",
+    "groupId": "efbf3f29-efb1-4837-8924-7322606858f3",
+    "createdAt": "2024-01-15T10:30:00Z",
     "payoutMethod": {
       "type": "paypal",
       "details": {
