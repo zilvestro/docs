@@ -9,29 +9,50 @@ description: "Update an existing affiliate"
 </ParamField>
 
 <ParamField body="name" type="string">
-  Update the affiliate's name
+  Update the affiliate's display name
 </ParamField>
 
-<ParamField body="userName" type="string">
-  Update the username
-</ParamField>
-
-<ParamField body="status" type="string">
-  Update status: `active`, `pending`, `inactive`, `rejected`, `banned`
+<ParamField body="email" type="string">
+  Update the affiliate's email address
 </ParamField>
 
 <ParamField body="groupId" type="string">
-  Move affiliate to a different group
+  Move affiliate to a different group (set to null to remove from group)
+</ParamField>
+
+<ParamField body="companyName" type="string">
+  Update company name for invoicing (set to null to clear)
+</ParamField>
+
+<ParamField body="countryCode" type="string">
+  Update two-letter ISO country code for invoicing (set to null to clear)
+</ParamField>
+
+<ParamField body="payoutMethod" type="string">
+  Update payout method: `paypal`, `wise`, `payoneer`, `paxum`, `webmoney`, `skrill`, `wire_transfer`, `bitcoin`, `ethereum`, `alipay`, `wechat`, `manual`, `none`
+</ParamField>
+
+<ParamField body="payoutDetails" type="object">
+  Update payout method details (email, accountId, address, bank details depending on method)
+</ParamField>
+
+<ParamField body="status" type="string">
+  Update partnership status: `PENDING`, `APPROVED`, `REJECTED`
 </ParamField>
 
 <RequestExample>
 ```bash cURL
-curl -X PUT "https://api.affonso.io/v1/affiliates/aff_123abc" \
+curl -X PUT "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak" \
   -H "Authorization: Bearer sk_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
-    "status": "active",
-    "groupId": "grp_premium"
+    "companyName": "John LLC",
+    "countryCode": "US",
+    "payoutMethod": "paypal",
+    "payoutDetails": {
+      "email": "john@example.com"
+    },
+    "status": "APPROVED"
   }'
 ```
 </RequestExample>
@@ -41,11 +62,16 @@ curl -X PUT "https://api.affonso.io/v1/affiliates/aff_123abc" \
 {
   "success": true,
   "data": {
-    "id": "aff_123abc",
-    "name": "John Doe",
-    "status": "active",
-    "groupId": "grp_premium",
-    "updatedAt": "2024-01-25T10:00:00Z"
+    "id": "cmj8pptm10002p3010z8mk9ak",
+    "name": "Test API Affiliate",
+    "email": "testapi123@zaapp.io",
+    "trackingId": "test-api-affiliate",
+    "source": "api",
+    "partnershipStatus": "APPROVED",
+    "onboardingCompleted": false,
+    "programId": "cm7xutqbb0001yfkcrnpextmp",
+    "groupId": null,
+    "createdAt": "2025-12-16T15:03:19.081Z"
   }
 }
 ```

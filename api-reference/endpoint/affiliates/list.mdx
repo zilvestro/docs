@@ -14,16 +14,28 @@ description: "Get a paginated list of all affiliates"
   Number of results per page (max 200)
 </ParamField>
 
-<ParamField query="status" type="string">
-  Filter by status: `active`, `pending`, `inactive`, `rejected`, `banned`
+<ParamField query="partnershipStatus" type="string">
+  Filter by partnership status: `PENDING`, `APPROVED`, `REJECTED`
 </ParamField>
 
 <ParamField query="search" type="string">
   Search by name or email
 </ParamField>
 
+<ParamField query="groupId" type="string">
+  Filter by affiliate group ID
+</ParamField>
+
+<ParamField query="programId" type="string">
+  Filter by affiliate program ID
+</ParamField>
+
 <ParamField query="sort" type="string">
-  Sort field and direction (e.g., `createdAt:desc`)
+  Sort field and direction (e.g., `createdAt:desc`, `partnershipStatus:asc`)
+</ParamField>
+
+<ParamField query="expand" type="string">
+  Expand related data: `promoCodes`, `commissionOverrides`, `invoiceDetails`, `payoutMethod`
 </ParamField>
 
 <RequestExample>
@@ -39,11 +51,15 @@ curl -X GET "https://api.affonso.io/v1/affiliates?limit=10&status=active" \
   "success": true,
   "data": [
     {
-      "id": "aff_123abc",
-      "trackingId": "PARTNER123",
-      "email": "affiliate@example.com",
+      "id": "cmj8pptm10002p3010z8mk9ak",
       "name": "John Doe",
-      "status": "active",
+      "email": "john@example.com",
+      "trackingId": "PARTNER123",
+      "source": "api",
+      "partnershipStatus": "APPROVED",
+      "onboardingCompleted": true,
+      "programId": "cm7xutqbb0001yfkcrnpextmp",
+      "groupId": "efbf3f29-efb1-4837-8924-7322606858f3",
       "createdAt": "2024-01-15T10:30:00Z"
     }
   ],

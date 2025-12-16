@@ -4,20 +4,36 @@ api: "POST /v1/affiliates"
 description: "Create a new affiliate user"
 ---
 
-<ParamField body="email" type="string" required>
-  The affiliate's email address
-</ParamField>
-
 <ParamField body="name" type="string" required>
   The affiliate's display name
 </ParamField>
 
-<ParamField body="userName" type="string">
-  Optional username for the affiliate
+<ParamField body="email" type="string" required>
+  The affiliate's email address
 </ParamField>
 
-<ParamField body="status" type="string" default="pending">
-  Initial status: `pending` or `active`
+<ParamField body="programId" type="string" required>
+  The affiliate program ID to assign the affiliate to
+</ParamField>
+
+<ParamField body="groupId" type="string">
+  Optional affiliate group ID to assign to
+</ParamField>
+
+<ParamField body="companyName" type="string">
+  Optional company name for invoicing
+</ParamField>
+
+<ParamField body="countryCode" type="string">
+  Optional two-letter ISO country code for invoicing
+</ParamField>
+
+<ParamField body="payoutMethod" type="string">
+  Payout method: `paypal`, `wise`, `payoneer`, `paxum`, `webmoney`, `skrill`, `wire_transfer`, `bitcoin`, `ethereum`, `alipay`, `wechat`, `manual`, `none`
+</ParamField>
+
+<ParamField body="payoutDetails" type="object">
+  Payout method details (email, accountId, address, bank details depending on method)
 </ParamField>
 
 <RequestExample>
@@ -26,9 +42,15 @@ curl -X POST "https://api.affonso.io/v1/affiliates" \
   -H "Authorization: Bearer sk_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "newpartner@example.com",
     "name": "Jane Smith",
-    "status": "active"
+    "email": "jane@example.com",
+    "programId": "cm7xutqbb0001yfkcrnpextmp",
+    "companyName": "Jane LLC",
+    "countryCode": "US",
+    "payoutMethod": "paypal",
+    "payoutDetails": {
+      "email": "jane@example.com"
+    }
   }'
 ```
 </RequestExample>
@@ -38,11 +60,15 @@ curl -X POST "https://api.affonso.io/v1/affiliates" \
 {
   "success": true,
   "data": {
-    "id": "aff_789ghi",
-    "trackingId": "JANE456",
-    "email": "newpartner@example.com",
+    "id": "cmj8q1wau0003sb01lpvka478",
     "name": "Jane Smith",
-    "status": "active",
+    "email": "jane@example.com",
+    "trackingId": "jane-smith",
+    "source": "api",
+    "partnershipStatus": "APPROVED",
+    "onboardingCompleted": false,
+    "programId": "cm7xutqbb0001yfkcrnpextmp",
+    "groupId": null,
     "createdAt": "2024-01-25T09:15:00Z"
   }
 }
