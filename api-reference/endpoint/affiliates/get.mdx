@@ -45,5 +45,78 @@ curl -X GET "https://api.affonso.io/v1/affiliates/aff_123abc" \
   }
 }
 ```
+
+**With Expand:**
+```bash
+?expand=promoCodes,commissionOverrides,invoiceDetails,payoutMethod
+```
+
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "cmj8pptm10002p3010z8mk9ak",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "trackingId": "PARTNER123",
+    "source": "api",
+    "partnershipStatus": "APPROVED",
+    "onboardingCompleted": true,
+    "programId": "cm7xutqbb0001yfkcrnpextmp",
+    "groupId": "efbf3f29-efb1-4837-8924-7322606858f3",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "stats": {
+      "totalReferredCustomers": 25,
+      "totalRevenueGenerated": 12500.00,
+      "totalCommissionsEarned": 1250.00,
+      "creditPending": 250.00,
+      "creditReadyForPayment": 1000.00,
+      "totalBalancePaid": 5000.00
+    },
+    "promoCodes": [
+      {
+        "code": "JOHN25",
+        "promoCodeId": null,
+        "couponId": "coupon_123",
+        "discountType": "percentage",
+        "discountValue": 25,
+        "duration": "forever",
+        "createdAt": "2024-01-15T10:30:00Z"
+      }
+    ],
+    "commissionOverrides": [
+      {
+        "id": "override_123",
+        "incentiveId": "incentive_456",
+        "incentiveName": "Premium Commission",
+        "incentiveType": "commission",
+        "amount": 15,
+        "isPercentage": true,
+        "applyTo": "all_plans",
+        "productIds": []
+      }
+    ],
+    "invoiceDetails": {
+      "companyName": "John LLC",
+      "firstName": "John",
+      "lastName": "Doe",
+      "addressLine1": "123 Main St",
+      "addressLine2": null,
+      "city": "New York",
+      "postalCode": "10001",
+      "state": "NY",
+      "country": "US",
+      "vatId": null,
+      "taxId": null
+    },
+    "payoutMethod": {
+      "type": "paypal",
+      "details": {
+        "email": "john@example.com"
+      }
+    }
+  }
+}
+```
 </ResponseExample>
 
