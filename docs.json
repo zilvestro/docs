@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "aspen",
+  "theme": "mint",
   "name": "Affonso Docs",
   "colors": {
     "primary": "#881337",
@@ -12,11 +12,10 @@
   "api": {
     "baseUrl": "https://api.affonso.io",
     "auth": {
-      "method": "bearer",
-      "name": "Authorization"
+      "method": "bearer"
     },
     "playground": {
-      "mode": "show"
+      "display": "interactive"
     }
   },
   "navigation": {
