@@ -22,34 +22,34 @@ All body parameters are optional. Only include the fields you want to update.
   Update the affiliate's email address. Must be a valid email format. If the email is already in use by another user, the request will fail with a conflict error.
 </ParamField>
 
-<ParamField body="groupId" type="string | null">
-  Move affiliate to a different group by providing the group ID, or set to `null` to remove from the current group. The group must belong to your team.
+<ParamField body="group_id" type="string | null">
+  Affiliate group ID (null to remove).
 </ParamField>
 
-<ParamField body="companyName" type="string | null">
-  Update company name for invoicing purposes. Maximum 100 characters. Set to `null` to clear the company name.
+<ParamField body="company_name" type="string | null">
+  Company name for invoice. Maximum 100 characters. Set to `null` to clear.
 </ParamField>
 
-<ParamField body="countryCode" type="string | null">
-  Update two-letter ISO 3166-1 alpha-2 country code (e.g., `US`, `GB`, `DE`) for invoicing. Will be automatically converted to uppercase. Set to `null` to clear the country code.
+<ParamField body="country_code" type="string | null">
+  2-letter ISO country code. Set to `null` to clear.
 </ParamField>
 
-<ParamField body="payoutMethod" type="string">
-  Update payout method for the affiliate. Valid values: `paypal`, `wise`, `payoneer`, `paxum`, `webmoney`, `skrill`, `wire_transfer`, `bitcoin`, `ethereum`, `alipay`, `wechat`, `manual`, `none`. Setting to `none` will remove the payout method.
+<ParamField body="payout_method" type="string">
+  Payout method (none to remove). Valid values: `paypal`, `wise`, `payoneer`, `paxum`, `webmoney`, `skrill`, `wire_transfer`, `bitcoin`, `ethereum`, `alipay`, `wechat`, `manual`, `none`.
 </ParamField>
 
-<ParamField body="payoutDetails" type="object">
-  Update payout method details. The required fields depend on the `payoutMethod`:
+<ParamField body="payout_details" type="object">
+  Payout details (snake_case fields). The required fields depend on the `payout_method`:
   
   - **Email-based methods** (`paypal`, `wise`, `payoneer`, `paxum`, `skrill`): `email` (string, valid email)
-  - **ID-based methods** (`webmoney`, `alipay`, `wechat`): `accountId` (string)
+  - **ID-based methods** (`webmoney`, `alipay`, `wechat`): `account_id` (string)
   - **Crypto methods** (`bitcoin`, `ethereum`): `address` (string, wallet address)
-  - **Wire transfer** (`wire_transfer`): `bankName`, `accountNumber`, `swiftCode`, `iban`, `routingNumber`, `accountName` (all strings)
+  - **Wire transfer** (`wire_transfer`): `bank_name`, `account_number`, `swift_code`, `iban`, `routing_number`, `account_name` (all strings)
   - **Manual** (`manual`): No details required
 </ParamField>
 
 <ParamField body="status" type="string">
-  Update partnership status with the program. Valid values: `PENDING`, `APPROVED`, `REJECTED`. This updates the partnership status for your team's program.
+  Partnership approval status. Valid values: `pending`, `approved`, `rejected`.
 </ParamField>
 
 ## Response
@@ -102,13 +102,13 @@ curl -X PUT "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak" \
   -H "Authorization: Bearer sk_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
-    "companyName": "John LLC",
-    "countryCode": "US",
-    "payoutMethod": "paypal",
-    "payoutDetails": {
+    "company_name": "John LLC",
+    "country_code": "US",
+    "payout_method": "paypal",
+    "payout_details": {
       "email": "john@example.com"
     },
-    "status": "APPROVED"
+    "status": "approved"
   }'
 ```
 </RequestExample>

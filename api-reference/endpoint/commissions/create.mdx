@@ -9,41 +9,45 @@ description: "Create a new commission transaction manually"
 ### Required Parameters
 
 <ParamField body="referral_id" type="string" required>
-  The unique identifier of the referral this commission is associated with. The referral must belong to your team.
-</ParamField>
-
-<ParamField body="affiliate_id" type="string" required>
-  The unique identifier of the affiliate who will receive this commission. The affiliate must belong to your team.
+  ID of the referral this commission belongs to.
 </ParamField>
 
 <ParamField body="amount" type="number" required>
-  The total sale amount in the transaction. Must be a positive number.
+  Transaction amount. Must be a positive number.
 </ParamField>
 
 <ParamField body="commission_amount" type="number" required>
-  The commission amount to award to the affiliate. Must be a non-negative number (can be 0).
+  Commission amount earned. Must be a non-negative number (can be 0).
 </ParamField>
 
 ### Optional Parameters
 
 <ParamField body="amount_currency" type="string" default="USD">
-  The currency code for the sale amount. Must be a 3-letter ISO 4217 currency code (e.g., `USD`, `EUR`, `GBP`). Defaults to `USD`.
+  Currency code (3 letters). Defaults to `USD`.
 </ParamField>
 
 <ParamField body="commission_currency" type="string" default="USD">
-  The currency code for the commission amount. Must be a 3-letter ISO 4217 currency code (e.g., `USD`, `EUR`, `GBP`). Defaults to `USD`.
+  Currency code (3 letters). Defaults to `USD`.
 </ParamField>
 
-<ParamField body="sales_status" type="string" default="open">
-  The sales/transaction status. Valid values: `open` (sale is open/pending), `complete` (sale completed successfully), `trialing` (customer is in trial period), `failed` (sale failed), `refunded` (sale fully refunded), `partial_refunded` (sale partially refunded). Defaults to `open`.
+<ParamField body="is_subscription" type="boolean" default="false">
+  Whether this commission is from a subscription.
+</ParamField>
+
+<ParamField body="status" type="string" default="pending">
+  Commission status. Valid values: `pending`, `pending_manual_approval`, `ready_for_payment`, `paid`, `declined`. Defaults to `pending`.
+</ParamField>
+
+<ParamField body="sales_status" type="string" default="complete">
+  Status of the customer's purchase. Valid values: `open`, `complete`, `trialing`, `failed`, `refunded`, `partial_refunded`. Defaults to `complete`.
 </ParamField>
 
 <ParamField body="payment_intent_id" type="string">
-  Optional payment intent ID from your payment processor (e.g., Stripe payment intent ID). If provided, must be unique across all commissions. Used to prevent duplicate commissions for the same payment.
+  Payment provider's intent ID. If provided, must be unique across all commissions. Used to prevent duplicate commissions for the same payment.
 </ParamField>
 
-<ParamField body="invoice_id" type="string">
-  Optional invoice ID from your billing system. Used to link the commission to an invoice.
+<ParamField body="hold_period_days" type="integer">
+  Number of days to hold commission before it's ready for payment. Must be a non-negative integer. If not provided, uses the program's default hold period.
 </ParamField>
 
 ## Response
@@ -110,20 +114,6 @@ The response includes the created commission object.
   ISO 8601 timestamp of when the commission was last updated
 </ResponseField>
 
-### Expanded Fields (when using `expand` parameter)
-
-<ResponseField name="affiliate" type="object" expandable>
-  Affiliate object (see Affiliate schema). Only present when `expand=affiliate`.
-</ResponseField>
-
-<ResponseField name="affiliate_program" type="object" expandable>
-  Affiliate program object containing program details. Only present when `expand=affiliate_program`.
-</ResponseField>
-
-<ResponseField name="referral" type="object" expandable>
-  Referral object (see Referral schema). Only present when `expand=referral`.
-</ResponseField>
-
 <RequestExample>
 ```bash cURL
 curl -X POST "https://api.affonso.io/v1/commissions" \
@@ -131,7 +121,6 @@ curl -X POST "https://api.affonso.io/v1/commissions" \
   -H "Content-Type: application/json" \
   -d '{
     "referral_id": "ref_456def",
-    "affiliate_id": "aff_789ghi",
     "amount": 99.00,
     "commission_amount": 9.90,
     "amount_currency": "USD",

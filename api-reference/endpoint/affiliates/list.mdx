@@ -14,20 +14,20 @@ description: "Get a paginated list of all affiliates with optional filtering and
   Number of results per page. Maximum value is 200. Default is 50.
 </ParamField>
 
-<ParamField query="partnershipStatus" type="string">
-  Filter affiliates by partnership status. Valid values: `PENDING`, `APPROVED`, `REJECTED`. Only returns affiliates with the specified status for your team's program.
+<ParamField query="partnership_status" type="string">
+  Filter by partnership approval status. Valid values: `pending`, `approved`, `rejected`.
 </ParamField>
 
 <ParamField query="search" type="string">
-  Search affiliates by name, username, tracking ID, or email address. Case-insensitive partial matching. Maximum 100 characters.
+  Search by name, email, or tracking ID. Case-insensitive partial matching. Maximum 100 characters.
 </ParamField>
 
-<ParamField query="groupId" type="string">
-  Filter affiliates by affiliate group ID. Only returns affiliates assigned to the specified group.
+<ParamField query="group_id" type="string">
+  Filter by affiliate group.
 </ParamField>
 
-<ParamField query="programId" type="string">
-  Filter affiliates by affiliate program ID. If not provided, uses your team's default program.
+<ParamField query="program_id" type="string">
+  Filter by specific program (defaults to team's program).
 </ParamField>
 
 <ParamField query="sort" type="string">
@@ -70,7 +70,7 @@ The response includes a paginated list of affiliates and pagination metadata.
 
 <RequestExample>
 ```bash cURL
-curl -X GET "https://api.affonso.io/v1/affiliates?limit=10&partnershipStatus=APPROVED" \
+curl -X GET "https://api.affonso.io/v1/affiliates?limit=10&partnership_status=approved" \
   -H "Authorization: Bearer sk_live_your_api_key"
 ```
 

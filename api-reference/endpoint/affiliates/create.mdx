@@ -16,35 +16,35 @@ description: "Create a new affiliate user"
   The affiliate's email address. Must be a valid email format. If a user with this email already exists, they will be linked to the affiliate account.
 </ParamField>
 
-<ParamField body="programId" type="string" required>
-  The unique identifier of the affiliate program to assign the affiliate to. The program must belong to your team.
+<ParamField body="program_id" type="string" required>
+  Program ID to associate affiliate with.
 </ParamField>
 
 ### Optional Parameters
 
-<ParamField body="groupId" type="string">
-  Optional affiliate group ID to assign the affiliate to. The group must belong to the specified program.
+<ParamField body="group_id" type="string">
+  Optional affiliate group ID.
 </ParamField>
 
-<ParamField body="companyName" type="string">
-  Optional company name for invoicing purposes. Maximum 100 characters. If provided, invoice details will be created for the affiliate.
+<ParamField body="company_name" type="string">
+  Company name for invoice. Maximum 100 characters.
 </ParamField>
 
-<ParamField body="countryCode" type="string">
-  Optional two-letter ISO 3166-1 alpha-2 country code (e.g., `US`, `GB`, `DE`) for invoicing purposes. Will be automatically converted to uppercase.
+<ParamField body="country_code" type="string">
+  2-letter ISO country code.
 </ParamField>
 
-<ParamField body="payoutMethod" type="string">
-  Payout method for the affiliate. Valid values: `paypal`, `wise`, `payoneer`, `paxum`, `webmoney`, `skrill`, `wire_transfer`, `bitcoin`, `ethereum`, `alipay`, `wechat`, `manual`, `none`. If not provided, no payout method will be set.
+<ParamField body="payout_method" type="string">
+  Payout method (lowercase with underscores). Valid values: `paypal`, `wise`, `payoneer`, `paxum`, `webmoney`, `skrill`, `wire_transfer`, `bitcoin`, `ethereum`, `alipay`, `wechat`, `manual`, `none`.
 </ParamField>
 
-<ParamField body="payoutDetails" type="object">
-  Payout method details object. The required fields depend on the `payoutMethod`:
+<ParamField body="payout_details" type="object">
+  Payout details (fields vary by method, all snake_case). The required fields depend on the `payout_method`:
   
   - **Email-based methods** (`paypal`, `wise`, `payoneer`, `paxum`, `skrill`): `email` (string, valid email)
-  - **ID-based methods** (`webmoney`, `alipay`, `wechat`): `accountId` (string)
+  - **ID-based methods** (`webmoney`, `alipay`, `wechat`): `account_id` (string)
   - **Crypto methods** (`bitcoin`, `ethereum`): `address` (string, wallet address)
-  - **Wire transfer** (`wire_transfer`): `bankName`, `accountNumber`, `swiftCode`, `iban`, `routingNumber`, `accountName` (all strings)
+  - **Wire transfer** (`wire_transfer`): `bank_name`, `account_number`, `swift_code`, `iban`, `routing_number`, `account_name` (all strings)
   - **Manual** (`manual`): No details required
 </ParamField>
 
@@ -100,11 +100,11 @@ curl -X POST "https://api.affonso.io/v1/affiliates" \
   -d '{
     "name": "Jane Smith",
     "email": "jane@example.com",
-    "programId": "cm7xutqbb0001yfkcrnpextmp",
-    "companyName": "Jane LLC",
-    "countryCode": "US",
-    "payoutMethod": "paypal",
-    "payoutDetails": {
+    "program_id": "cm7xutqbb0001yfkcrnpextmp",
+    "company_name": "Jane LLC",
+    "country_code": "US",
+    "payout_method": "paypal",
+    "payout_details": {
       "email": "jane@example.com"
     }
   }'

@@ -19,23 +19,11 @@ All body parameters are optional. Only include the fields you want to update.
 </ParamField>
 
 <ParamField body="sales_status" type="string">
-  Update the sales/transaction status. Valid values: `open`, `complete`, `trialing`, `failed`, `refunded`, `partial_refunded`.
+  Status of the customer's purchase. Valid values: `open`, `complete`, `trialing`, `failed`, `refunded`, `partial_refunded`.
 </ParamField>
 
-<ParamField body="amount" type="number">
-  Update the transaction amount. Must be a positive number.
-</ParamField>
-
-<ParamField body="commission_amount" type="number">
-  Update the commission amount. Must be a non-negative number.
-</ParamField>
-
-<ParamField body="payment_intent_id" type="string">
-  Update the payment intent ID. Set to `null` to clear.
-</ParamField>
-
-<ParamField body="invoice_id" type="string">
-  Update the invoice ID. Set to `null` to clear.
+<ParamField body="hold_period_days" type="integer">
+  Number of days to hold commission before it's ready for payment. Must be a non-negative integer.
 </ParamField>
 
 ## Response

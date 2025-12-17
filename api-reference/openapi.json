@@ -72,13 +72,14 @@
             }
           },
           {
-            "name": "partnershipStatus",
+            "name": "partnership_status",
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["PENDING", "APPROVED", "REJECTED"],
+              "enum": ["pending", "approved", "rejected"],
               "nullable": true
-            }
+            },
+            "description": "Filter by partnership approval status"
           },
           {
             "name": "search",
@@ -86,21 +87,24 @@
             "schema": {
               "type": "string",
               "maxLength": 100
-            }
+            },
+            "description": "Search by name, email, or tracking ID"
           },
           {
-            "name": "groupId",
+            "name": "group_id",
             "in": "query",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Filter by affiliate group"
           },
           {
-            "name": "programId",
+            "name": "program_id",
             "in": "query",
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Filter by specific program (defaults to team's program)"
           },
           {
             "name": "sort",
@@ -109,7 +113,8 @@
               "type": "string",
               "pattern": "^(createdAt|updatedAt|name|partnershipStatus):(asc|desc)$",
               "example": "createdAt:desc"
-            }
+            },
+            "description": "Sort results by field and direction"
           },
           {
             "name": "expand",
@@ -1165,33 +1170,39 @@
       },
       "CreateAffiliateInput": {
         "type": "object",
-        "required": ["name", "email", "programId"],
+        "required": ["name", "email", "program_id"],
         "properties": {
           "name": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 100
+            "maxLength": 100,
+            "description": "Affiliate name"
           },
           "email": {
             "type": "string",
-            "format": "email"
+            "format": "email",
+            "description": "Affiliate email address"
           },
-          "programId": {
-            "type": "string"
-          },
-          "groupId": {
-            "type": "string"
-          },
-          "companyName": {
+          "program_id": {
             "type": "string",
-            "maxLength": 100
+            "description": "Program ID to associate affiliate with"
           },
-          "countryCode": {
+          "group_id": {
+            "type": "string",
+            "description": "Optional affiliate group ID"
+          },
+          "company_name": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "Company name for invoice"
+          },
+          "country_code": {
             "type": "string",
             "minLength": 2,
-            "maxLength": 2
+            "maxLength": 2,
+            "description": "2-letter ISO country code"
           },
-          "payoutMethod": {
+          "payout_method": {
             "type": "string",
             "enum": [
               "paypal",
@@ -1207,37 +1218,39 @@
               "wechat",
               "manual",
               "none"
-            ]
+            ],
+            "description": "Payout method (lowercase with underscores)"
           },
-          "payoutDetails": {
+          "payout_details": {
             "type": "object",
+            "description": "Payout details (fields vary by method, all snake_case)",
             "properties": {
               "email": {
                 "type": "string",
                 "format": "email"
               },
-              "accountId": {
+              "account_id": {
                 "type": "string"
               },
               "address": {
                 "type": "string"
               },
-              "bankName": {
+              "bank_name": {
                 "type": "string"
               },
-              "accountNumber": {
+              "account_number": {
                 "type": "string"
               },
-              "swiftCode": {
+              "swift_code": {
                 "type": "string"
               },
               "iban": {
                 "type": "string"
               },
-              "routingNumber": {
+              "routing_number": {
                 "type": "string"
               },
-              "accountName": {
+              "account_name": {
                 "type": "string"
               }
             }
@@ -1250,28 +1263,33 @@
           "name": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 100
+            "maxLength": 100,
+            "description": "Affiliate name"
           },
           "email": {
             "type": "string",
-            "format": "email"
+            "format": "email",
+            "description": "Affiliate email address"
           },
-          "groupId": {
+          "group_id": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "description": "Affiliate group ID (null to remove)"
           },
-          "companyName": {
+          "company_name": {
             "type": "string",
             "maxLength": 100,
-            "nullable": true
+            "nullable": true,
+            "description": "Company name for invoice"
           },
-          "countryCode": {
+          "country_code": {
             "type": "string",
             "minLength": 2,
             "maxLength": 2,
-            "nullable": true
+            "nullable": true,
+            "description": "2-letter ISO country code"
           },
-          "payoutMethod": {
+          "payout_method": {
             "type": "string",
             "enum": [
               "paypal",
@@ -1287,14 +1305,17 @@
               "wechat",
               "manual",
               "none"
-            ]
+            ],
+            "description": "Payout method (none to remove)"
           },
-          "payoutDetails": {
-            "type": "object"
+          "payout_details": {
+            "type": "object",
+            "description": "Payout details (snake_case fields)"
           },
           "status": {
             "type": "string",
-            "enum": ["PENDING", "APPROVED", "REJECTED"]
+            "enum": ["pending", "approved", "rejected"],
+            "description": "Partnership approval status"
           }
         }
       },
@@ -1514,13 +1535,11 @@
       },
       "CreateCommissionInput": {
         "type": "object",
-        "required": ["referral_id", "affiliate_id", "amount", "commission_amount"],
+        "required": ["referral_id", "amount", "commission_amount"],
         "properties": {
           "referral_id": {
-            "type": "string"
-          },
-          "affiliate_id": {
-            "type": "string"
+            "type": "string",
+            "description": "ID of the referral this commission belongs to"
           },
           "amount": {
             "type": "number",
@@ -1528,7 +1547,8 @@
           },
           "amount_currency": {
             "type": "string",
-            "default": "USD"
+            "default": "USD",
+            "description": "Currency code (3 letters)"
           },
           "commission_amount": {
             "type": "number",
@@ -1536,20 +1556,36 @@
           },
           "commission_currency": {
             "type": "string",
-            "default": "USD"
+            "default": "USD",
+            "description": "Currency code (3 letters)"
+          },
+          "is_subscription": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether this commission is from a subscription"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "pending_manual_approval", "ready_for_payment", "paid", "declined"],
+            "default": "pending",
+            "description": "Commission status"
           },
           "sales_status": {
             "type": "string",
             "enum": ["open", "complete", "trialing", "failed", "refunded", "partial_refunded"],
-            "default": "open"
+            "default": "complete",
+            "description": "Status of the customer's purchase"
           },
           "payment_intent_id": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "description": "Payment provider's intent ID"
           },
-          "invoice_id": {
-            "type": "string",
-            "nullable": true
+          "hold_period_days": {
+            "type": "integer",
+            "minimum": 0,
+            "nullable": true,
+            "description": "Number of days to hold commission before it's ready for payment"
           }
         }
       },
@@ -1558,25 +1594,18 @@
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["pending", "pending_manual_approval", "ready_for_payment", "paid", "declined"]
+            "enum": ["pending", "pending_manual_approval", "ready_for_payment", "paid", "declined"],
+            "description": "Commission status"
           },
           "sales_status": {
             "type": "string",
-            "enum": ["open", "complete", "trialing", "failed", "refunded", "partial_refunded"]
+            "enum": ["open", "complete", "trialing", "failed", "refunded", "partial_refunded"],
+            "description": "Status of the customer's purchase"
           },
-          "amount": {
-            "type": "number"
-          },
-          "commission_amount": {
-            "type": "number"
-          },
-          "payment_intent_id": {
-            "type": "string",
-            "nullable": true
-          },
-          "invoice_id": {
-            "type": "string",
-            "nullable": true
+          "hold_period_days": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of days to hold commission before it's ready for payment"
           }
         }
       },

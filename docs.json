@@ -12,10 +12,11 @@
   "api": {
     "baseUrl": "https://api.affonso.io",
     "auth": {
-      "method": "bearer"
+      "method": "bearer",
+      "name": "Authorization"
     },
     "playground": {
-      "mode": "simple"
+      "mode": "show"
     }
   },
   "navigation": {
