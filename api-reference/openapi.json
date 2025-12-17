@@ -390,7 +390,7 @@
             "description": "Cursor for backward pagination"
           },
           {
-            "name": "affiliateId",
+            "name": "affiliate_id",
             "in": "query",
             "schema": {
               "type": "string"
@@ -423,7 +423,7 @@
             "description": "Comma-separated list: affiliate"
           },
           {
-            "name": "createdGte",
+            "name": "created_gte",
             "in": "query",
             "schema": {
               "type": "string",
@@ -431,7 +431,7 @@
             }
           },
           {
-            "name": "createdLte",
+            "name": "created_lte",
             "in": "query",
             "schema": {
               "type": "string",
@@ -673,18 +673,259 @@
       "get": {
         "tags": ["Commissions"],
         "summary": "List commissions",
+        "description": "Get a paginated list of all commissions with optional filtering and expansion",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "maximum": 200
+            }
+          },
+          {
+            "name": "affiliate_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by affiliate ID"
+          },
+          {
+            "name": "referral_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by referral ID"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["pending", "pending_manual_approval", "ready_for_payment", "paid", "declined"]
+            },
+            "description": "Filter by commission status"
+          },
+          {
+            "name": "sales_status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["open", "complete", "trialing", "failed", "refunded", "partial_refunded"]
+            },
+            "description": "Filter by sales/transaction status"
+          },
+          {
+            "name": "expand",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "affiliate,referral"
+            },
+            "description": "Expand related resources. Multiple values can be comma-separated (e.g., expand=affiliate,referral). Available: affiliate, affiliate_program, referral"
+          },
+          {
+            "name": "created_gte",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter by created date (greater than or equal)"
+          },
+          {
+            "name": "created_lte",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter by created date (less than or equal)"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "List of commissions"
+            "description": "List of commissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Commission"
+                      }
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitExceeded"
           }
         }
       },
       "post": {
         "tags": ["Commissions"],
         "summary": "Create commission",
+        "description": "Create a new commission transaction",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCommissionInput"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
-            "description": "Commission created"
+            "description": "Commission created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Commission"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "409": {
+            "$ref": "#/components/responses/DuplicateError"
+          }
+        }
+      }
+    },
+    "/v1/commissions/{id}": {
+      "get": {
+        "tags": ["Commissions"],
+        "summary": "Get commission",
+        "description": "Get a single commission by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "expand",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "affiliate,referral"
+            },
+            "description": "Expand related resources. Multiple values can be comma-separated (e.g., expand=affiliate,referral). Available: affiliate, affiliate_program, referral"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Commission details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Commission"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Commissions"],
+        "summary": "Update commission",
+        "description": "Update a commission transaction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCommissionInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Commission updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Commission"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
           }
         }
       }
@@ -1126,26 +1367,26 @@
       },
       "CreateReferralInput": {
         "type": "object",
-        "required": ["email", "affiliateId"],
+        "required": ["email", "affiliate_id"],
         "properties": {
           "email": {
             "type": "string",
             "format": "email"
           },
-          "affiliateId": {
+          "affiliate_id": {
             "type": "string"
           },
-          "subscriptionId": {
+          "subscription_id": {
             "type": "string"
           },
-          "customerId": {
+          "customer_id": {
             "type": "string"
           },
-          "clickId": {
+          "click_id": {
             "type": "string",
             "description": "If provided, converts existing CLICK to referral instead of creating new"
           },
-          "createdAt": {
+          "created_at": {
             "type": "string",
             "format": "date-time",
             "description": "Allows backdating the referral"
@@ -1164,15 +1405,178 @@
             "type": "string",
             "format": "email"
           },
-          "subscriptionId": {
+          "subscription_id": {
             "type": "string"
           },
-          "customerId": {
+          "customer_id": {
             "type": "string"
           },
           "status": {
             "type": "string",
             "enum": ["lead", "trialing", "customer", "active", "canceled", "rejected"]
+          }
+        }
+      },
+      "Commission": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "referral_id": {
+            "type": "string"
+          },
+          "affiliate_id": {
+            "type": "string"
+          },
+          "program_id": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Transaction amount"
+          },
+          "amount_currency": {
+            "type": "string",
+            "description": "Currency code (e.g., USD, EUR)"
+          },
+          "commission_amount": {
+            "type": "number",
+            "description": "Commission amount earned"
+          },
+          "commission_currency": {
+            "type": "string",
+            "description": "Commission currency code"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "pending_manual_approval", "ready_for_payment", "paid", "declined"],
+            "description": "Commission status: pending (on hold period, auto-updates to ready_for_payment when period expires), pending_manual_approval (same as pending but requires manual approval), ready_for_payment (approved and ready for payout in next cycle, not yet paid), paid (confirmed and already paid out), declined (rejected, not paid and excluded from payouts)"
+          },
+          "sales_status": {
+            "type": "string",
+            "enum": ["open", "complete", "trialing", "failed", "refunded", "partial_refunded"],
+            "description": "Sales/transaction status: open (sale is open/pending), complete (sale completed successfully), trialing (customer is in trial period), failed (sale failed), refunded (sale fully refunded), partial_refunded (sale partially refunded)"
+          },
+          "hold_period_days": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Number of days commission is on hold before becoming available for payment"
+          },
+          "payment_intent_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "External payment intent ID"
+          },
+          "invoice_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "External invoice ID"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "affiliate": {
+            "$ref": "#/components/schemas/Affiliate",
+            "description": "Only present when expand=affiliate"
+          },
+          "affiliate_program": {
+            "$ref": "#/components/schemas/AffiliateProgram",
+            "description": "Only present when expand=affiliate_program"
+          },
+          "referral": {
+            "$ref": "#/components/schemas/Referral",
+            "description": "Only present when expand=referral"
+          }
+        }
+      },
+      "AffiliateProgram": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "commission_type": {
+            "type": "string"
+          },
+          "commission_value": {
+            "type": "number"
+          }
+        }
+      },
+      "CreateCommissionInput": {
+        "type": "object",
+        "required": ["referral_id", "affiliate_id", "amount", "commission_amount"],
+        "properties": {
+          "referral_id": {
+            "type": "string"
+          },
+          "affiliate_id": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Transaction amount"
+          },
+          "amount_currency": {
+            "type": "string",
+            "default": "USD"
+          },
+          "commission_amount": {
+            "type": "number",
+            "description": "Commission amount earned"
+          },
+          "commission_currency": {
+            "type": "string",
+            "default": "USD"
+          },
+          "sales_status": {
+            "type": "string",
+            "enum": ["open", "complete", "trialing", "failed", "refunded", "partial_refunded"],
+            "default": "open"
+          },
+          "payment_intent_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "invoice_id": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "UpdateCommissionInput": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["pending", "pending_manual_approval", "ready_for_payment", "paid", "declined"]
+          },
+          "sales_status": {
+            "type": "string",
+            "enum": ["open", "complete", "trialing", "failed", "refunded", "partial_refunded"]
+          },
+          "amount": {
+            "type": "number"
+          },
+          "commission_amount": {
+            "type": "number"
+          },
+          "payment_intent_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "invoice_id": {
+            "type": "string",
+            "nullable": true
           }
         }
       },

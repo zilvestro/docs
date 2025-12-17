@@ -14,32 +14,32 @@ description: "Get a paginated list of all commissions with optional filtering"
   Number of results per page. Maximum value is 200. Default is 50.
 </ParamField>
 
-<ParamField query="status" type="string">
-  Filter commissions by status. Valid values: `pending`, `pending_manual_approval`, `ready_for_payment`, `processing_payout`, `paid`, `declined`, `refunded`, `dispute`.
-</ParamField>
-
-<ParamField query="transactionStatus" type="string">
-  Filter commissions by transaction status. Valid values: `open`, `complete`, `trialing`, `failed`, `refunded`, `partial_refunded`.
-</ParamField>
-
-<ParamField query="referralId" type="string">
-  Filter commissions by referral ID. Only returns commissions for the specified referral.
-</ParamField>
-
-<ParamField query="affiliateId" type="string">
+<ParamField query="affiliate_id" type="string">
   Filter commissions by affiliate ID. Only returns commissions for the specified affiliate.
 </ParamField>
 
-<ParamField query="sort" type="string">
-  Sort field and direction in the format `field:direction`. Valid fields: `createdAt`, `updatedAt`, `amount`, `affiliateCommissionAmount`. Valid directions: `asc`, `desc`. Example: `createdAt:desc`.
+<ParamField query="referral_id" type="string">
+  Filter commissions by referral ID. Only returns commissions for the specified referral.
 </ParamField>
 
-<ParamField query="dateFrom" type="string">
-  Filter commissions created on or after this date. ISO 8601 date format (e.g., `2024-01-01`).
+<ParamField query="status" type="string">
+  Filter commissions by commission status. Valid values: `pending`, `pending_manual_approval`, `ready_for_payment`, `paid`, `declined`.
 </ParamField>
 
-<ParamField query="dateTo" type="string">
-  Filter commissions created on or before this date. ISO 8601 date format (e.g., `2024-12-31`).
+<ParamField query="sales_status" type="string">
+  Filter commissions by sales/transaction status. Valid values: `open`, `complete`, `trialing`, `failed`, `refunded`, `partial_refunded`.
+</ParamField>
+
+<ParamField query="expand" type="string">
+  Comma-separated list of related data to include. Valid values: `affiliate`, `affiliate_program`, `referral`. You can combine multiple values: `affiliate,referral`.
+</ParamField>
+
+<ParamField query="created_gte" type="string">
+  Filter commissions created on or after this date. ISO 8601 date-time format (e.g., `2024-01-01T00:00:00Z`).
+</ParamField>
+
+<ParamField query="created_lte" type="string">
+  Filter commissions created on or before this date. ISO 8601 date-time format (e.g., `2024-12-31T23:59:59Z`).
 </ParamField>
 
 ## Response
@@ -59,16 +59,16 @@ The response includes a paginated list of commissions and pagination metadata.
   - `page` (integer): Current page number
   - `limit` (integer): Number of results per page
   - `total` (integer): Total number of commissions matching the filters
-  - `totalPages` (integer): Total number of pages
-  - `hasNextPage` (boolean): Whether there is a next page
-  - `hasPrevPage` (boolean): Whether there is a previous page
+  - `total_pages` (integer): Total number of pages
+  - `has_next_page` (boolean): Whether there is a next page
+  - `has_prev_page` (boolean): Whether there is a previous page
 </ResponseField>
 
 ## Examples
 
 <RequestExample>
 ```bash cURL
-curl -X GET "https://api.affonso.io/v1/commissions?limit=10&status=ready_for_payment" \
+curl -X GET "https://api.affonso.io/v1/commissions?limit=10&status=ready_for_payment&sales_status=complete" \
   -H "Authorization: Bearer sk_live_your_api_key"
 ```
 </RequestExample>
@@ -80,31 +80,96 @@ curl -X GET "https://api.affonso.io/v1/commissions?limit=10&status=ready_for_pay
   "data": [
     {
       "id": "com_abc123",
-      "referralId": "ref_456def",
-      "affiliateId": "aff_789ghi",
-      "programId": "prog_123xyz",
+      "referral_id": "ref_456def",
+      "affiliate_id": "aff_789ghi",
+      "program_id": "prog_123xyz",
       "amount": 99.00,
-      "amountCurrency": "USD",
-      "commissionAmount": 9.90,
-      "commissionCurrency": "USD",
+      "amount_currency": "USD",
+      "commission_amount": 9.90,
+      "commission_currency": "USD",
       "status": "ready_for_payment",
-      "transactionStatus": "complete",
-      "isSubscription": false,
-      "userHasPaid": true,
-      "holdPeriodDays": null,
-      "paymentIntentId": null,
-      "invoiceId": null,
-      "createdAt": "2024-01-20T15:30:00Z",
-      "updatedAt": "2024-01-20T15:30:00Z"
+      "sales_status": "complete",
+      "hold_period_days": null,
+      "payment_intent_id": null,
+      "invoice_id": null,
+      "created_at": "2024-01-20T15:30:00Z",
+      "updated_at": "2024-01-20T15:30:00Z"
     }
   ],
   "pagination": {
     "page": 1,
     "limit": 10,
     "total": 50,
-    "totalPages": 5,
-    "hasNextPage": true,
-    "hasPrevPage": false
+    "total_pages": 5,
+    "has_next_page": true,
+    "has_prev_page": false
+  }
+}
+```
+</ResponseExample>
+
+**With Expand:**
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/commissions?limit=10&expand=affiliate,referral" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response with Expand
+{
+  "success": true,
+  "data": [
+    {
+      "id": "com_abc123",
+      "referral_id": "ref_456def",
+      "affiliate_id": "aff_789ghi",
+      "program_id": "prog_123xyz",
+      "amount": 99.00,
+      "amount_currency": "USD",
+      "commission_amount": 9.90,
+      "commission_currency": "USD",
+      "status": "ready_for_payment",
+      "sales_status": "complete",
+      "hold_period_days": null,
+      "payment_intent_id": null,
+      "invoice_id": null,
+      "created_at": "2024-01-20T15:30:00Z",
+      "updated_at": "2024-01-20T15:30:00Z",
+      "affiliate": {
+        "id": "aff_789ghi",
+        "name": "John Doe",
+        "email": "john@example.com",
+        "tracking_id": "PARTNER123",
+        "source": "api",
+        "partnership_status": "APPROVED",
+        "onboarding_completed": true,
+        "program_id": "prog_123xyz",
+        "group_id": null,
+        "created_at": "2024-01-15T10:30:00Z"
+      },
+      "referral": {
+        "id": "ref_456def",
+        "affiliate_id": "aff_789ghi",
+        "program_id": "prog_123xyz",
+        "email": "customer@example.com",
+        "customer_id": "cust_123",
+        "subscription_id": null,
+        "status": "customer",
+        "created_at": "2024-01-18T12:00:00Z",
+        "converted_at": "2024-01-18T12:00:00Z"
+      }
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 50,
+    "total_pages": 5,
+    "has_next_page": true,
+    "has_prev_page": false
   }
 }
 ```

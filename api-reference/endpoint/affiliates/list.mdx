@@ -34,12 +34,12 @@ description: "Get a paginated list of all affiliates with optional filtering and
   Sort field and direction in the format `field:direction`. Valid fields: `createdAt`, `updatedAt`, `name`, `partnershipStatus`. Valid directions: `asc`, `desc`. Example: `createdAt:desc`.
 </ParamField>
 
-<ParamField query="dateFrom" type="string">
-  Filter affiliates created on or after this date. ISO 8601 date format (e.g., `2024-01-01`).
+<ParamField query="createdGte" type="string">
+  Filter affiliates created on or after this date. ISO 8601 date-time format (e.g., `2024-01-01T00:00:00Z`).
 </ParamField>
 
-<ParamField query="dateTo" type="string">
-  Filter affiliates created on or before this date. ISO 8601 date format (e.g., `2024-12-31`).
+<ParamField query="createdLte" type="string">
+  Filter affiliates created on or before this date. ISO 8601 date-time format (e.g., `2024-12-31T23:59:59Z`).
 </ParamField>
 
 <ParamField query="expand" type="string">

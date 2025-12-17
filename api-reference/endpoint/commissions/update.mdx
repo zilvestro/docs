@@ -15,15 +15,27 @@ description: "Update a commission's status, transaction status, or hold period"
 All body parameters are optional. Only include the fields you want to update.
 
 <ParamField body="status" type="string">
-  Update the commission status. Valid values: `pending`, `pending_manual_approval`, `ready_for_payment`, `processing_payout`, `paid`, `declined`, `refunded`, `dispute`. Status changes may trigger webhook events (`transaction.approved`, `transaction.rejected`, `transaction.paid`).
+  Update the commission status. Valid values: `pending`, `pending_manual_approval`, `ready_for_payment`, `paid`, `declined`. Status changes may trigger webhook events (`transaction.approved`, `transaction.rejected`, `transaction.paid`).
 </ParamField>
 
-<ParamField body="transactionStatus" type="string">
-  Update the transaction status. Valid values: `open`, `complete`, `trialing`, `failed`, `refunded`, `partial_refunded`. If set to `complete`, `userHasPaid` will be automatically set to `true`.
+<ParamField body="sales_status" type="string">
+  Update the sales/transaction status. Valid values: `open`, `complete`, `trialing`, `failed`, `refunded`, `partial_refunded`.
 </ParamField>
 
-<ParamField body="holdPeriodDays" type="integer">
-  Update the hold period in days before the commission becomes available for payout. Must be a non-negative integer.
+<ParamField body="amount" type="number">
+  Update the transaction amount. Must be a positive number.
+</ParamField>
+
+<ParamField body="commission_amount" type="number">
+  Update the commission amount. Must be a non-negative number.
+</ParamField>
+
+<ParamField body="payment_intent_id" type="string">
+  Update the payment intent ID. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="invoice_id" type="string">
+  Update the invoice ID. Set to `null` to clear.
 </ParamField>
 
 ## Response
@@ -49,22 +61,20 @@ curl -X PUT "https://api.affonso.io/v1/commissions/com_abc123" \
   "success": true,
   "data": {
     "id": "com_abc123",
-    "referralId": "ref_456def",
-    "affiliateId": "aff_789ghi",
-    "programId": "prog_123xyz",
+    "referral_id": "ref_456def",
+    "affiliate_id": "aff_789ghi",
+    "program_id": "prog_123xyz",
     "amount": 99.00,
-    "amountCurrency": "USD",
-    "commissionAmount": 9.90,
-    "commissionCurrency": "USD",
+    "amount_currency": "USD",
+    "commission_amount": 9.90,
+    "commission_currency": "USD",
     "status": "paid",
-    "transactionStatus": "complete",
-    "isSubscription": false,
-    "userHasPaid": true,
-    "holdPeriodDays": null,
-    "paymentIntentId": null,
-    "invoiceId": null,
-    "createdAt": "2024-01-20T15:30:00Z",
-    "updatedAt": "2024-01-20T16:45:00Z"
+    "sales_status": "complete",
+    "hold_period_days": null,
+    "payment_intent_id": null,
+    "invoice_id": null,
+    "created_at": "2024-01-20T15:30:00Z",
+    "updated_at": "2024-01-20T16:45:00Z"
   }
 }
 ```

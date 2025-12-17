@@ -6,8 +6,8 @@ description: "Get a cursor-paginated list of all referrals with optional filteri
 
 ## Query Parameters
 
-<ParamField query="limit" type="integer" default="50">
-  Number of results per page. Maximum value is 200. Default is 50.
+<ParamField query="limit" type="integer" default="10">
+  Number of results per page. Minimum value is 1, maximum value is 100. Default is 10.
 </ParamField>
 
 <ParamField query="starting_after" type="string">
@@ -18,7 +18,7 @@ description: "Get a cursor-paginated list of all referrals with optional filteri
   Cursor for pagination. Use the `id` of the first item from the current page to get the previous page.
 </ParamField>
 
-<ParamField query="affiliateId" type="string">
+<ParamField query="affiliate_id" type="string">
   Filter referrals by affiliate ID. Only returns referrals for the specified affiliate.
 </ParamField>
 
@@ -30,12 +30,12 @@ description: "Get a cursor-paginated list of all referrals with optional filteri
   Filter referrals by status. Valid values: `lead`, `trialing`, `customer`, `active`, `canceled`, `rejected`. Note: `click` status is excluded from this endpoint.
 </ParamField>
 
-<ParamField query="createdGte" type="string">
-  Filter referrals created on or after this date. ISO 8601 date format (e.g., `2024-01-01`).
+<ParamField query="created_gte" type="string">
+  Filter referrals created on or after this date. ISO 8601 date-time format (e.g., `2024-01-01T00:00:00Z`).
 </ParamField>
 
-<ParamField query="createdLte" type="string">
-  Filter referrals created on or before this date. ISO 8601 date format (e.g., `2024-12-31`).
+<ParamField query="created_lte" type="string">
+  Filter referrals created on or before this date. ISO 8601 date-time format (e.g., `2024-12-31T23:59:59Z`).
 </ParamField>
 
 <ParamField query="expand" type="string">

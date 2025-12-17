@@ -8,7 +8,7 @@ description: "Create a new referral or convert an existing click to a referral"
 
 ### Required Parameters
 
-<ParamField body="affiliateId" type="string" required>
+<ParamField body="affiliate_id" type="string" required>
   The unique identifier of the affiliate who referred this customer. The affiliate must belong to your team.
 </ParamField>
 
@@ -18,23 +18,23 @@ description: "Create a new referral or convert an existing click to a referral"
 
 ### Optional Parameters
 
-<ParamField body="customerId" type="string">
+<ParamField body="customer_id" type="string">
   Your internal customer ID or identifier. Used to link the referral to a customer in your system.
 </ParamField>
 
-<ParamField body="subscriptionId" type="string">
+<ParamField body="subscription_id" type="string">
   Your internal subscription ID if this referral is for a subscription. Used to track subscription-based referrals.
 </ParamField>
 
-<ParamField body="clickId" type="string">
+<ParamField body="click_id" type="string">
   Optional click ID to convert an existing click to a referral. If provided, the click will be updated to a referral with the specified status. The click must belong to your team and have status `CLICK`.
 </ParamField>
 
 <ParamField body="status" type="string" default="lead">
-  The initial referral status. Valid values: `lead`, `trialing`, `customer`, `active`, `canceled`, `rejected`. Defaults to `lead`. If set to any value other than `lead`, `convertedAt` will be automatically set.
+  The initial referral status. Valid values: `lead`, `trialing`, `customer`, `active`, `canceled`, `rejected`. Defaults to `lead`. If set to any value other than `lead`, `converted_at` will be automatically set.
 </ParamField>
 
-<ParamField body="createdAt" type="string">
+<ParamField body="created_at" type="string">
   Optional ISO 8601 timestamp to backdate the referral creation. If not provided, uses the current timestamp.
 </ParamField>
 
@@ -86,9 +86,9 @@ curl -X POST "https://api.affonso.io/v1/referrals" \
   -H "Authorization: Bearer sk_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
-    "affiliateId": "aff_123abc",
+    "affiliate_id": "aff_123abc",
     "email": "newcustomer@example.com",
-    "customerId": "cust_456",
+    "customer_id": "cust_456",
     "status": "customer"
   }'
 ```

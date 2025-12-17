@@ -10,6 +10,12 @@ description: "Retrieve a single commission by ID"
   The unique identifier of the commission to retrieve
 </ParamField>
 
+## Query Parameters
+
+<ParamField query="expand" type="string">
+  Comma-separated list of related data to include. Valid values: `affiliate`, `affiliate_program`, `referral`. You can combine multiple values: `affiliate,referral`.
+</ParamField>
+
 ## Response
 
 The response includes the commission object with all its details.
@@ -18,15 +24,15 @@ The response includes the commission object with all its details.
   Unique identifier for the commission
 </ResponseField>
 
-<ResponseField name="referralId" type="string">
+<ResponseField name="referral_id" type="string">
   The referral ID this commission is associated with
 </ResponseField>
 
-<ResponseField name="affiliateId" type="string">
+<ResponseField name="affiliate_id" type="string">
   The affiliate ID who will receive this commission
 </ResponseField>
 
-<ResponseField name="programId" type="string">
+<ResponseField name="program_id" type="string">
   The affiliate program ID
 </ResponseField>
 
@@ -34,52 +40,58 @@ The response includes the commission object with all its details.
   The total sale amount
 </ResponseField>
 
-<ResponseField name="amountCurrency" type="string">
+<ResponseField name="amount_currency" type="string">
   The currency code for the sale amount
 </ResponseField>
 
-<ResponseField name="commissionAmount" type="number">
+<ResponseField name="commission_amount" type="number">
   The commission amount to be paid
 </ResponseField>
 
-<ResponseField name="commissionCurrency" type="string">
+<ResponseField name="commission_currency" type="string">
   The currency code for the commission amount
 </ResponseField>
 
 <ResponseField name="status" type="string">
-  The commission status (lowercase): `pending`, `pending_manual_approval`, `ready_for_payment`, `processing_payout`, `paid`, `declined`, `refunded`, `dispute`
+  The commission status. Valid values: `pending` (on hold period, auto-updates to ready_for_payment when period expires), `pending_manual_approval` (same as pending but requires manual approval), `ready_for_payment` (approved and ready for payout in next cycle, not yet paid), `paid` (confirmed and already paid out), `declined` (rejected, not paid and excluded from payouts).
 </ResponseField>
 
-<ResponseField name="transactionStatus" type="string">
-  The transaction status (lowercase): `open`, `complete`, `trialing`, `failed`, `refunded`, `partial_refunded`
+<ResponseField name="sales_status" type="string">
+  The sales/transaction status. Valid values: `open` (sale is open/pending), `complete` (sale completed successfully), `trialing` (customer is in trial period), `failed` (sale failed), `refunded` (sale fully refunded), `partial_refunded` (sale partially refunded).
 </ResponseField>
 
-<ResponseField name="isSubscription" type="boolean">
-  Whether this is a subscription transaction
+<ResponseField name="hold_period_days" type="integer | null">
+  Number of days commission is on hold before becoming available for payment
 </ResponseField>
 
-<ResponseField name="userHasPaid" type="boolean">
-  Whether the user has completed payment for this transaction
-</ResponseField>
-
-<ResponseField name="holdPeriodDays" type="integer | null">
-  Hold period in days before payout
-</ResponseField>
-
-<ResponseField name="paymentIntentId" type="string | null">
+<ResponseField name="payment_intent_id" type="string | null">
   Payment intent ID if provided
 </ResponseField>
 
-<ResponseField name="invoiceId" type="string | null">
+<ResponseField name="invoice_id" type="string | null">
   Invoice ID if linked to a payout invoice
 </ResponseField>
 
-<ResponseField name="createdAt" type="string">
+<ResponseField name="created_at" type="string">
   ISO 8601 timestamp of when the commission was created
 </ResponseField>
 
-<ResponseField name="updatedAt" type="string">
+<ResponseField name="updated_at" type="string">
   ISO 8601 timestamp of when the commission was last updated
+</ResponseField>
+
+### Expanded Fields (when using `expand` parameter)
+
+<ResponseField name="affiliate" type="object" expandable>
+  Affiliate object (see Affiliate schema). Only present when `expand=affiliate`.
+</ResponseField>
+
+<ResponseField name="affiliate_program" type="object" expandable>
+  Affiliate program object containing program details. Only present when `expand=affiliate_program`.
+</ResponseField>
+
+<ResponseField name="referral" type="object" expandable>
+  Referral object (see Referral schema). Only present when `expand=referral`.
 </ResponseField>
 
 ## Examples
@@ -97,22 +109,77 @@ curl -X GET "https://api.affonso.io/v1/commissions/com_abc123" \
   "success": true,
   "data": {
     "id": "com_abc123",
-    "referralId": "ref_456def",
-    "affiliateId": "aff_789ghi",
-    "programId": "prog_123xyz",
+    "referral_id": "ref_456def",
+    "affiliate_id": "aff_789ghi",
+    "program_id": "prog_123xyz",
     "amount": 99.00,
-    "amountCurrency": "USD",
-    "commissionAmount": 9.90,
-    "commissionCurrency": "USD",
+    "amount_currency": "USD",
+    "commission_amount": 9.90,
+    "commission_currency": "USD",
     "status": "ready_for_payment",
-    "transactionStatus": "complete",
-    "isSubscription": false,
-    "userHasPaid": true,
-    "holdPeriodDays": null,
-    "paymentIntentId": null,
-    "invoiceId": null,
-    "createdAt": "2024-01-20T15:30:00Z",
-    "updatedAt": "2024-01-20T15:30:00Z"
+    "sales_status": "complete",
+    "hold_period_days": null,
+    "payment_intent_id": null,
+    "invoice_id": null,
+    "created_at": "2024-01-20T15:30:00Z",
+    "updated_at": "2024-01-20T15:30:00Z"
+  }
+}
+```
+</ResponseExample>
+
+**With Expand:**
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/commissions/com_abc123?expand=affiliate,referral" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response with Expand
+{
+  "success": true,
+  "data": {
+    "id": "com_abc123",
+    "referral_id": "ref_456def",
+    "affiliate_id": "aff_789ghi",
+    "program_id": "prog_123xyz",
+    "amount": 99.00,
+    "amount_currency": "USD",
+    "commission_amount": 9.90,
+    "commission_currency": "USD",
+    "status": "ready_for_payment",
+    "sales_status": "complete",
+    "hold_period_days": null,
+    "payment_intent_id": null,
+    "invoice_id": null,
+    "created_at": "2024-01-20T15:30:00Z",
+    "updated_at": "2024-01-20T15:30:00Z",
+    "affiliate": {
+      "id": "aff_789ghi",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "tracking_id": "PARTNER123",
+      "source": "api",
+      "partnership_status": "APPROVED",
+      "onboarding_completed": true,
+      "program_id": "prog_123xyz",
+      "group_id": null,
+      "created_at": "2024-01-15T10:30:00Z"
+    },
+    "referral": {
+      "id": "ref_456def",
+      "affiliate_id": "aff_789ghi",
+      "program_id": "prog_123xyz",
+      "email": "customer@example.com",
+      "customer_id": "cust_123",
+      "subscription_id": null,
+      "status": "customer",
+      "created_at": "2024-01-18T12:00:00Z",
+      "converted_at": "2024-01-18T12:00:00Z"
+    }
   }
 }
 ```
