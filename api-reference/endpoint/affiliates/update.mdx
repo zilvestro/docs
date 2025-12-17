@@ -4,43 +4,103 @@ api: "PUT /v1/affiliates/{id}"
 description: "Update an existing affiliate"
 ---
 
+## Path Parameters
+
 <ParamField path="id" type="string" required>
-  The unique affiliate ID
+  The unique identifier of the affiliate to update
 </ParamField>
 
+## Body Parameters
+
+All body parameters are optional. Only include the fields you want to update.
+
 <ParamField body="name" type="string">
-  Update the affiliate's display name
+  Update the affiliate's display name. Must be between 1 and 100 characters.
 </ParamField>
 
 <ParamField body="email" type="string">
-  Update the affiliate's email address
+  Update the affiliate's email address. Must be a valid email format. If the email is already in use by another user, the request will fail with a conflict error.
 </ParamField>
 
-<ParamField body="groupId" type="string">
-  Move affiliate to a different group (set to null to remove from group)
+<ParamField body="groupId" type="string | null">
+  Move affiliate to a different group by providing the group ID, or set to `null` to remove from the current group. The group must belong to your team.
 </ParamField>
 
-<ParamField body="companyName" type="string">
-  Update company name for invoicing (set to null to clear)
+<ParamField body="companyName" type="string | null">
+  Update company name for invoicing purposes. Maximum 100 characters. Set to `null` to clear the company name.
 </ParamField>
 
-<ParamField body="countryCode" type="string">
-  Update two-letter ISO country code for invoicing (set to null to clear)
+<ParamField body="countryCode" type="string | null">
+  Update two-letter ISO 3166-1 alpha-2 country code (e.g., `US`, `GB`, `DE`) for invoicing. Will be automatically converted to uppercase. Set to `null` to clear the country code.
 </ParamField>
 
 <ParamField body="payoutMethod" type="string">
-  Update payout method: `paypal`, `wise`, `payoneer`, `paxum`, `webmoney`, `skrill`, `wire_transfer`, `bitcoin`, `ethereum`, `alipay`, `wechat`, `manual`, `none`
+  Update payout method for the affiliate. Valid values: `paypal`, `wise`, `payoneer`, `paxum`, `webmoney`, `skrill`, `wire_transfer`, `bitcoin`, `ethereum`, `alipay`, `wechat`, `manual`, `none`. Setting to `none` will remove the payout method.
 </ParamField>
 
 <ParamField body="payoutDetails" type="object">
-  Update payout method details (email, accountId, address, bank details depending on method)
+  Update payout method details. The required fields depend on the `payoutMethod`:
+  
+  - **Email-based methods** (`paypal`, `wise`, `payoneer`, `paxum`, `skrill`): `email` (string, valid email)
+  - **ID-based methods** (`webmoney`, `alipay`, `wechat`): `accountId` (string)
+  - **Crypto methods** (`bitcoin`, `ethereum`): `address` (string, wallet address)
+  - **Wire transfer** (`wire_transfer`): `bankName`, `accountNumber`, `swiftCode`, `iban`, `routingNumber`, `accountName` (all strings)
+  - **Manual** (`manual`): No details required
 </ParamField>
 
 <ParamField body="status" type="string">
-  Update partnership status: `PENDING`, `APPROVED`, `REJECTED`
+  Update partnership status with the program. Valid values: `PENDING`, `APPROVED`, `REJECTED`. This updates the partnership status for your team's program.
 </ParamField>
 
-<RequestExample>
+## Response
+
+The response includes the updated affiliate object with the same structure as the create endpoint.
+
+<ResponseField name="id" type="string">
+  Unique identifier for the affiliate
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The affiliate's display name
+</ResponseField>
+
+<ResponseField name="email" type="string">
+  The affiliate's email address
+</ResponseField>
+
+<ResponseField name="tracking_id" type="string">
+  Unique tracking ID for the affiliate
+</ResponseField>
+
+<ResponseField name="source" type="string">
+  Source of the affiliate creation
+</ResponseField>
+
+<ResponseField name="partnership_status" type="string">
+  Partnership status with the program: `"PENDING"`, `"APPROVED"`, `"REJECTED"`, or `null`
+</ResponseField>
+
+<ResponseField name="onboarding_completed" type="boolean">
+  Whether the affiliate has completed their onboarding process
+</ResponseField>
+
+<ResponseField name="program_id" type="string">
+  The affiliate program ID the affiliate is assigned to
+</ResponseField>
+
+<ResponseField name="group_id" type="string | null">
+  The affiliate group ID if assigned, otherwise `null`
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp of when the affiliate was created
+</ResponseField>
+
+## Examples
+
+<Tabs>
+  <Tab title="Example">
+    <RequestExample>
 ```bash cURL
 curl -X PUT "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak" \
   -H "Authorization: Bearer sk_live_your_api_key" \
@@ -55,27 +115,29 @@ curl -X PUT "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak" \
     "status": "APPROVED"
   }'
 ```
-</RequestExample>
+    </RequestExample>
 
-<ResponseExample>
+    <ResponseExample>
 ```json Response
 {
   "success": true,
   "data": {
     "id": "cmj8pptm10002p3010z8mk9ak",
-    "name": "Test API Affiliate",
-    "email": "testapi123@zaapp.io",
-    "trackingId": "test-api-affiliate",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "tracking_id": "john-doe",
     "source": "api",
-    "partnershipStatus": "APPROVED",
-    "onboardingCompleted": false,
-    "programId": "cm7xutqbb0001yfkcrnpextmp",
-    "groupId": null,
-    "createdAt": "2025-12-16T15:03:19.081Z"
+    "partnership_status": "APPROVED",
+    "onboarding_completed": false,
+    "program_id": "cm7xutqbb0001yfkcrnpextmp",
+    "group_id": null,
+    "created_at": "2024-01-15T10:30:00Z"
   }
 }
 ```
+    </ResponseExample>
+  </Tab>
+</Tabs>
 
-**Note:** Use `GET /v1/affiliates/{id}?expand=...` to retrieve updated related data like promo codes, commission overrides, invoice details, and payout methods.
-</ResponseExample>
+**Note:** To retrieve updated related data like promo codes, commission overrides, invoice details, and payout methods, use `GET /v1/affiliates/{id}?expand=promoCodes,commissionOverrides,invoiceDetails,payoutMethod`.
 

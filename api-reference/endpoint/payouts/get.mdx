@@ -1,17 +1,125 @@
 ---
 title: "Get Payout"
 api: "GET /v1/payouts/{id}"
-description: "Retrieve a single payout by ID"
+description: "Retrieve a single payout by ID with transaction details"
 ---
 
+## Path Parameters
+
 <ParamField path="id" type="string" required>
-  The unique payout ID
+  The unique identifier of the payout to retrieve
 </ParamField>
 
-<RequestExample>
+## Response
+
+The response includes the payout object with transaction details.
+
+<ResponseField name="id" type="string">
+  Unique identifier for the payout
+</ResponseField>
+
+<ResponseField name="affiliateId" type="string">
+  The affiliate ID who will receive this payout
+</ResponseField>
+
+<ResponseField name="invoiceNumber" type="number">
+  Invoice number for this payout
+</ResponseField>
+
+<ResponseField name="amount" type="number">
+  Total payout amount
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Payout status (lowercase): `pending`, `processing`, `completed`, `failed`, `cancelled`
+</ResponseField>
+
+<ResponseField name="paymentMethod" type="string | null">
+  Payment method used for the payout
+</ResponseField>
+
+<ResponseField name="paymentReference" type="string | null">
+  External payment reference (e.g., PayPal transaction ID)
+</ResponseField>
+
+<ResponseField name="processedAt" type="string | null">
+  ISO 8601 timestamp when the payout was processed
+</ResponseField>
+
+<ResponseField name="managedPayout" type="boolean">
+  Whether this is a managed payout
+</ResponseField>
+
+<ResponseField name="affiliate" type="object | null">
+  Affiliate information object containing:
+  - `name` (string | null): Affiliate name
+  - `email` (string | null): Affiliate email
+</ResponseField>
+
+<ResponseField name="transactions" type="array">
+  Array of payout transaction objects. Each transaction contains:
+  - `id` (string): Transaction ID
+  - `amount` (number): Transaction amount
+  - `commission` (object): Commission details with `id`, `amount`, `commissionAmount`, `createdAt`
+  - `createdAt` (string): ISO 8601 creation timestamp
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  ISO 8601 timestamp of when the payout was created
+</ResponseField>
+
+<ResponseField name="updatedAt" type="string">
+  ISO 8601 timestamp of when the payout was last updated
+</ResponseField>
+
+## Examples
+
+<Tabs>
+  <Tab title="Example">
+    <RequestExample>
 ```bash cURL
 curl -X GET "https://api.affonso.io/v1/payouts/pay_abc123" \
   -H "Authorization: Bearer sk_live_your_api_key"
 ```
-</RequestExample>
+    </RequestExample>
+
+    <ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "pay_abc123",
+    "affiliateId": "aff_456def",
+    "invoiceNumber": 1001,
+    "amount": 150.00,
+    "status": "pending",
+    "paymentMethod": "paypal",
+    "paymentReference": null,
+    "processedAt": null,
+    "managedPayout": true,
+    "affiliate": {
+      "name": "John Doe",
+      "email": "john@example.com"
+    },
+    "transactions": [
+      {
+        "id": "txn_123",
+        "amount": 50.00,
+        "commission": {
+          "id": "com_456",
+          "amount": 100.00,
+          "commissionAmount": 50.00,
+          "createdAt": "2024-01-20T10:00:00Z"
+        },
+        "createdAt": "2024-01-25T10:00:00Z"
+      }
+    ],
+    "createdAt": "2024-01-25T10:00:00Z",
+    "updatedAt": "2024-01-25T10:00:00Z"
+  }
+}
+```
+    </ResponseExample>
+  </Tab>
+</Tabs>
 

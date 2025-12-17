@@ -1,44 +1,82 @@
 ---
 title: "Update Payout"
 api: "PUT /v1/payouts/{id}"
-description: "Update a payout status"
+description: "Update a payout's status, payment method, or payment reference"
 ---
 
+## Path Parameters
+
 <ParamField path="id" type="string" required>
-  The unique payout ID
+  The unique identifier of the payout to update
 </ParamField>
 
-<ParamField body="status" type="string">
-  Update status: `pending`, `processing`, `completed`, `failed`, `cancelled`
+## Body Parameters
+
+<ParamField body="status" type="string" required>
+  Update the payout status. Valid values: `pending`, `processing`, `completed`, `failed`, `cancelled`. Status transitions are validated:
+  
+  - `pending` → `processing`, `cancelled`
+  - `processing` → `completed`, `failed`, `cancelled`
+  - `failed` → `pending`, `cancelled`
+  - `completed` → (cannot be changed)
+  - `cancelled` → `pending`
+  
+  When status is set to `completed`, `processedAt` is automatically set and all associated commission transactions are marked as `paid`. Status changes may trigger webhook events (`payout.paid`, `payout.failed`).
+</ParamField>
+
+<ParamField body="paymentMethod" type="string">
+  Update the payment method used for the payout. Maximum 50 characters.
 </ParamField>
 
 <ParamField body="paymentReference" type="string">
-  External payment reference (e.g., PayPal transaction ID)
+  Update the external payment reference (e.g., PayPal transaction ID, bank transfer reference). Maximum 255 characters.
 </ParamField>
 
-<RequestExample>
+## Response
+
+The response includes the updated payout object with the same structure as the get endpoint.
+
+## Examples
+
+<Tabs>
+  <Tab title="Example">
+    <RequestExample>
 ```bash cURL
 curl -X PUT "https://api.affonso.io/v1/payouts/pay_abc123" \
   -H "Authorization: Bearer sk_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
     "status": "completed",
+    "paymentMethod": "paypal",
     "paymentReference": "PAYPAL-TXN-123456"
   }'
 ```
-</RequestExample>
+    </RequestExample>
 
-<ResponseExample>
+    <ResponseExample>
 ```json Response
 {
   "success": true,
   "data": {
     "id": "pay_abc123",
+    "affiliateId": "aff_456def",
+    "invoiceNumber": 1001,
+    "amount": 150.00,
     "status": "completed",
+    "paymentMethod": "paypal",
     "paymentReference": "PAYPAL-TXN-123456",
-    "processedAt": "2024-01-25T14:30:00Z"
+    "processedAt": "2024-01-25T14:30:00Z",
+    "managedPayout": true,
+    "affiliate": {
+      "name": "John Doe",
+      "email": "john@example.com"
+    },
+    "createdAt": "2024-01-25T10:00:00Z",
+    "updatedAt": "2024-01-25T14:30:00Z"
   }
 }
 ```
-</ResponseExample>
+    </ResponseExample>
+  </Tab>
+</Tabs>
 

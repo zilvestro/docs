@@ -1,39 +1,137 @@
 ---
 title: "List Referrals"
 api: "GET /v1/referrals"
-description: "Get a paginated list of all referrals"
+description: "Get a cursor-paginated list of all referrals with optional filtering and expansion"
 ---
 
-<RequestExample>
+## Query Parameters
+
+<ParamField query="limit" type="integer" default="50">
+  Number of results per page. Maximum value is 200. Default is 50.
+</ParamField>
+
+<ParamField query="starting_after" type="string">
+  Cursor for pagination. Use the `id` of the last item from the previous page to get the next page.
+</ParamField>
+
+<ParamField query="ending_before" type="string">
+  Cursor for pagination. Use the `id` of the first item from the current page to get the previous page.
+</ParamField>
+
+<ParamField query="affiliateId" type="string">
+  Filter referrals by affiliate ID. Only returns referrals for the specified affiliate.
+</ParamField>
+
+<ParamField query="order" type="string" default="desc">
+  Sort order. Valid values: `asc`, `desc`. Defaults to `desc` (newest first).
+</ParamField>
+
+<ParamField query="status" type="string">
+  Filter referrals by status. Valid values: `lead`, `trialing`, `customer`, `active`, `canceled`, `rejected`. Note: `click` status is excluded from this endpoint.
+</ParamField>
+
+<ParamField query="createdGte" type="string">
+  Filter referrals created on or after this date. ISO 8601 date format (e.g., `2024-01-01`).
+</ParamField>
+
+<ParamField query="createdLte" type="string">
+  Filter referrals created on or before this date. ISO 8601 date format (e.g., `2024-12-31`).
+</ParamField>
+
+<ParamField query="expand" type="string">
+  Comma-separated list of related data to include. Valid values: `affiliate`. Example: `expand=affiliate`.
+</ParamField>
+
+## Response
+
+The response includes a cursor-paginated list of referrals.
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of referral objects. Each referral object has the same structure as the single referral response (see Get Referral endpoint).
+</ResponseField>
+
+<ResponseField name="has_more" type="boolean">
+  Whether there are more results available
+</ResponseField>
+
+## Examples
+
+<Tabs>
+  <Tab title="Example">
+    <RequestExample>
 ```bash cURL
-curl -X GET "https://api.affonso.io/v1/referrals?limit=10" \
+curl -X GET "https://api.affonso.io/v1/referrals?limit=10&status=customer" \
   -H "Authorization: Bearer sk_live_your_api_key"
 ```
-</RequestExample>
+    </RequestExample>
 
-<ResponseExample>
+    <ResponseExample>
 ```json Response
 {
   "success": true,
   "data": [
     {
       "id": "ref_abc123",
-      "trackingId": "PARTNER123",
-      "affiliateId": "aff_456def",
-      "programId": "prg_789ghi",
+      "affiliate_id": "aff_456def",
+      "program_id": "prg_789ghi",
       "email": "customer@example.com",
+      "customer_id": "cust_123",
+      "subscription_id": null,
       "status": "customer",
-      "country": "US",
-      "createdAt": "2024-01-20T15:30:00Z"
+      "created_at": "2024-01-20T15:30:00Z",
+      "converted_at": "2024-01-20T15:30:00Z"
     }
   ],
-  "pagination": {
-    "page": 1,
-    "limit": 10,
-    "total": 25,
-    "totalPages": 3
-  }
+  "has_more": true
 }
 ```
-</ResponseExample>
+    </ResponseExample>
+  </Tab>
+  <Tab title="Expand & Include Response">
+    <RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/referrals?limit=10&expand=affiliate" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+    </RequestExample>
+
+    <ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": [
+    {
+      "id": "ref_abc123",
+      "affiliate_id": "aff_456def",
+      "program_id": "prg_789ghi",
+      "email": "customer@example.com",
+      "customer_id": "cust_123",
+      "subscription_id": null,
+      "status": "customer",
+      "created_at": "2024-01-20T15:30:00Z",
+      "converted_at": "2024-01-20T15:30:00Z",
+      "affiliate": {
+        "id": "aff_456def",
+        "name": "John Doe",
+        "email": "john@example.com",
+        "tracking_id": "PARTNER123",
+        "source": "api",
+        "partnership_status": "APPROVED",
+        "onboarding_completed": true,
+        "program_id": "prg_789ghi",
+        "group_id": null,
+        "created_at": "2024-01-15T10:30:00Z"
+      }
+    }
+  ],
+  "has_more": true
+}
+```
+    </ResponseExample>
+  </Tab>
+</Tabs>
 

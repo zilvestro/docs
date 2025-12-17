@@ -1,33 +1,57 @@
 ---
 title: "Delete Affiliate"
 api: "DELETE /v1/affiliates/{id}"
-description: "Delete an affiliate user"
+description: "Delete an affiliate user and optionally their associated user account"
 ---
 
 <Warning>
-  This action is irreversible. All associated data including referrals and commissions will be permanently deleted.
+  This action is irreversible. All associated data including referrals, commissions, and partnerships will be permanently deleted. A webhook event will be emitted before deletion.
 </Warning>
 
+## Path Parameters
+
 <ParamField path="id" type="string" required>
-  The unique affiliate ID to delete
+  The unique identifier of the affiliate to delete
 </ParamField>
 
-<RequestExample>
+## Response
+
+The response confirms successful deletion.
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful deletions
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message: `"Affiliate deleted successfully"`
+</ResponseField>
+
+## Examples
+
+<Tabs>
+  <Tab title="Example">
+    <RequestExample>
 ```bash cURL
-curl -X DELETE "https://api.affonso.io/v1/affiliates/aff_123abc" \
+curl -X DELETE "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak" \
   -H "Authorization: Bearer sk_live_your_api_key"
 ```
-</RequestExample>
+    </RequestExample>
 
-<ResponseExample>
+    <ResponseExample>
 ```json Response
 {
   "success": true,
-  "data": {
-    "id": "aff_123abc",
-    "deleted": true
-  }
+  "message": "Affiliate deleted successfully"
 }
 ```
-</ResponseExample>
+    </ResponseExample>
+  </Tab>
+</Tabs>
+
+**Note:** The associated user account will only be deleted if:
+- The user has no other affiliate accounts
+- The user does not own any teams
+- The user is not a member of any teams
+
+Otherwise, only the affiliate account is deleted and the user account remains.
 

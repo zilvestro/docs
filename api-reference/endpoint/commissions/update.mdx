@@ -1,18 +1,40 @@
 ---
 title: "Update Commission"
 api: "PUT /v1/commissions/{id}"
-description: "Update a commission status"
+description: "Update a commission's status, transaction status, or hold period"
 ---
 
+## Path Parameters
+
 <ParamField path="id" type="string" required>
-  The unique commission ID
+  The unique identifier of the commission to update
 </ParamField>
+
+## Body Parameters
+
+All body parameters are optional. Only include the fields you want to update.
 
 <ParamField body="status" type="string">
-  Update status: `pending`, `ready_for_payment`, `paid`, `declined`, `refunded`
+  Update the commission status. Valid values: `pending`, `pending_manual_approval`, `ready_for_payment`, `processing_payout`, `paid`, `declined`, `refunded`, `dispute`. Status changes may trigger webhook events (`transaction.approved`, `transaction.rejected`, `transaction.paid`).
 </ParamField>
 
-<RequestExample>
+<ParamField body="transactionStatus" type="string">
+  Update the transaction status. Valid values: `open`, `complete`, `trialing`, `failed`, `refunded`, `partial_refunded`. If set to `complete`, `userHasPaid` will be automatically set to `true`.
+</ParamField>
+
+<ParamField body="holdPeriodDays" type="integer">
+  Update the hold period in days before the commission becomes available for payout. Must be a non-negative integer.
+</ParamField>
+
+## Response
+
+The response includes the updated commission object with the same structure as the get endpoint.
+
+## Examples
+
+<Tabs>
+  <Tab title="Example">
+    <RequestExample>
 ```bash cURL
 curl -X PUT "https://api.affonso.io/v1/commissions/com_abc123" \
   -H "Authorization: Bearer sk_live_your_api_key" \
@@ -21,5 +43,34 @@ curl -X PUT "https://api.affonso.io/v1/commissions/com_abc123" \
     "status": "paid"
   }'
 ```
-</RequestExample>
+    </RequestExample>
+
+    <ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "com_abc123",
+    "referralId": "ref_456def",
+    "affiliateId": "aff_789ghi",
+    "programId": "prog_123xyz",
+    "amount": 99.00,
+    "amountCurrency": "USD",
+    "commissionAmount": 9.90,
+    "commissionCurrency": "USD",
+    "status": "paid",
+    "transactionStatus": "complete",
+    "isSubscription": false,
+    "userHasPaid": true,
+    "holdPeriodDays": null,
+    "paymentIntentId": null,
+    "invoiceId": null,
+    "createdAt": "2024-01-20T15:30:00Z",
+    "updatedAt": "2024-01-20T16:45:00Z"
+  }
+}
+```
+    </ResponseExample>
+  </Tab>
+</Tabs>
 

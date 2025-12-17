@@ -1,17 +1,50 @@
 ---
 title: "Delete Commission"
 api: "DELETE /v1/commissions/{id}"
-description: "Delete a commission"
+description: "Delete a commission transaction"
 ---
 
+<Warning>
+  This action is irreversible. Commissions with status `paid` cannot be deleted. A webhook event will be emitted before deletion.
+</Warning>
+
+## Path Parameters
+
 <ParamField path="id" type="string" required>
-  The unique commission ID to delete
+  The unique identifier of the commission to delete
 </ParamField>
 
-<RequestExample>
+## Response
+
+The response confirms successful deletion.
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful deletions
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message: `"Commission deleted successfully"`
+</ResponseField>
+
+## Examples
+
+<Tabs>
+  <Tab title="Example">
+    <RequestExample>
 ```bash cURL
 curl -X DELETE "https://api.affonso.io/v1/commissions/com_abc123" \
   -H "Authorization: Bearer sk_live_your_api_key"
 ```
-</RequestExample>
+    </RequestExample>
+
+    <ResponseExample>
+```json Response
+{
+  "success": true,
+  "message": "Commission deleted successfully"
+}
+```
+    </ResponseExample>
+  </Tab>
+</Tabs>
 

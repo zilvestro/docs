@@ -1,54 +1,148 @@
 ---
 title: "Track Click"
 api: "POST /v1/clicks"
-description: "Record a click event for affiliate tracking"
+description: "Record a click event for affiliate tracking. This endpoint uses burst rate limiting for high-frequency tracking."
 ---
 
-Use this endpoint to track when a visitor clicks an affiliate link. This is useful for server-side tracking implementations.
+Use this endpoint to track when a visitor clicks an affiliate link. This is useful for server-side tracking implementations. The click can later be converted to a referral using the `clickId` parameter in the Create Referral endpoint.
 
-<ParamField body="affiliateId" type="string" required>
-  The affiliate's ID or tracking code
-</ParamField>
+## Body Parameters
+
+### Required Parameters
 
 <ParamField body="programId" type="string" required>
-  The affiliate program ID
+  The unique identifier of the affiliate program. The program must belong to your team.
+</ParamField>
+
+<ParamField body="trackingId" type="string" required>
+  The affiliate's tracking ID. The affiliate must have an approved partnership with the specified program.
+</ParamField>
+
+### Optional Parameters
+
+<ParamField body="sub1" type="string">
+  Sub-parameter 1 for custom tracking. Maximum 255 characters.
+</ParamField>
+
+<ParamField body="sub2" type="string">
+  Sub-parameter 2 for custom tracking. Maximum 255 characters.
+</ParamField>
+
+<ParamField body="sub3" type="string">
+  Sub-parameter 3 for custom tracking. Maximum 255 characters.
+</ParamField>
+
+<ParamField body="sub4" type="string">
+  Sub-parameter 4 for custom tracking. Maximum 255 characters.
+</ParamField>
+
+<ParamField body="sub5" type="string">
+  Sub-parameter 5 for custom tracking. Maximum 255 characters.
 </ParamField>
 
 <ParamField body="referrer" type="string">
-  The referring URL
+  The referring URL where the click originated. Maximum 2000 characters.
 </ParamField>
 
 <ParamField body="ip" type="string">
-  Visitor's IP address
+  Visitor's IP address. Maximum 45 characters (supports IPv6).
 </ParamField>
 
 <ParamField body="userAgent" type="string">
-  Visitor's user agent
+  Visitor's user agent string. Maximum 1000 characters.
 </ParamField>
 
-<RequestExample>
+<ParamField body="utmSource" type="string">
+  UTM source parameter. Maximum 255 characters.
+</ParamField>
+
+<ParamField body="utmMedium" type="string">
+  UTM medium parameter. Maximum 255 characters.
+</ParamField>
+
+<ParamField body="utmCampaign" type="string">
+  UTM campaign parameter. Maximum 255 characters.
+</ParamField>
+
+<ParamField body="utmTerm" type="string">
+  UTM term parameter. Maximum 255 characters.
+</ParamField>
+
+<ParamField body="utmContent" type="string">
+  UTM content parameter. Maximum 255 characters.
+</ParamField>
+
+<ParamField body="gclid" type="string">
+  Google Click ID for Google Ads tracking. Maximum 255 characters.
+</ParamField>
+
+<ParamField body="fbclid" type="string">
+  Facebook Click ID for Facebook Ads tracking. Maximum 255 characters.
+</ParamField>
+
+<ParamField body="msclkid" type="string">
+  Microsoft Click ID for Microsoft Ads tracking. Maximum 255 characters.
+</ParamField>
+
+<ParamField body="ttclid" type="string">
+  TikTok Click ID for TikTok Ads tracking. Maximum 255 characters.
+</ParamField>
+
+## Response
+
+The response includes the created click object.
+
+<ResponseField name="id" type="string">
+  Unique identifier for the click. This ID can be used in the Create Referral endpoint's `clickId` parameter to convert the click to a referral.
+</ResponseField>
+
+<ResponseField name="trackingId" type="string">
+  The affiliate's tracking ID
+</ResponseField>
+
+<ResponseField name="programId" type="string">
+  The affiliate program ID
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  ISO 8601 timestamp of when the click was recorded
+</ResponseField>
+
+## Examples
+
+<Tabs>
+  <Tab title="Example">
+    <RequestExample>
 ```bash cURL
 curl -X POST "https://api.affonso.io/v1/clicks" \
   -H "Authorization: Bearer sk_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
-    "affiliateId": "aff_123abc",
     "programId": "prg_456def",
-    "referrer": "https://partner-blog.com/review"
+    "trackingId": "PARTNER123",
+    "referrer": "https://partner-blog.com/review",
+    "utmSource": "partner-blog",
+    "utmMedium": "referral",
+    "utmCampaign": "summer-2024"
   }'
 ```
-</RequestExample>
+    </RequestExample>
 
-<ResponseExample>
+    <ResponseExample>
 ```json Response
 {
   "success": true,
   "data": {
     "id": "clk_xyz789",
-    "affiliateId": "aff_123abc",
+    "trackingId": "PARTNER123",
+    "programId": "prg_456def",
     "createdAt": "2024-01-25T12:00:00Z"
   }
 }
 ```
-</ResponseExample>
+    </ResponseExample>
+  </Tab>
+</Tabs>
+
+**Note:** To convert a click to a referral, use the click's `id` as the `clickId` parameter when creating a referral via `POST /v1/referrals`.
 

@@ -1,18 +1,44 @@
 ---
 title: "Update Referral"
 api: "PUT /v1/referrals/{id}"
-description: "Update an existing referral"
+description: "Update an existing referral's email, customer ID, subscription ID, or status"
 ---
 
+## Path Parameters
+
 <ParamField path="id" type="string" required>
-  The unique referral ID
+  The unique identifier of the referral to update
+</ParamField>
+
+## Body Parameters
+
+All body parameters are optional. Only include the fields you want to update.
+
+<ParamField body="email" type="string">
+  Update the customer's email address. Must be a valid email format.
+</ParamField>
+
+<ParamField body="customerId" type="string">
+  Update your internal customer ID. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="subscriptionId" type="string">
+  Update your internal subscription ID. Set to `null` to clear.
 </ParamField>
 
 <ParamField body="status" type="string">
-  Update status: `click`, `lead`, `customer`, `active`, `canceled`
+  Update the referral status. Valid values: `lead`, `trialing`, `customer`, `active`, `canceled`, `rejected`. If changing from `lead` to any other status, `convertedAt` will be automatically set. Status changes may trigger webhook events (`referral.converted`).
 </ParamField>
 
-<RequestExample>
+## Response
+
+The response includes the updated referral object with the same structure as the get endpoint.
+
+## Examples
+
+<Tabs>
+  <Tab title="Example">
+    <RequestExample>
 ```bash cURL
 curl -X PUT "https://api.affonso.io/v1/referrals/ref_abc123" \
   -H "Authorization: Bearer sk_live_your_api_key" \
@@ -21,5 +47,26 @@ curl -X PUT "https://api.affonso.io/v1/referrals/ref_abc123" \
     "status": "customer"
   }'
 ```
-</RequestExample>
+    </RequestExample>
+
+    <ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "ref_abc123",
+    "affiliate_id": "aff_456def",
+    "program_id": "prg_789ghi",
+    "email": "customer@example.com",
+    "customer_id": "cust_123",
+    "subscription_id": null,
+    "status": "customer",
+    "created_at": "2024-01-20T15:30:00Z",
+    "converted_at": "2024-01-20T16:00:00Z"
+  }
+}
+```
+    </ResponseExample>
+  </Tab>
+</Tabs>
 

@@ -4,14 +4,121 @@ api: "GET /v1/commissions/{id}"
 description: "Retrieve a single commission by ID"
 ---
 
+## Path Parameters
+
 <ParamField path="id" type="string" required>
-  The unique commission ID
+  The unique identifier of the commission to retrieve
 </ParamField>
 
-<RequestExample>
+## Response
+
+The response includes the commission object with all its details.
+
+<ResponseField name="id" type="string">
+  Unique identifier for the commission
+</ResponseField>
+
+<ResponseField name="referralId" type="string">
+  The referral ID this commission is associated with
+</ResponseField>
+
+<ResponseField name="affiliateId" type="string">
+  The affiliate ID who will receive this commission
+</ResponseField>
+
+<ResponseField name="programId" type="string">
+  The affiliate program ID
+</ResponseField>
+
+<ResponseField name="amount" type="number">
+  The total sale amount
+</ResponseField>
+
+<ResponseField name="amountCurrency" type="string">
+  The currency code for the sale amount
+</ResponseField>
+
+<ResponseField name="commissionAmount" type="number">
+  The commission amount to be paid
+</ResponseField>
+
+<ResponseField name="commissionCurrency" type="string">
+  The currency code for the commission amount
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  The commission status (lowercase): `pending`, `pending_manual_approval`, `ready_for_payment`, `processing_payout`, `paid`, `declined`, `refunded`, `dispute`
+</ResponseField>
+
+<ResponseField name="transactionStatus" type="string">
+  The transaction status (lowercase): `open`, `complete`, `trialing`, `failed`, `refunded`, `partial_refunded`
+</ResponseField>
+
+<ResponseField name="isSubscription" type="boolean">
+  Whether this is a subscription transaction
+</ResponseField>
+
+<ResponseField name="userHasPaid" type="boolean">
+  Whether the user has completed payment for this transaction
+</ResponseField>
+
+<ResponseField name="holdPeriodDays" type="integer | null">
+  Hold period in days before payout
+</ResponseField>
+
+<ResponseField name="paymentIntentId" type="string | null">
+  Payment intent ID if provided
+</ResponseField>
+
+<ResponseField name="invoiceId" type="string | null">
+  Invoice ID if linked to a payout invoice
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  ISO 8601 timestamp of when the commission was created
+</ResponseField>
+
+<ResponseField name="updatedAt" type="string">
+  ISO 8601 timestamp of when the commission was last updated
+</ResponseField>
+
+## Examples
+
+<Tabs>
+  <Tab title="Example">
+    <RequestExample>
 ```bash cURL
 curl -X GET "https://api.affonso.io/v1/commissions/com_abc123" \
   -H "Authorization: Bearer sk_live_your_api_key"
 ```
-</RequestExample>
+    </RequestExample>
+
+    <ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "com_abc123",
+    "referralId": "ref_456def",
+    "affiliateId": "aff_789ghi",
+    "programId": "prog_123xyz",
+    "amount": 99.00,
+    "amountCurrency": "USD",
+    "commissionAmount": 9.90,
+    "commissionCurrency": "USD",
+    "status": "ready_for_payment",
+    "transactionStatus": "complete",
+    "isSubscription": false,
+    "userHasPaid": true,
+    "holdPeriodDays": null,
+    "paymentIntentId": null,
+    "invoiceId": null,
+    "createdAt": "2024-01-20T15:30:00Z",
+    "updatedAt": "2024-01-20T15:30:00Z"
+  }
+}
+```
+    </ResponseExample>
+  </Tab>
+</Tabs>
 

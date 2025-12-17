@@ -1,17 +1,85 @@
 ---
 title: "List Payouts"
 api: "GET /v1/payouts"
-description: "Get a paginated list of all payouts"
+description: "Get a paginated list of all payouts with optional filtering"
 ---
 
-<RequestExample>
+## Query Parameters
+
+<ParamField query="page" type="integer" default="1">
+  Page number for pagination. Must be a positive integer.
+</ParamField>
+
+<ParamField query="limit" type="integer" default="50">
+  Number of results per page. Maximum value is 200. Default is 50.
+</ParamField>
+
+<ParamField query="status" type="string">
+  Filter payouts by status. Valid values: `pending`, `processing`, `completed`, `failed`, `cancelled`.
+</ParamField>
+
+<ParamField query="affiliateId" type="string">
+  Filter payouts by affiliate ID. Only returns payouts for the specified affiliate.
+</ParamField>
+
+<ParamField query="sort" type="string">
+  Sort field and direction in the format `field:direction`. Valid fields: `createdAt`, `updatedAt`, `amount`, `processedAt`. Valid directions: `asc`, `desc`. Example: `createdAt:desc`.
+</ParamField>
+
+<ParamField query="dateFrom" type="string">
+  Filter payouts created on or after this date. ISO 8601 date format (e.g., `2024-01-01`).
+</ParamField>
+
+<ParamField query="dateTo" type="string">
+  Filter payouts created on or before this date. ISO 8601 date format (e.g., `2024-12-31`).
+</ParamField>
+
+## Response
+
+The response includes a paginated list of payouts and pagination metadata.
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of payout objects. Each payout object contains:
+  - `id` (string): Unique payout identifier
+  - `affiliateId` (string): Affiliate ID
+  - `invoiceNumber` (number): Invoice number
+  - `amount` (number): Payout amount
+  - `status` (string): Payout status (lowercase)
+  - `paymentMethod` (string | null): Payment method used
+  - `paymentReference` (string | null): External payment reference
+  - `processedAt` (string | null): ISO 8601 timestamp when processed
+  - `managedPayout` (boolean): Whether this is a managed payout
+  - `affiliate` (object | null): Affiliate information (name, email)
+  - `createdAt` (string): ISO 8601 creation timestamp
+  - `updatedAt` (string): ISO 8601 last update timestamp
+</ResponseField>
+
+<ResponseField name="pagination" type="object">
+  Pagination metadata object containing:
+  - `page` (integer): Current page number
+  - `limit` (integer): Number of results per page
+  - `total` (integer): Total number of payouts matching the filters
+  - `totalPages` (integer): Total number of pages
+  - `hasNextPage` (boolean): Whether there is a next page
+  - `hasPrevPage` (boolean): Whether there is a previous page
+</ResponseField>
+
+## Examples
+
+<Tabs>
+  <Tab title="Example">
+    <RequestExample>
 ```bash cURL
-curl -X GET "https://api.affonso.io/v1/payouts?limit=10" \
+curl -X GET "https://api.affonso.io/v1/payouts?limit=10&status=pending" \
   -H "Authorization: Bearer sk_live_your_api_key"
 ```
-</RequestExample>
+    </RequestExample>
 
-<ResponseExample>
+    <ResponseExample>
 ```json Response
 {
   "success": true,
@@ -19,18 +87,32 @@ curl -X GET "https://api.affonso.io/v1/payouts?limit=10" \
     {
       "id": "pay_abc123",
       "affiliateId": "aff_456def",
+      "invoiceNumber": 1001,
       "amount": 150.00,
       "status": "pending",
       "paymentMethod": "paypal",
-      "createdAt": "2024-01-25T10:00:00Z"
+      "paymentReference": null,
+      "processedAt": null,
+      "managedPayout": true,
+      "affiliate": {
+        "name": "John Doe",
+        "email": "john@example.com"
+      },
+      "createdAt": "2024-01-25T10:00:00Z",
+      "updatedAt": "2024-01-25T10:00:00Z"
     }
   ],
   "pagination": {
     "page": 1,
     "limit": 10,
-    "total": 15
+    "total": 15,
+    "totalPages": 2,
+    "hasNextPage": true,
+    "hasPrevPage": false
   }
 }
 ```
-</ResponseExample>
+    </ResponseExample>
+  </Tab>
+</Tabs>
 

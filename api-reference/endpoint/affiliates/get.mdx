@@ -1,25 +1,123 @@
 ---
 title: "Get Affiliate"
 api: "GET /v1/affiliates/{id}"
-description: "Retrieve a single affiliate by ID"
+description: "Retrieve a single affiliate by ID with optional expanded data"
 ---
 
+## Path Parameters
+
 <ParamField path="id" type="string" required>
-  The unique affiliate ID
+  The unique identifier of the affiliate to retrieve
 </ParamField>
+
+## Query Parameters
 
 <ParamField query="expand" type="string">
-  Expand related data: `promoCodes`, `commissionOverrides`, `invoiceDetails`, `payoutMethod`
+  Comma-separated list of related data to include in the response. Valid values: `promoCodes`, `commissionOverrides`, `invoiceDetails`, `payoutMethod`. You can combine multiple values: `promoCodes,payoutMethod`.
 </ParamField>
 
-<RequestExample>
+## Response
+
+The response includes the affiliate object with the following fields:
+
+<ResponseField name="id" type="string">
+  Unique identifier for the affiliate
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The affiliate's display name
+</ResponseField>
+
+<ResponseField name="email" type="string">
+  The affiliate's email address
+</ResponseField>
+
+<ResponseField name="tracking_id" type="string">
+  Unique tracking ID for the affiliate
+</ResponseField>
+
+<ResponseField name="source" type="string">
+  Source of the affiliate creation (e.g., `"api"`, `"dashboard"`)
+</ResponseField>
+
+<ResponseField name="partnership_status" type="string | null">
+  Partnership status with the program: `"PENDING"`, `"APPROVED"`, `"REJECTED"`, or `null` if no partnership exists
+</ResponseField>
+
+<ResponseField name="onboarding_completed" type="boolean">
+  Whether the affiliate has completed their onboarding process
+</ResponseField>
+
+<ResponseField name="program_id" type="string">
+  The affiliate program ID the affiliate is assigned to
+</ResponseField>
+
+<ResponseField name="group_id" type="string | null">
+  The affiliate group ID if assigned, otherwise `null`
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp of when the affiliate was created
+</ResponseField>
+
+### Expanded Fields (when using `expand` parameter)
+
+<ResponseField name="promoCodes" type="array" expandable>
+  Array of promo codes associated with the affiliate. Each item contains:
+  - `code` (string): The promo code
+  - `promo_code_id` (string | null): Internal promo code ID
+  - `coupon_id` (string | null): Coupon ID if linked
+  - `discount_type` (string | null): Type of discount (e.g., `"percentage"`, `"fixed"`)
+  - `discount_value` (number | null): Discount value
+  - `duration` (string | null): Duration of the discount (e.g., `"forever"`, `"once"`)
+  - `created_at` (string): ISO 8601 timestamp
+</ResponseField>
+
+<ResponseField name="commissionOverrides" type="array" expandable>
+  Array of commission overrides for the affiliate. Each item contains:
+  - `id` (string): Override ID
+  - `incentive_id` (string): Incentive ID
+  - `incentive_name` (string): Name of the incentive
+  - `incentive_type` (string): Type of incentive (e.g., `"commission"`)
+  - `amount` (number): Commission amount
+  - `is_percentage` (boolean): Whether the amount is a percentage
+  - `apply_to` (string): What the override applies to (e.g., `"all_plans"`)
+  - `product_ids` (array): Array of product IDs if applicable
+</ResponseField>
+
+<ResponseField name="invoiceDetails" type="object | null" expandable>
+  Invoice details for the affiliate. Contains:
+  - `company_name` (string | null): Company name
+  - `first_name` (string): First name
+  - `last_name` (string): Last name
+  - `address_line_1` (string): Street address
+  - `address_line_2` (string | null): Additional address line
+  - `city` (string): City
+  - `postal_code` (string | null): Postal/ZIP code
+  - `state` (string | null): State/Province
+  - `country` (string): Two-letter country code
+  - `vat_id` (string | null): VAT identification number
+  - `tax_id` (string | null): Tax identification number
+</ResponseField>
+
+<ResponseField name="payoutMethod" type="object | null" expandable>
+  Payout method configuration. Contains:
+  - `type` (string): Payout method type (e.g., `"paypal"`, `"wire_transfer"`)
+  - `details` (object): Method-specific details (varies by type)
+</ResponseField>
+
+## Examples
+
+<Tabs>
+  <Tab title="Example">
+    <RequestExample>
 ```bash cURL
-curl -X GET "https://api.affonso.io/v1/affiliates/aff_123abc" \
+curl -X GET "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak" \
   -H "Authorization: Bearer sk_live_your_api_key"
 ```
-</RequestExample>
+    </RequestExample>
 
-<ResponseExample>
+    <ResponseExample>
 ```json Response
 {
   "success": true,
@@ -27,34 +125,27 @@ curl -X GET "https://api.affonso.io/v1/affiliates/aff_123abc" \
     "id": "cmj8pptm10002p3010z8mk9ak",
     "name": "John Doe",
     "email": "john@example.com",
-    "trackingId": "PARTNER123",
+    "tracking_id": "PARTNER123",
     "source": "api",
-    "partnershipStatus": "APPROVED",
-    "onboardingCompleted": true,
-    "programId": "cm7xutqbb0001yfkcrnpextmp",
-    "groupId": "efbf3f29-efb1-4837-8924-7322606858f3",
-    "createdAt": "2024-01-15T10:30:00Z"
+    "partnership_status": "APPROVED",
+    "onboarding_completed": true,
+    "program_id": "cm7xutqbb0001yfkcrnpextmp",
+    "group_id": "efbf3f29-efb1-4837-8924-7322606858f3",
+    "created_at": "2024-01-15T10:30:00Z"
   }
 }
 ```
-
-**With Expand:**
-
-Expand specific fields or combinations:
-```bash
-# All expandables
-?expand=promoCodes,commissionOverrides,invoiceDetails,payoutMethod
-
-# Individual expandables
-?expand=promoCodes
-?expand=commissionOverrides
-?expand=invoiceDetails
-?expand=payoutMethod
-
-# Combinations
-?expand=promoCodes,payoutMethod
+    </ResponseExample>
+  </Tab>
+  <Tab title="Expand & Include Response">
+    <RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak?expand=promoCodes,commissionOverrides,invoiceDetails,payoutMethod" \
+  -H "Authorization: Bearer sk_live_your_api_key"
 ```
+    </RequestExample>
 
+    <ResponseExample>
 ```json Response
 {
   "success": true,
@@ -62,48 +153,48 @@ Expand specific fields or combinations:
     "id": "cmj8pptm10002p3010z8mk9ak",
     "name": "John Doe",
     "email": "john@example.com",
-    "trackingId": "PARTNER123",
+    "tracking_id": "PARTNER123",
     "source": "api",
-    "partnershipStatus": "APPROVED",
-    "onboardingCompleted": true,
-    "programId": "cm7xutqbb0001yfkcrnpextmp",
-    "groupId": "efbf3f29-efb1-4837-8924-7322606858f3",
-    "createdAt": "2024-01-15T10:30:00Z",
+    "partnership_status": "APPROVED",
+    "onboarding_completed": true,
+    "program_id": "cm7xutqbb0001yfkcrnpextmp",
+    "group_id": "efbf3f29-efb1-4837-8924-7322606858f3",
+    "created_at": "2024-01-15T10:30:00Z",
     "promoCodes": [
       {
         "code": "JOHN25",
-        "promoCodeId": null,
-        "couponId": "coupon_123",
-        "discountType": "percentage",
-        "discountValue": 25,
+        "promo_code_id": null,
+        "coupon_id": "coupon_123",
+        "discount_type": "percentage",
+        "discount_value": 25,
         "duration": "forever",
-        "createdAt": "2024-01-15T10:30:00Z"
+        "created_at": "2024-01-15T10:30:00Z"
       }
     ],
     "commissionOverrides": [
       {
         "id": "override_123",
-        "incentiveId": "incentive_456",
-        "incentiveName": "Premium Commission",
-        "incentiveType": "commission",
+        "incentive_id": "incentive_456",
+        "incentive_name": "Premium Commission",
+        "incentive_type": "commission",
         "amount": 15,
-        "isPercentage": true,
-        "applyTo": "all_plans",
-        "productIds": []
+        "is_percentage": true,
+        "apply_to": "all_plans",
+        "product_ids": []
       }
     ],
     "invoiceDetails": {
-      "companyName": "John LLC",
-      "firstName": "John",
-      "lastName": "Doe",
-      "addressLine1": "123 Main St",
-      "addressLine2": null,
+      "company_name": "John LLC",
+      "first_name": "John",
+      "last_name": "Doe",
+      "address_line_1": "123 Main St",
+      "address_line_2": null,
       "city": "New York",
-      "postalCode": "10001",
+      "postal_code": "10001",
       "state": "NY",
       "country": "US",
-      "vatId": null,
-      "taxId": null
+      "vat_id": null,
+      "tax_id": null
     },
     "payoutMethod": {
       "type": "paypal",
@@ -114,34 +205,7 @@ Expand specific fields or combinations:
   }
 }
 ```
-
-**Example with single expandable:**
-```bash
-?expand=payoutMethod
-```
-
-```json Response
-{
-  "success": true,
-  "data": {
-    "id": "cmj8pptm10002p3010z8mk9ak",
-    "name": "John Doe",
-    "email": "john@example.com",
-    "trackingId": "PARTNER123",
-    "source": "api",
-    "partnershipStatus": "APPROVED",
-    "onboardingCompleted": true,
-    "programId": "cm7xutqbb0001yfkcrnpextmp",
-    "groupId": "efbf3f29-efb1-4837-8924-7322606858f3",
-    "createdAt": "2024-01-15T10:30:00Z",
-    "payoutMethod": {
-      "type": "paypal",
-      "details": {
-        "email": "john@example.com"
-      }
-    }
-  }
-}
-```
-</ResponseExample>
+    </ResponseExample>
+  </Tab>
+</Tabs>
 

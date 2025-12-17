@@ -1,51 +1,85 @@
 ---
 title: "List Affiliates"
 api: "GET /v1/affiliates"
-description: "Get a paginated list of all affiliates"
+description: "Get a paginated list of all affiliates with optional filtering and expansion"
 ---
 
 ## Query Parameters
 
 <ParamField query="page" type="integer" default="1">
-  Page number for pagination
+  Page number for pagination. Must be a positive integer.
 </ParamField>
 
 <ParamField query="limit" type="integer" default="50">
-  Number of results per page (max 200)
+  Number of results per page. Maximum value is 200. Default is 50.
 </ParamField>
 
 <ParamField query="partnershipStatus" type="string">
-  Filter by partnership status: `PENDING`, `APPROVED`, `REJECTED`
+  Filter affiliates by partnership status. Valid values: `PENDING`, `APPROVED`, `REJECTED`. Only returns affiliates with the specified status for your team's program.
 </ParamField>
 
 <ParamField query="search" type="string">
-  Search by name or email
+  Search affiliates by name, username, tracking ID, or email address. Case-insensitive partial matching. Maximum 100 characters.
 </ParamField>
 
 <ParamField query="groupId" type="string">
-  Filter by affiliate group ID
+  Filter affiliates by affiliate group ID. Only returns affiliates assigned to the specified group.
 </ParamField>
 
 <ParamField query="programId" type="string">
-  Filter by affiliate program ID
+  Filter affiliates by affiliate program ID. If not provided, uses your team's default program.
 </ParamField>
 
 <ParamField query="sort" type="string">
-  Sort field and direction (e.g., `createdAt:desc`, `partnershipStatus:asc`)
+  Sort field and direction in the format `field:direction`. Valid fields: `createdAt`, `updatedAt`, `name`, `partnershipStatus`. Valid directions: `asc`, `desc`. Example: `createdAt:desc`.
+</ParamField>
+
+<ParamField query="dateFrom" type="string">
+  Filter affiliates created on or after this date. ISO 8601 date format (e.g., `2024-01-01`).
+</ParamField>
+
+<ParamField query="dateTo" type="string">
+  Filter affiliates created on or before this date. ISO 8601 date format (e.g., `2024-12-31`).
 </ParamField>
 
 <ParamField query="expand" type="string">
-  Expand related data: `promoCodes`, `commissionOverrides`, `invoiceDetails`, `payoutMethod`
+  Comma-separated list of related data to include in the response. Valid values: `promoCodes`, `commissionOverrides`, `invoiceDetails`, `payoutMethod`. You can combine multiple values: `promoCodes,payoutMethod`.
 </ParamField>
 
-<RequestExample>
+## Response
+
+The response includes a paginated list of affiliates and pagination metadata.
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of affiliate objects. Each affiliate object has the same structure as the single affiliate response (see Get Affiliate endpoint).
+</ResponseField>
+
+<ResponseField name="pagination" type="object">
+  Pagination metadata object containing:
+  - `page` (integer): Current page number
+  - `limit` (integer): Number of results per page
+  - `total` (integer): Total number of affiliates matching the filters
+  - `totalPages` (integer): Total number of pages
+  - `hasNextPage` (boolean): Whether there is a next page
+  - `hasPrevPage` (boolean): Whether there is a previous page
+</ResponseField>
+
+## Examples
+
+<Tabs>
+  <Tab title="Example">
+    <RequestExample>
 ```bash cURL
-curl -X GET "https://api.affonso.io/v1/affiliates?limit=10&status=active" \
+curl -X GET "https://api.affonso.io/v1/affiliates?limit=10&partnershipStatus=APPROVED" \
   -H "Authorization: Bearer sk_live_your_api_key"
 ```
-</RequestExample>
+    </RequestExample>
 
-<ResponseExample>
+    <ResponseExample>
 ```json Response
 {
   "success": true,
@@ -54,13 +88,13 @@ curl -X GET "https://api.affonso.io/v1/affiliates?limit=10&status=active" \
       "id": "cmj8pptm10002p3010z8mk9ak",
       "name": "John Doe",
       "email": "john@example.com",
-      "trackingId": "PARTNER123",
+      "tracking_id": "PARTNER123",
       "source": "api",
-      "partnershipStatus": "APPROVED",
-      "onboardingCompleted": true,
-      "programId": "cm7xutqbb0001yfkcrnpextmp",
-      "groupId": "efbf3f29-efb1-4837-8924-7322606858f3",
-      "createdAt": "2024-01-15T10:30:00Z"
+      "partnership_status": "APPROVED",
+      "onboarding_completed": true,
+      "program_id": "cm7xutqbb0001yfkcrnpextmp",
+      "group_id": "efbf3f29-efb1-4837-8924-7322606858f3",
+      "created_at": "2024-01-15T10:30:00Z"
     }
   ],
   "pagination": {
@@ -73,24 +107,17 @@ curl -X GET "https://api.affonso.io/v1/affiliates?limit=10&status=active" \
   }
 }
 ```
-
-**With Expand:**
-
-Expand specific fields or combinations:
-```bash
-# All expandables
-?expand=promoCodes,commissionOverrides,invoiceDetails,payoutMethod
-
-# Individual expandables
-?expand=promoCodes
-?expand=commissionOverrides
-?expand=invoiceDetails
-?expand=payoutMethod
-
-# Combinations
-?expand=promoCodes,payoutMethod
+    </ResponseExample>
+  </Tab>
+  <Tab title="Expand & Include Response">
+    <RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/affiliates?limit=10&expand=promoCodes,commissionOverrides,invoiceDetails,payoutMethod" \
+  -H "Authorization: Bearer sk_live_your_api_key"
 ```
+    </RequestExample>
 
+    <ResponseExample>
 ```json Response
 {
   "success": true,
@@ -99,48 +126,48 @@ Expand specific fields or combinations:
       "id": "cmj8pptm10002p3010z8mk9ak",
       "name": "John Doe",
       "email": "john@example.com",
-      "trackingId": "PARTNER123",
+      "tracking_id": "PARTNER123",
       "source": "api",
-      "partnershipStatus": "APPROVED",
-      "onboardingCompleted": true,
-      "programId": "cm7xutqbb0001yfkcrnpextmp",
-      "groupId": "efbf3f29-efb1-4837-8924-7322606858f3",
-      "createdAt": "2024-01-15T10:30:00Z",
+      "partnership_status": "APPROVED",
+      "onboarding_completed": true,
+      "program_id": "cm7xutqbb0001yfkcrnpextmp",
+      "group_id": "efbf3f29-efb1-4837-8924-7322606858f3",
+      "created_at": "2024-01-15T10:30:00Z",
       "promoCodes": [
         {
           "code": "JOHN25",
-          "promoCodeId": null,
-          "couponId": "coupon_123",
-          "discountType": "percentage",
-          "discountValue": 25,
+          "promo_code_id": null,
+          "coupon_id": "coupon_123",
+          "discount_type": "percentage",
+          "discount_value": 25,
           "duration": "forever",
-          "createdAt": "2024-01-15T10:30:00Z"
+          "created_at": "2024-01-15T10:30:00Z"
         }
       ],
       "commissionOverrides": [
         {
           "id": "override_123",
-          "incentiveId": "incentive_456",
-          "incentiveName": "Premium Commission",
-          "incentiveType": "commission",
+          "incentive_id": "incentive_456",
+          "incentive_name": "Premium Commission",
+          "incentive_type": "commission",
           "amount": 15,
-          "isPercentage": true,
-          "applyTo": "all_plans",
-          "productIds": []
+          "is_percentage": true,
+          "apply_to": "all_plans",
+          "product_ids": []
         }
       ],
       "invoiceDetails": {
-        "companyName": "John LLC",
-        "firstName": "John",
-        "lastName": "Doe",
-        "addressLine1": "123 Main St",
-        "addressLine2": null,
+        "company_name": "John LLC",
+        "first_name": "John",
+        "last_name": "Doe",
+        "address_line_1": "123 Main St",
+        "address_line_2": null,
         "city": "New York",
-        "postalCode": "10001",
+        "postal_code": "10001",
         "state": "NY",
         "country": "US",
-        "vatId": null,
-        "taxId": null
+        "vat_id": null,
+        "tax_id": null
       },
       "payoutMethod": {
         "type": "paypal",
@@ -160,44 +187,7 @@ Expand specific fields or combinations:
   }
 }
 ```
-
-**Example with single expandable:**
-```bash
-?expand=payoutMethod
-```
-
-```json Response
-{
-  "success": true,
-  "data": [
-    {
-      "id": "cmj8pptm10002p3010z8mk9ak",
-      "name": "John Doe",
-      "email": "john@example.com",
-      "trackingId": "PARTNER123",
-      "source": "api",
-      "partnershipStatus": "APPROVED",
-      "onboardingCompleted": true,
-      "programId": "cm7xutqbb0001yfkcrnpextmp",
-      "groupId": "efbf3f29-efb1-4837-8924-7322606858f3",
-      "createdAt": "2024-01-15T10:30:00Z",
-      "payoutMethod": {
-        "type": "paypal",
-        "details": {
-          "email": "john@example.com"
-        }
-      }
-    }
-  ],
-  "pagination": {
-    "page": 1,
-    "limit": 10,
-    "total": 50,
-    "totalPages": 5,
-    "hasNextPage": true,
-    "hasPrevPage": false
-  }
-}
-```
-</ResponseExample>
+    </ResponseExample>
+  </Tab>
+</Tabs>
 

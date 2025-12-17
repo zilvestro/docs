@@ -1,17 +1,55 @@
 ---
 title: "Delete Referral"
 api: "DELETE /v1/referrals/{id}"
-description: "Delete a referral"
+description: "Delete a referral and all associated commission transactions"
 ---
 
+<Warning>
+  This action is irreversible. All associated commission transactions will be permanently deleted. A webhook event will be emitted before deletion.
+</Warning>
+
+## Path Parameters
+
 <ParamField path="id" type="string" required>
-  The unique referral ID to delete
+  The unique identifier of the referral to delete
 </ParamField>
 
-<RequestExample>
+## Response
+
+The response confirms successful deletion.
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful deletions
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Deletion confirmation object containing:
+  - `id` (string): The deleted referral ID
+  - `deleted` (boolean): Always `true`
+</ResponseField>
+
+## Examples
+
+<Tabs>
+  <Tab title="Example">
+    <RequestExample>
 ```bash cURL
 curl -X DELETE "https://api.affonso.io/v1/referrals/ref_abc123" \
   -H "Authorization: Bearer sk_live_your_api_key"
 ```
-</RequestExample>
+    </RequestExample>
+
+    <ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "ref_abc123",
+    "deleted": true
+  }
+}
+```
+    </ResponseExample>
+  </Tab>
+</Tabs>
 
