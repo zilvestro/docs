@@ -20,6 +20,32 @@ description: "Retrieve a single referral by ID with optional expanded data and s
   Comma-separated list of additional data to include. Valid values: `stats`. Example: `include=stats`. The `stats` include provides aggregated statistics about the referral's transactions.
 </ParamField>
 
+### Expanded Fields (when using `expand` parameter)
+
+When using `expand=affiliate`, the following additional field will be included:
+
+- **affiliate** (object): Affiliate object containing:
+  - `id` (string): Affiliate ID
+  - `name` (string): Affiliate name
+  - `email` (string): Affiliate email
+  - `tracking_id` (string): Tracking ID
+  - `source` (string): Source of creation
+  - `partnership_status` (string): Partnership status
+  - `onboarding_completed` (boolean): Onboarding status
+  - `program_id` (string): Program ID
+  - `group_id` (string | null): Group ID
+  - `created_at` (string): Creation timestamp
+
+### Included Fields (when using `include` parameter)
+
+When using `include=stats`, the following additional field will be included:
+
+- **stats** (object): Statistics object containing:
+  - `total_revenue` (number): Total revenue from all transactions
+  - `total_commission` (number): Total commission earned
+  - `total_orders` (number): Total number of transactions
+  - `last_order_at` (string | null): ISO 8601 timestamp of the most recent transaction
+
 ## Response
 
 The response includes the referral object with optional expanded/included data.
@@ -60,33 +86,7 @@ The response includes the referral object with optional expanded/included data.
   ISO 8601 timestamp of when the referral was converted (set when status is not `lead`)
 </ResponseField>
 
-### Expanded Fields (when using `expand` parameter)
-
-<ResponseField name="affiliate" type="object" expandable>
-  Affiliate object containing:
-  - `id` (string): Affiliate ID
-  - `name` (string): Affiliate name
-  - `email` (string): Affiliate email
-  - `tracking_id` (string): Tracking ID
-  - `source` (string): Source of creation
-  - `partnership_status` (string): Partnership status
-  - `onboarding_completed` (boolean): Onboarding status
-  - `program_id` (string): Program ID
-  - `group_id` (string | null): Group ID
-  - `created_at` (string): Creation timestamp
-</ResponseField>
-
-### Included Fields (when using `include` parameter)
-
-<ResponseField name="stats" type="object" expandable>
-  Statistics object containing:
-  - `total_revenue` (number): Total revenue from all transactions
-  - `total_commission` (number): Total commission earned
-  - `total_orders` (number): Total number of transactions
-  - `last_order_at` (string | null): ISO 8601 timestamp of the most recent transaction
-</ResponseField>
-
-## Examples
+<RequestExample>
 
 <RequestExample>
 ```bash cURL
