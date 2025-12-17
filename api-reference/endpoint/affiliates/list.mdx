@@ -75,6 +75,11 @@ The response includes a paginated list of affiliates and pagination metadata.
 curl -X GET "https://api.affonso.io/v1/affiliates?limit=10&partnershipStatus=APPROVED" \
   -H "Authorization: Bearer sk_live_your_api_key"
 ```
+
+```bash cURL with Expand
+curl -X GET "https://api.affonso.io/v1/affiliates?limit=10&expand=promoCodes,commissionOverrides,invoiceDetails,payoutMethod" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
 </RequestExample>
 
 <ResponseExample>
@@ -105,18 +110,7 @@ curl -X GET "https://api.affonso.io/v1/affiliates?limit=10&partnershipStatus=APP
   }
 }
 ```
-</ResponseExample>
 
-**With Expand:**
-
-<RequestExample>
-```bash cURL
-curl -X GET "https://api.affonso.io/v1/affiliates?limit=10&expand=promoCodes,commissionOverrides,invoiceDetails,payoutMethod" \
-  -H "Authorization: Bearer sk_live_your_api_key"
-```
-</RequestExample>
-
-<ResponseExample>
 ```json Response with Expand
 {
   "success": true,

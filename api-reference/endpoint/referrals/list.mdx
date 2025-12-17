@@ -65,6 +65,11 @@ The response includes a cursor-paginated list of referrals.
 curl -X GET "https://api.affonso.io/v1/referrals?limit=10&status=customer" \
   -H "Authorization: Bearer sk_live_your_api_key"
 ```
+
+```bash cURL with Expand
+curl -X GET "https://api.affonso.io/v1/referrals?limit=10&expand=affiliate" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
 </RequestExample>
 
 <ResponseExample>
@@ -87,18 +92,7 @@ curl -X GET "https://api.affonso.io/v1/referrals?limit=10&status=customer" \
   "has_more": true
 }
 ```
-</ResponseExample>
 
-**With Expand:**
-
-<RequestExample>
-```bash cURL
-curl -X GET "https://api.affonso.io/v1/referrals?limit=10&expand=affiliate" \
-  -H "Authorization: Bearer sk_live_your_api_key"
-```
-</RequestExample>
-
-<ResponseExample>
 ```json Response with Expand
 {
   "success": true,
