@@ -38,9 +38,7 @@ The response includes the updated payout object with the same structure as the g
 
 ## Examples
 
-<Tabs>
-  <Tab title="Example">
-    <RequestExample>
+<RequestExample>
 ```bash cURL
 curl -X PUT "https://api.affonso.io/v1/payouts/pay_abc123" \
   -H "Authorization: Bearer sk_live_your_api_key" \
@@ -51,9 +49,9 @@ curl -X PUT "https://api.affonso.io/v1/payouts/pay_abc123" \
     "paymentReference": "PAYPAL-TXN-123456"
   }'
 ```
-    </RequestExample>
+</RequestExample>
 
-    <ResponseExample>
+<ResponseExample>
 ```json Response
 {
   "success": true,
@@ -76,7 +74,5 @@ curl -X PUT "https://api.affonso.io/v1/payouts/pay_abc123" \
   }
 }
 ```
-    </ResponseExample>
-  </Tab>
-</Tabs>
+</ResponseExample>
 

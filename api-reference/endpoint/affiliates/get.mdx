@@ -108,16 +108,14 @@ The response includes the affiliate object with the following fields:
 
 ## Examples
 
-<Tabs>
-  <Tab title="Example">
-    <RequestExample>
+<RequestExample>
 ```bash cURL
 curl -X GET "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak" \
   -H "Authorization: Bearer sk_live_your_api_key"
 ```
-    </RequestExample>
+</RequestExample>
 
-    <ResponseExample>
+<ResponseExample>
 ```json Response
 {
   "success": true,
@@ -135,18 +133,19 @@ curl -X GET "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak" \
   }
 }
 ```
-    </ResponseExample>
-  </Tab>
-  <Tab title="Expand & Include Response">
-    <RequestExample>
+</ResponseExample>
+
+**With Expand:**
+
+<RequestExample>
 ```bash cURL
 curl -X GET "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak?expand=promoCodes,commissionOverrides,invoiceDetails,payoutMethod" \
   -H "Authorization: Bearer sk_live_your_api_key"
 ```
-    </RequestExample>
+</RequestExample>
 
-    <ResponseExample>
-```json Response
+<ResponseExample>
+```json Response with Expand
 {
   "success": true,
   "data": {
@@ -205,7 +204,5 @@ curl -X GET "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak?expa
   }
 }
 ```
-    </ResponseExample>
-  </Tab>
-</Tabs>
+</ResponseExample>
 

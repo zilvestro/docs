@@ -88,16 +88,14 @@ The response includes the referral object with optional expanded/included data.
 
 ## Examples
 
-<Tabs>
-  <Tab title="Example">
-    <RequestExample>
+<RequestExample>
 ```bash cURL
 curl -X GET "https://api.affonso.io/v1/referrals/ref_abc123" \
   -H "Authorization: Bearer sk_live_your_api_key"
 ```
-    </RequestExample>
+</RequestExample>
 
-    <ResponseExample>
+<ResponseExample>
 ```json Response
 {
   "success": true,
@@ -114,18 +112,19 @@ curl -X GET "https://api.affonso.io/v1/referrals/ref_abc123" \
   }
 }
 ```
-    </ResponseExample>
-  </Tab>
-  <Tab title="Expand & Include Response">
-    <RequestExample>
+</ResponseExample>
+
+**With Expand & Include:**
+
+<RequestExample>
 ```bash cURL
 curl -X GET "https://api.affonso.io/v1/referrals/ref_abc123?expand=affiliate&include=stats" \
   -H "Authorization: Bearer sk_live_your_api_key"
 ```
-    </RequestExample>
+</RequestExample>
 
-    <ResponseExample>
-```json Response
+<ResponseExample>
+```json Response with Expand & Include
 {
   "success": true,
   "data": {
@@ -159,7 +158,5 @@ curl -X GET "https://api.affonso.io/v1/referrals/ref_abc123?expand=affiliate&inc
   }
 }
 ```
-    </ResponseExample>
-  </Tab>
-</Tabs>
+</ResponseExample>
 

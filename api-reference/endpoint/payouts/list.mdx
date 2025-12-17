@@ -70,16 +70,14 @@ The response includes a paginated list of payouts and pagination metadata.
 
 ## Examples
 
-<Tabs>
-  <Tab title="Example">
-    <RequestExample>
+<RequestExample>
 ```bash cURL
 curl -X GET "https://api.affonso.io/v1/payouts?limit=10&status=pending" \
   -H "Authorization: Bearer sk_live_your_api_key"
 ```
-    </RequestExample>
+</RequestExample>
 
-    <ResponseExample>
+<ResponseExample>
 ```json Response
 {
   "success": true,
@@ -112,7 +110,5 @@ curl -X GET "https://api.affonso.io/v1/payouts?limit=10&status=pending" \
   }
 }
 ```
-    </ResponseExample>
-  </Tab>
-</Tabs>
+</ResponseExample>
 

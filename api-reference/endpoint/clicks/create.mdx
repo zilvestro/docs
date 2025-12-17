@@ -110,9 +110,7 @@ The response includes the created click object.
 
 ## Examples
 
-<Tabs>
-  <Tab title="Example">
-    <RequestExample>
+<RequestExample>
 ```bash cURL
 curl -X POST "https://api.affonso.io/v1/clicks" \
   -H "Authorization: Bearer sk_live_your_api_key" \
@@ -126,9 +124,9 @@ curl -X POST "https://api.affonso.io/v1/clicks" \
     "utmCampaign": "summer-2024"
   }'
 ```
-    </RequestExample>
+</RequestExample>
 
-    <ResponseExample>
+<ResponseExample>
 ```json Response
 {
   "success": true,
@@ -140,9 +138,7 @@ curl -X POST "https://api.affonso.io/v1/clicks" \
   }
 }
 ```
-    </ResponseExample>
-  </Tab>
-</Tabs>
+</ResponseExample>
 
 **Note:** To convert a click to a referral, use the click's `id` as the `clickId` parameter when creating a referral via `POST /v1/referrals`.
 

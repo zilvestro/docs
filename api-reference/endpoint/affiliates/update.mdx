@@ -98,9 +98,7 @@ The response includes the updated affiliate object with the same structure as th
 
 ## Examples
 
-<Tabs>
-  <Tab title="Example">
-    <RequestExample>
+<RequestExample>
 ```bash cURL
 curl -X PUT "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak" \
   -H "Authorization: Bearer sk_live_your_api_key" \
@@ -115,9 +113,9 @@ curl -X PUT "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak" \
     "status": "APPROVED"
   }'
 ```
-    </RequestExample>
+</RequestExample>
 
-    <ResponseExample>
+<ResponseExample>
 ```json Response
 {
   "success": true,
@@ -135,9 +133,7 @@ curl -X PUT "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak" \
   }
 }
 ```
-    </ResponseExample>
-  </Tab>
-</Tabs>
+</ResponseExample>
 
 **Note:** To retrieve updated related data like promo codes, commission overrides, invoice details, and payout methods, use `GET /v1/affiliates/{id}?expand=promoCodes,commissionOverrides,invoiceDetails,payoutMethod`.
 

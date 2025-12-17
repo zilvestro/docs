@@ -1,1 +1,1316 @@
-{"openapi":"3.1.0","info":{"title":"Affonso API","description":"REST API for managing affiliates, referrals, commissions, and payouts.","version":"1.0.0","contact":{"name":"Affonso Support","url":"https://affonso.io","email":"support@affonso.io"}},"servers":[{"url":"https://api.affonso.io","description":"Production"},{"url":"http://localhost:3000","description":"Development"}],"security":[{"bearerAuth":[]}],"tags":[{"name":"Affiliates","description":"Manage affiliate users"},{"name":"Referrals","description":"Manage referrals and conversions"},{"name":"Clicks","description":"Track click events"},{"name":"Commissions","description":"Manage commission transactions"},{"name":"Payouts","description":"Manage affiliate payouts"}],"paths":{"/v1/affiliates":{"get":{"tags":["Affiliates"],"summary":"List affiliates","description":"Get a paginated list of all affiliates","parameters":[{"name":"page","in":"query","schema":{"type":"integer","default":1}},{"name":"limit","in":"query","schema":{"type":"integer","default":50,"maximum":200}},{"name":"status","in":"query","schema":{"type":"string","enum":["active","pending","inactive","rejected","banned"]}},{"name":"search","in":"query","schema":{"type":"string"}},{"name":"sort","in":"query","schema":{"type":"string","example":"createdAt:desc"}}],"responses":{"200":{"description":"List of affiliates"},"401":{"description":"Unauthorized"},"429":{"description":"Rate limit exceeded"}}},"post":{"tags":["Affiliates"],"summary":"Create affiliate","description":"Create a new affiliate user","requestBody":{"required":true,"content":{"application/json":{"schema":{"type":"object","required":["email","name"],"properties":{"email":{"type":"string","format":"email"},"name":{"type":"string"},"userName":{"type":"string"},"status":{"type":"string","enum":["pending","active"]}}}}}},"responses":{"201":{"description":"Affiliate created"},"400":{"description":"Validation error"},"409":{"description":"Duplicate email"}}}},"/v1/affiliates/{id}":{"get":{"tags":["Affiliates"],"summary":"Get affiliate","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"Affiliate details"},"404":{"description":"Not found"}}},"put":{"tags":["Affiliates"],"summary":"Update affiliate","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"Affiliate updated"},"404":{"description":"Not found"}}},"delete":{"tags":["Affiliates"],"summary":"Delete affiliate","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"Affiliate deleted"},"404":{"description":"Not found"}}}},"/v1/referrals":{"get":{"tags":["Referrals"],"summary":"List referrals","responses":{"200":{"description":"List of referrals"}}},"post":{"tags":["Referrals"],"summary":"Create referral","responses":{"201":{"description":"Referral created"}}}},"/v1/clicks":{"post":{"tags":["Clicks"],"summary":"Track click","description":"Record a click event for affiliate tracking","responses":{"201":{"description":"Click recorded"}}}},"/v1/commissions":{"get":{"tags":["Commissions"],"summary":"List commissions","responses":{"200":{"description":"List of commissions"}}},"post":{"tags":["Commissions"],"summary":"Create commission","responses":{"201":{"description":"Commission created"}}}},"/v1/payouts":{"get":{"tags":["Payouts"],"summary":"List payouts","responses":{"200":{"description":"List of payouts"}}}},"/v1/payouts/{id}":{"get":{"tags":["Payouts"],"summary":"Get payout","responses":{"200":{"description":"Payout details"}}},"put":{"tags":["Payouts"],"summary":"Update payout status","responses":{"200":{"description":"Payout updated"}}}}},"components":{"securitySchemes":{"bearerAuth":{"type":"http","scheme":"bearer","bearerFormat":"API Key","description":"API key authentication. Use your API key as the bearer token."}}}}
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Affonso API",
+    "description": "REST API for managing affiliates, referrals, commissions, and payouts.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Affonso Support",
+      "url": "https://affonso.io",
+      "email": "support@affonso.io"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.affonso.io",
+      "description": "Production"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Affiliates",
+      "description": "Manage affiliate users"
+    },
+    {
+      "name": "Referrals",
+      "description": "Manage referrals and conversions"
+    },
+    {
+      "name": "Clicks",
+      "description": "Track click events"
+    },
+    {
+      "name": "Commissions",
+      "description": "Manage commission transactions"
+    },
+    {
+      "name": "Payouts",
+      "description": "Manage affiliate payouts"
+    }
+  ],
+  "paths": {
+    "/v1/affiliates": {
+      "get": {
+        "tags": ["Affiliates"],
+        "summary": "List affiliates",
+        "description": "Get a paginated list of all affiliates with optional filtering and expansion",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "maximum": 200
+            }
+          },
+          {
+            "name": "partnershipStatus",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["PENDING", "APPROVED", "REJECTED"],
+              "nullable": true
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "groupId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "programId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "pattern": "^(createdAt|updatedAt|name|partnershipStatus):(asc|desc)$",
+              "example": "createdAt:desc"
+            }
+          },
+          {
+            "name": "expand",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "promoCodes,commissionOverrides"
+            },
+            "description": "Comma-separated list of fields to expand: promoCodes, commissionOverrides, invoiceDetails, payoutMethod"
+          },
+          {
+            "name": "createdGte",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "createdLte",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of affiliates",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Affiliate"
+                      }
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/PaginationMeta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitExceeded"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Affiliates"],
+        "summary": "Create affiliate",
+        "description": "Create a new affiliate user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAffiliateInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Affiliate created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Affiliate"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "409": {
+            "$ref": "#/components/responses/DuplicateError"
+          }
+        }
+      }
+    },
+    "/v1/affiliates/{id}": {
+      "get": {
+        "tags": ["Affiliates"],
+        "summary": "Get affiliate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "expand",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "promoCodes,payoutMethod"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Affiliate details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Affiliate"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Affiliates"],
+        "summary": "Update affiliate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAffiliateInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Affiliate updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Affiliate"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Affiliates"],
+        "summary": "Delete affiliate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Affiliate deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "deleted": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/v1/referrals": {
+      "get": {
+        "tags": ["Referrals"],
+        "summary": "List referrals",
+        "description": "Get referrals with cursor-based pagination (excludes CLICKs)",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "starting_after",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Cursor for forward pagination"
+          },
+          {
+            "name": "ending_before",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Cursor for backward pagination"
+          },
+          {
+            "name": "affiliateId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "desc"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["lead", "trialing", "customer", "active", "canceled", "rejected"]
+            }
+          },
+          {
+            "name": "expand",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "affiliate"
+            },
+            "description": "Comma-separated list: affiliate"
+          },
+          {
+            "name": "createdGte",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "createdLte",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of referrals",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Referral"
+                      }
+                    },
+                    "has_more": {
+                      "type": "boolean",
+                      "description": "True if more results are available"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Referrals"],
+        "summary": "Create referral",
+        "description": "Create a new referral or convert a click to referral",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReferralInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Referral created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Referral"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "409": {
+            "$ref": "#/components/responses/DuplicateError"
+          }
+        }
+      }
+    },
+    "/v1/referrals/{id}": {
+      "get": {
+        "tags": ["Referrals"],
+        "summary": "Get referral",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "expand",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "affiliate"
+            }
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "stats"
+            },
+            "description": "Comma-separated list: stats"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Referral details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Referral"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Referrals"],
+        "summary": "Update referral",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateReferralInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Referral updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Referral"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Referrals"],
+        "summary": "Delete referral",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Referral deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "deleted": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/clicks": {
+      "post": {
+        "tags": ["Clicks"],
+        "summary": "Track click",
+        "description": "Record a click event for affiliate tracking",
+        "responses": {
+          "201": {
+            "description": "Click recorded"
+          }
+        }
+      }
+    },
+    "/v1/commissions": {
+      "get": {
+        "tags": ["Commissions"],
+        "summary": "List commissions",
+        "responses": {
+          "200": {
+            "description": "List of commissions"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Commissions"],
+        "summary": "Create commission",
+        "responses": {
+          "201": {
+            "description": "Commission created"
+          }
+        }
+      }
+    },
+    "/v1/payouts": {
+      "get": {
+        "tags": ["Payouts"],
+        "summary": "List payouts",
+        "responses": {
+          "200": {
+            "description": "List of payouts"
+          }
+        }
+      }
+    },
+    "/v1/payouts/{id}": {
+      "get": {
+        "tags": ["Payouts"],
+        "summary": "Get payout",
+        "responses": {
+          "200": {
+            "description": "Payout details"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Payouts"],
+        "summary": "Update payout status",
+        "responses": {
+          "200": {
+            "description": "Payout updated"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "API key authentication. Use your API key as the bearer token."
+      }
+    },
+    "schemas": {
+      "Affiliate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "nullable": true
+          },
+          "tracking_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "source": {
+            "type": "string",
+            "nullable": true
+          },
+          "partnership_status": {
+            "type": "string",
+            "enum": ["PENDING", "APPROVED", "REJECTED"],
+            "nullable": true
+          },
+          "onboarding_completed": {
+            "type": "boolean"
+          },
+          "program_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "group_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "promo_codes": {
+            "type": "array",
+            "description": "Only present when expand=promoCodes",
+            "items": {
+              "$ref": "#/components/schemas/PromoCode"
+            }
+          },
+          "commission_overrides": {
+            "type": "array",
+            "description": "Only present when expand=commissionOverrides",
+            "items": {
+              "$ref": "#/components/schemas/CommissionOverride"
+            }
+          },
+          "invoice_details": {
+            "$ref": "#/components/schemas/InvoiceDetails",
+            "description": "Only present when expand=invoiceDetails"
+          },
+          "payout_method": {
+            "$ref": "#/components/schemas/PayoutMethod",
+            "description": "Only present when expand=payoutMethod"
+          }
+        }
+      },
+      "PromoCode": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "promo_code_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "coupon_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "discount_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "discount_value": {
+            "type": "number",
+            "nullable": true
+          },
+          "duration": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CommissionOverride": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "incentive_id": {
+            "type": "string"
+          },
+          "incentive_name": {
+            "type": "string"
+          },
+          "incentive_type": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "is_percentage": {
+            "type": "boolean"
+          },
+          "apply_to": {
+            "type": "string"
+          },
+          "product_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "InvoiceDetails": {
+        "type": "object",
+        "properties": {
+          "company_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "address_line_1": {
+            "type": "string"
+          },
+          "address_line_2": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string"
+          },
+          "postal_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string"
+          },
+          "vat_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "tax_id": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "PayoutMethod": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "details": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "nullable": true
+            },
+            "description": "Keys use snake_case: account_id, bank_name, account_number, etc."
+          }
+        }
+      },
+      "CreateAffiliateInput": {
+        "type": "object",
+        "required": ["name", "email", "programId"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "programId": {
+            "type": "string"
+          },
+          "groupId": {
+            "type": "string"
+          },
+          "companyName": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "countryCode": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 2
+          },
+          "payoutMethod": {
+            "type": "string",
+            "enum": [
+              "paypal",
+              "wise",
+              "payoneer",
+              "paxum",
+              "webmoney",
+              "skrill",
+              "wire_transfer",
+              "bitcoin",
+              "ethereum",
+              "alipay",
+              "wechat",
+              "manual",
+              "none"
+            ]
+          },
+          "payoutDetails": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "accountId": {
+                "type": "string"
+              },
+              "address": {
+                "type": "string"
+              },
+              "bankName": {
+                "type": "string"
+              },
+              "accountNumber": {
+                "type": "string"
+              },
+              "swiftCode": {
+                "type": "string"
+              },
+              "iban": {
+                "type": "string"
+              },
+              "routingNumber": {
+                "type": "string"
+              },
+              "accountName": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "UpdateAffiliateInput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "groupId": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyName": {
+            "type": "string",
+            "maxLength": 100,
+            "nullable": true
+          },
+          "countryCode": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 2,
+            "nullable": true
+          },
+          "payoutMethod": {
+            "type": "string",
+            "enum": [
+              "paypal",
+              "wise",
+              "payoneer",
+              "paxum",
+              "webmoney",
+              "skrill",
+              "wire_transfer",
+              "bitcoin",
+              "ethereum",
+              "alipay",
+              "wechat",
+              "manual",
+              "none"
+            ]
+          },
+          "payoutDetails": {
+            "type": "object"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PENDING", "APPROVED", "REJECTED"]
+          }
+        }
+      },
+      "Referral": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "affiliate_id": {
+            "type": "string"
+          },
+          "program_id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "nullable": true
+          },
+          "customer_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "subscription_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": ["lead", "trialing", "customer", "active", "canceled", "rejected"]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "converted_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "affiliate": {
+            "$ref": "#/components/schemas/Affiliate",
+            "description": "Only present when expand=affiliate"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/ReferralStats",
+            "description": "Only present when include=stats"
+          }
+        }
+      },
+      "ReferralStats": {
+        "type": "object",
+        "properties": {
+          "total_revenue": {
+            "type": "number"
+          },
+          "total_commission": {
+            "type": "number"
+          },
+          "total_orders": {
+            "type": "integer"
+          },
+          "last_order_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "CreateReferralInput": {
+        "type": "object",
+        "required": ["email", "affiliateId"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "affiliateId": {
+            "type": "string"
+          },
+          "subscriptionId": {
+            "type": "string"
+          },
+          "customerId": {
+            "type": "string"
+          },
+          "clickId": {
+            "type": "string",
+            "description": "If provided, converts existing CLICK to referral instead of creating new"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Allows backdating the referral"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["lead", "trialing", "customer", "active", "canceled", "rejected"],
+            "default": "lead"
+          }
+        }
+      },
+      "UpdateReferralInput": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "subscriptionId": {
+            "type": "string"
+          },
+          "customerId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["lead", "trialing", "customer", "active", "canceled", "rejected"]
+          }
+        }
+      },
+      "PaginationMeta": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "total_pages": {
+            "type": "integer"
+          },
+          "has_next_page": {
+            "type": "boolean"
+          },
+          "has_prev_page": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "field": {
+                "type": "string",
+                "description": "Optional field name for validation errors"
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "Unauthorized": {
+        "description": "Missing or invalid API key",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "success": false,
+              "error": {
+                "code": "UNAUTHORIZED",
+                "message": "Invalid API key"
+              }
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "success": false,
+              "error": {
+                "code": "NOT_FOUND",
+                "message": "Resource not found"
+              }
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "description": "Validation error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "success": false,
+              "error": {
+                "code": "VALIDATION_ERROR",
+                "message": "Valid email is required",
+                "field": "email"
+              }
+            }
+          }
+        }
+      },
+      "DuplicateError": {
+        "description": "Duplicate resource",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "success": false,
+              "error": {
+                "code": "DUPLICATE_ERROR",
+                "message": "Resource with this identifier already exists"
+              }
+            }
+          }
+        }
+      },
+      "RateLimitExceeded": {
+        "description": "Rate limit exceeded",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "success": false,
+              "error": {
+                "code": "RATE_LIMIT_EXCEEDED",
+                "message": "Rate limit exceeded. Please try again later."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
