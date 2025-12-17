@@ -42,6 +42,7 @@ description: "Create a new referral or convert an existing click to a referral"
 
 The response includes the created referral object.
 
+<Expandable title="Response Properties">
 <ResponseField name="id" type="string">
   Unique identifier for the referral
 </ResponseField>
@@ -77,6 +78,7 @@ The response includes the created referral object.
 <ResponseField name="converted_at" type="string | null">
   ISO 8601 timestamp of when the referral was converted (set when status is not `lead`)
 </ResponseField>
+</Expandable>
 
 <RequestExample>
 ```bash cURL

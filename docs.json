@@ -14,6 +14,11 @@
     "auth": {
       "method": "bearer"
     },
+    "mdx": {
+      "auth": {
+        "method": "bearer"
+      }
+    },
     "playground": {
       "display": "interactive"
     }
