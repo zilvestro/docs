@@ -57,12 +57,6 @@
             ]
           },
           {
-            "group": "Clicks",
-            "pages": [
-              "api/endpoint/clicks/create"
-            ]
-          },
-          {
             "group": "Commissions",
             "pages": [
               "api/endpoint/commissions/list",
