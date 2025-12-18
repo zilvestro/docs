@@ -38,25 +38,62 @@ description: "Get a paginated list of all payouts with optional filtering"
 
 The response includes a paginated list of payouts and pagination metadata.
 
-<Expandable title="Response Properties">
 <ResponseField name="success" type="boolean">
   Always `true` for successful responses
 </ResponseField>
 
 <ResponseField name="data" type="array">
-  Array of payout objects. Each payout object contains:
-  - `id` (string): Unique payout identifier
-  - `affiliateId` (string): Affiliate ID
-  - `invoiceNumber` (number): Invoice number
-  - `amount` (number): Payout amount
-  - `status` (string): Payout status (lowercase)
-  - `paymentMethod` (string | null): Payment method used
-  - `paymentReference` (string | null): External payment reference
-  - `processedAt` (string | null): ISO 8601 timestamp when processed
-  - `managedPayout` (boolean): Whether this is a managed payout
-  - `affiliate` (object | null): Affiliate information (name, email)
-  - `createdAt` (string): ISO 8601 creation timestamp
-  - `updatedAt` (string): ISO 8601 last update timestamp
+  Array of payout objects.
+  
+<Expandable title="Data Object Properties">
+<ResponseField name="id" type="string">
+  Unique payout identifier
+</ResponseField>
+
+<ResponseField name="affiliateId" type="string">
+  Affiliate ID
+</ResponseField>
+
+<ResponseField name="invoiceNumber" type="number">
+  Invoice number
+</ResponseField>
+
+<ResponseField name="amount" type="number">
+  Payout amount
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Payout status (lowercase): `pending`, `processing`, `completed`, `failed`, `cancelled`
+</ResponseField>
+
+<ResponseField name="paymentMethod" type="string | null">
+  Payment method used
+</ResponseField>
+
+<ResponseField name="paymentReference" type="string | null">
+  External payment reference
+</ResponseField>
+
+<ResponseField name="processedAt" type="string | null">
+  ISO 8601 timestamp when processed
+</ResponseField>
+
+<ResponseField name="managedPayout" type="boolean">
+  Whether this is a managed payout
+</ResponseField>
+
+<ResponseField name="affiliate" type="object | null">
+  Affiliate information (name, email)
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  ISO 8601 creation timestamp
+</ResponseField>
+
+<ResponseField name="updatedAt" type="string">
+  ISO 8601 last update timestamp
+</ResponseField>
+</Expandable>
 </ResponseField>
 
 <ResponseField name="pagination" type="object">
@@ -68,7 +105,6 @@ The response includes a paginated list of payouts and pagination metadata.
   - `hasNextPage` (boolean): Whether there is a next page
   - `hasPrevPage` (boolean): Whether there is a previous page
 </ResponseField>
-</Expandable>
 
 <RequestExample>
 ```bash cURL

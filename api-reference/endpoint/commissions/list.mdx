@@ -46,13 +46,74 @@ description: "Get a paginated list of all commissions with optional filtering"
 
 The response includes a paginated list of commissions and pagination metadata.
 
-<Expandable title="Response Properties">
 <ResponseField name="success" type="boolean">
   Always `true` for successful responses
 </ResponseField>
 
 <ResponseField name="data" type="array">
   Array of commission objects. Each commission object has the same structure as the single commission response (see Get Commission endpoint).
+  
+<Expandable title="Data Object Properties">
+<ResponseField name="id" type="string">
+  Unique identifier for the commission
+</ResponseField>
+
+<ResponseField name="referral_id" type="string">
+  The referral ID this commission is associated with
+</ResponseField>
+
+<ResponseField name="affiliate_id" type="string">
+  The affiliate ID who will receive this commission
+</ResponseField>
+
+<ResponseField name="program_id" type="string">
+  The affiliate program ID
+</ResponseField>
+
+<ResponseField name="sale_amount" type="number">
+  The total sale/transaction amount (automatically converted to team currency if different)
+</ResponseField>
+
+<ResponseField name="sale_amount_currency" type="string">
+  The currency code for the sale (3 letters, e.g., USD, EUR). Represents the team's currency after conversion if applicable.
+</ResponseField>
+
+<ResponseField name="commission_amount" type="number">
+  The commission amount to be paid
+</ResponseField>
+
+<ResponseField name="commission_currency" type="string">
+  The currency code for the commission amount
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  The commission status. Valid values: `pending` (on hold period, auto-updates to ready_for_payment when period expires), `pending_manual_approval` (same as pending but requires manual approval), `ready_for_payment` (approved and ready for payout in next cycle, not yet paid), `paid` (confirmed and already paid out), `declined` (rejected, not paid and excluded from payouts).
+</ResponseField>
+
+<ResponseField name="sales_status" type="string">
+  The sales/transaction status. Valid values: `open` (sale is open/pending), `complete` (sale completed successfully), `trialing` (customer is in trial period), `failed` (sale failed), `refunded` (sale fully refunded), `partial_refunded` (sale partially refunded).
+</ResponseField>
+
+<ResponseField name="hold_period_days" type="integer | null">
+  Number of days commission is on hold before becoming available for payment
+</ResponseField>
+
+<ResponseField name="payment_intent_id" type="string | null">
+  Payment intent ID if provided
+</ResponseField>
+
+<ResponseField name="invoice_id" type="string | null">
+  Invoice ID if linked to a payout invoice
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp of when the commission was created
+</ResponseField>
+
+<ResponseField name="updated_at" type="string">
+  ISO 8601 timestamp of when the commission was last updated
+</ResponseField>
+</Expandable>
 </ResponseField>
 
 <ResponseField name="pagination" type="object">
@@ -64,7 +125,6 @@ The response includes a paginated list of commissions and pagination metadata.
   - `has_next_page` (boolean): Whether there is a next page
   - `has_prev_page` (boolean): Whether there is a previous page
 </ResponseField>
-</Expandable>
 
 <RequestExample>
 ```bash cURL
@@ -88,8 +148,8 @@ curl -X GET "https://api.affonso.io/v1/commissions?limit=10&expand=affiliate,ref
       "referral_id": "ref_456def",
       "affiliate_id": "aff_789ghi",
       "program_id": "prog_123xyz",
-      "amount": 99.00,
-      "amount_currency": "USD",
+      "sale_amount": 99.00,
+      "sale_amount_currency": "USD",
       "commission_amount": 9.90,
       "commission_currency": "USD",
       "status": "ready_for_payment",
@@ -121,8 +181,8 @@ curl -X GET "https://api.affonso.io/v1/commissions?limit=10&expand=affiliate,ref
       "referral_id": "ref_456def",
       "affiliate_id": "aff_789ghi",
       "program_id": "prog_123xyz",
-      "amount": 99.00,
-      "amount_currency": "USD",
+      "sale_amount": 99.00,
+      "sale_amount_currency": "USD",
       "commission_amount": 9.90,
       "commission_currency": "USD",
       "status": "ready_for_payment",

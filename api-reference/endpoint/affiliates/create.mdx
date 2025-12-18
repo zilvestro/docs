@@ -52,7 +52,14 @@ description: "Create a new affiliate user"
 
 The response includes the created affiliate object with the following fields:
 
-<Expandable title="Response Properties">
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  The created affiliate object.
+  
+<Expandable title="Data Object Properties">
 <ResponseField name="id" type="string">
   Unique identifier for the affiliate
 </ResponseField>
@@ -93,6 +100,7 @@ The response includes the created affiliate object with the following fields:
   ISO 8601 timestamp of when the affiliate was created
 </ResponseField>
 </Expandable>
+</ResponseField>
 
 <RequestExample>
 ```bash cURL

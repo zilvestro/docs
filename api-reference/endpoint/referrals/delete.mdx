@@ -18,17 +18,23 @@ description: "Delete a referral and all associated commission transactions"
 
 The response confirms successful deletion.
 
-<Expandable title="Response Properties">
 <ResponseField name="success" type="boolean">
   Always `true` for successful deletions
 </ResponseField>
 
 <ResponseField name="data" type="object">
-  Deletion confirmation object containing:
-  - `id` (string): The deleted referral ID
-  - `deleted` (boolean): Always `true`
+  Deletion confirmation object.
+  
+<Expandable title="Data Object Properties">
+<ResponseField name="id" type="string">
+  The deleted referral ID
+</ResponseField>
+
+<ResponseField name="deleted" type="boolean">
+  Always `true`
 </ResponseField>
 </Expandable>
+</ResponseField>
 
 <RequestExample>
 ```bash cURL

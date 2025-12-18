@@ -50,13 +50,54 @@ description: "Get a paginated list of all affiliates with optional filtering and
 
 The response includes a paginated list of affiliates and pagination metadata.
 
-<Expandable title="Response Properties">
 <ResponseField name="success" type="boolean">
   Always `true` for successful responses
 </ResponseField>
 
 <ResponseField name="data" type="array">
   Array of affiliate objects. Each affiliate object has the same structure as the single affiliate response (see Get Affiliate endpoint).
+  
+<Expandable title="Data Object Properties">
+<ResponseField name="id" type="string">
+  Unique identifier for the affiliate
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The affiliate's display name
+</ResponseField>
+
+<ResponseField name="email" type="string">
+  The affiliate's email address
+</ResponseField>
+
+<ResponseField name="tracking_id" type="string">
+  Unique tracking ID for the affiliate
+</ResponseField>
+
+<ResponseField name="source" type="string">
+  Source of the affiliate creation (e.g., `"api"`, `"dashboard"`)
+</ResponseField>
+
+<ResponseField name="partnership_status" type="string | null">
+  Partnership status with the program: `"PENDING"`, `"APPROVED"`, `"REJECTED"`, or `null` if no partnership exists
+</ResponseField>
+
+<ResponseField name="onboarding_completed" type="boolean">
+  Whether the affiliate has completed their onboarding process
+</ResponseField>
+
+<ResponseField name="program_id" type="string">
+  The affiliate program ID the affiliate is assigned to
+</ResponseField>
+
+<ResponseField name="group_id" type="string | null">
+  The affiliate group ID if assigned, otherwise `null`
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp of when the affiliate was created
+</ResponseField>
+</Expandable>
 </ResponseField>
 
 <ResponseField name="pagination" type="object">
@@ -68,7 +109,6 @@ The response includes a paginated list of affiliates and pagination metadata.
   - `hasNextPage` (boolean): Whether there is a next page
   - `hasPrevPage` (boolean): Whether there is a previous page
 </ResponseField>
-</Expandable>
 
 <RequestExample>
 ```bash cURL

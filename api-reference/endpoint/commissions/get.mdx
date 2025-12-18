@@ -28,7 +28,14 @@ When using the `expand` parameter, the following additional fields will be inclu
 
 The response includes the commission object with all its details.
 
-<Expandable title="Response Properties">
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  The commission object.
+  
+<Expandable title="Data Object Properties">
 <ResponseField name="id" type="string">
   Unique identifier for the commission
 </ResponseField>
@@ -45,12 +52,12 @@ The response includes the commission object with all its details.
   The affiliate program ID
 </ResponseField>
 
-<ResponseField name="amount" type="number">
-  The total sale amount
+<ResponseField name="sale_amount" type="number">
+  The total sale/transaction amount (automatically converted to team currency if different)
 </ResponseField>
 
-<ResponseField name="amount_currency" type="string">
-  The currency code for the sale amount
+<ResponseField name="sale_amount_currency" type="string">
+  The currency code for the sale (3 letters, e.g., USD, EUR). Represents the team's currency after conversion if applicable.
 </ResponseField>
 
 <ResponseField name="commission_amount" type="number">
@@ -89,6 +96,7 @@ The response includes the commission object with all its details.
   ISO 8601 timestamp of when the commission was last updated
 </ResponseField>
 </Expandable>
+</ResponseField>
 
 <RequestExample>
 
@@ -113,9 +121,9 @@ curl -X GET "https://api.affonso.io/v1/commissions/com_abc123?expand=affiliate,r
     "referral_id": "ref_456def",
     "affiliate_id": "aff_789ghi",
     "program_id": "prog_123xyz",
-    "amount": 99.00,
-    "amount_currency": "USD",
-    "commission_amount": 9.90,
+      "sale_amount": 99.00,
+      "sale_amount_currency": "USD",
+      "commission_amount": 9.90,
     "commission_currency": "USD",
     "status": "ready_for_payment",
     "sales_status": "complete",
@@ -136,9 +144,9 @@ curl -X GET "https://api.affonso.io/v1/commissions/com_abc123?expand=affiliate,r
     "referral_id": "ref_456def",
     "affiliate_id": "aff_789ghi",
     "program_id": "prog_123xyz",
-    "amount": 99.00,
-    "amount_currency": "USD",
-    "commission_amount": 9.90,
+      "sale_amount": 99.00,
+      "sale_amount_currency": "USD",
+      "commission_amount": 9.90,
     "commission_currency": "USD",
     "status": "ready_for_payment",
     "sales_status": "complete",

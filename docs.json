@@ -8,7 +8,7 @@
     "dark": "#881337"
   },
   "favicon": "/favicon.svg",
-  "openapi": "api-reference/openapi.json",
+  "openapi": "https://api.affonso.io/openapi.json",
   "api": {
     "baseUrl": "https://api.affonso.io",
     "auth": {

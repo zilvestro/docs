@@ -14,7 +14,14 @@ description: "Retrieve a single payout by ID with transaction details"
 
 The response includes the payout object with transaction details.
 
-<Expandable title="Response Properties">
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  The payout object.
+  
+<Expandable title="Data Object Properties">
 <ResponseField name="id" type="string">
   Unique identifier for the payout
 </ResponseField>
@@ -73,6 +80,7 @@ The response includes the payout object with transaction details.
   ISO 8601 timestamp of when the payout was last updated
 </ResponseField>
 </Expandable>
+</ResponseField>
 
 <RequestExample>
 ```bash cURL

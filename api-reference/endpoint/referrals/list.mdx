@@ -46,19 +46,55 @@ description: "Get a cursor-paginated list of all referrals with optional filteri
 
 The response includes a cursor-paginated list of referrals.
 
-<Expandable title="Response Properties">
 <ResponseField name="success" type="boolean">
   Always `true` for successful responses
 </ResponseField>
 
 <ResponseField name="data" type="array">
   Array of referral objects. Each referral object has the same structure as the single referral response (see Get Referral endpoint).
+  
+<Expandable title="Data Object Properties">
+<ResponseField name="id" type="string">
+  Unique identifier for the referral
+</ResponseField>
+
+<ResponseField name="affiliate_id" type="string">
+  The affiliate ID who referred this customer
+</ResponseField>
+
+<ResponseField name="program_id" type="string">
+  The affiliate program ID
+</ResponseField>
+
+<ResponseField name="email" type="string | null">
+  The customer's email address
+</ResponseField>
+
+<ResponseField name="customer_id" type="string | null">
+  Your internal customer ID if provided
+</ResponseField>
+
+<ResponseField name="subscription_id" type="string | null">
+  Your internal subscription ID if provided
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  The referral status (lowercase): `lead`, `trialing`, `customer`, `active`, `canceled`, `rejected`
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp of when the referral was created
+</ResponseField>
+
+<ResponseField name="converted_at" type="string | null">
+  ISO 8601 timestamp of when the referral was converted (set when status is not `lead`)
+</ResponseField>
+</Expandable>
 </ResponseField>
 
 <ResponseField name="has_more" type="boolean">
   Whether there are more results available
 </ResponseField>
-</Expandable>
 
 <RequestExample>
 ```bash cURL
