@@ -32,7 +32,51 @@ All body parameters are optional. Only include the fields you want to update.
 
 ## Response
 
-The response includes the updated referral object with the same structure as the get endpoint.
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  The updated referral object.
+  
+<Expandable title="Data Object Properties">
+<ResponseField name="id" type="string">
+  Unique identifier for the referral
+</ResponseField>
+
+<ResponseField name="affiliate_id" type="string">
+  The affiliate ID who referred this customer
+</ResponseField>
+
+<ResponseField name="program_id" type="string">
+  The affiliate program ID
+</ResponseField>
+
+<ResponseField name="email" type="string | null">
+  The customer's email address
+</ResponseField>
+
+<ResponseField name="customer_id" type="string | null">
+  Your internal customer ID
+</ResponseField>
+
+<ResponseField name="subscription_id" type="string | null">
+  Your internal subscription ID
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  The referral status: `lead`, `trialing`, `customer`, `active`, `canceled`, `rejected`
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp of when the referral was created
+</ResponseField>
+
+<ResponseField name="converted_at" type="string | null">
+  ISO 8601 timestamp of when the referral was converted
+</ResponseField>
+</Expandable>
+</ResponseField>
 
 <RequestExample>
 ```bash cURL

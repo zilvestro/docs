@@ -6,8 +6,6 @@ description: "Create a new referral or convert an existing click to a referral"
 
 ## Body Parameters
 
-### Required Parameters
-
 <ParamField body="affiliate_id" type="string" required>
   The unique identifier of the affiliate who referred this customer. The affiliate must belong to your team.
 </ParamField>
@@ -15,8 +13,6 @@ description: "Create a new referral or convert an existing click to a referral"
 <ParamField body="email" type="string" required>
   The customer's email address. Must be a valid email format. If a referral with this email already exists for the program, the request will fail with a conflict error.
 </ParamField>
-
-### Optional Parameters
 
 <ParamField body="customer_id" type="string">
   Your internal customer ID or identifier. Used to link the referral to a customer in your system.

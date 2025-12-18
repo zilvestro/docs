@@ -34,7 +34,63 @@ description: "Update a payout's status, payment method, or payment reference"
 
 ## Response
 
-The response includes the updated payout object with the same structure as the get endpoint.
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  The updated payout object.
+  
+<Expandable title="Data Object Properties">
+<ResponseField name="id" type="string">
+  Unique identifier for the payout
+</ResponseField>
+
+<ResponseField name="affiliate_id" type="string">
+  The affiliate ID who will receive this payout
+</ResponseField>
+
+<ResponseField name="invoice_number" type="number">
+  Invoice number for this payout
+</ResponseField>
+
+<ResponseField name="amount" type="number">
+  Total payout amount
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Payout status: `pending`, `processing`, `completed`, `failed`, `cancelled`
+</ResponseField>
+
+<ResponseField name="payment_method" type="string | null">
+  Payment method used
+</ResponseField>
+
+<ResponseField name="payment_reference" type="string | null">
+  External payment reference
+</ResponseField>
+
+<ResponseField name="processed_at" type="string | null">
+  ISO 8601 timestamp when processed
+</ResponseField>
+
+<ResponseField name="managed_payout" type="boolean">
+  Whether this is a managed payout
+</ResponseField>
+
+<ResponseField name="affiliate" type="object | null">
+  Affiliate info with `name` and `email`
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp of creation
+</ResponseField>
+
+<ResponseField name="updated_at" type="string">
+  ISO 8601 timestamp of last update
+</ResponseField>
+</Expandable>
+</ResponseField>
 
 <RequestExample>
 ```bash cURL

@@ -6,8 +6,6 @@ description: "Create a new commission transaction manually"
 
 ## Body Parameters
 
-### Required Parameters
-
 <ParamField body="referral_id" type="string" required>
   ID of the referral this commission belongs to.
 </ParamField>
@@ -19,8 +17,6 @@ description: "Create a new commission transaction manually"
 <ParamField body="commission_amount" type="number" required>
   Commission amount earned. Must be a non-negative number (can be 0).
 </ParamField>
-
-### Optional Parameters
 
 <ParamField body="sale_amount_currency" type="string" default="USD">
   Currency code for the sale (3 letters, e.g., USD, EUR). Defaults to `USD`. If different from your team currency, automatic conversion will occur and original values will be preserved in separate fields.

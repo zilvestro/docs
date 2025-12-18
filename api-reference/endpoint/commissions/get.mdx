@@ -16,14 +16,6 @@ description: "Retrieve a single commission by ID"
   Comma-separated list of related data to include. Valid values: `affiliate`, `affiliate_program`, `referral`. You can combine multiple values: `affiliate,referral`.
 </ParamField>
 
-### Expanded Fields (when using `expand` parameter)
-
-When using the `expand` parameter, the following additional fields will be included in the response:
-
-- **affiliate** (object): Affiliate object (see Affiliate schema). Only present when `expand=affiliate`.
-- **affiliate_program** (object): Affiliate program object containing program details. Only present when `expand=affiliate_program`.
-- **referral** (object): Referral object (see Referral schema). Only present when `expand=referral`.
-
 ## Response
 
 The response includes the commission object with all its details.
@@ -97,8 +89,6 @@ The response includes the commission object with all its details.
 </ResponseField>
 </Expandable>
 </ResponseField>
-
-<RequestExample>
 
 <RequestExample>
 ```bash cURL
