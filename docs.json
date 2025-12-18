@@ -31,53 +31,53 @@
           {
             "group": "Overview",
             "pages": [
-              "api-reference/introduction",
-              "api-reference/authentication",
-              "api-reference/rate-limits"
+              "api/introduction",
+              "api/authentication",
+              "api/rate-limits"
             ]
           },
           {
             "group": "Affiliates",
             "pages": [
-              "api-reference/endpoint/affiliates/list",
-              "api-reference/endpoint/affiliates/get",
-              "api-reference/endpoint/affiliates/create",
-              "api-reference/endpoint/affiliates/update",
-              "api-reference/endpoint/affiliates/delete"
+              "api/endpoint/affiliates/list",
+              "api/endpoint/affiliates/get",
+              "api/endpoint/affiliates/create",
+              "api/endpoint/affiliates/update",
+              "api/endpoint/affiliates/delete"
             ]
           },
           {
             "group": "Referrals",
             "pages": [
-              "api-reference/endpoint/referrals/list",
-              "api-reference/endpoint/referrals/get",
-              "api-reference/endpoint/referrals/create",
-              "api-reference/endpoint/referrals/update",
-              "api-reference/endpoint/referrals/delete"
+              "api/endpoint/referrals/list",
+              "api/endpoint/referrals/get",
+              "api/endpoint/referrals/create",
+              "api/endpoint/referrals/update",
+              "api/endpoint/referrals/delete"
             ]
           },
           {
             "group": "Clicks",
             "pages": [
-              "api-reference/endpoint/clicks/create"
+              "api/endpoint/clicks/create"
             ]
           },
           {
             "group": "Commissions",
             "pages": [
-              "api-reference/endpoint/commissions/list",
-              "api-reference/endpoint/commissions/get",
-              "api-reference/endpoint/commissions/create",
-              "api-reference/endpoint/commissions/update",
-              "api-reference/endpoint/commissions/delete"
+              "api/endpoint/commissions/list",
+              "api/endpoint/commissions/get",
+              "api/endpoint/commissions/create",
+              "api/endpoint/commissions/update",
+              "api/endpoint/commissions/delete"
             ]
           },
           {
             "group": "Payouts",
             "pages": [
-              "api-reference/endpoint/payouts/list",
-              "api-reference/endpoint/payouts/get",
-              "api-reference/endpoint/payouts/update"
+              "api/endpoint/payouts/list",
+              "api/endpoint/payouts/get",
+              "api/endpoint/payouts/update"
             ]
           }
         ]
@@ -167,6 +167,16 @@
      "vscode"
    ]
   },
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/api/introduction"
+    },
+    {
+      "source": "/api-reference/:path*",
+      "destination": "/api/:path*"
+    }
+  ],
   "footer": {
     "socials": {
       "x": "https://x.com/useAffonso",
