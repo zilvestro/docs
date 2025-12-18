@@ -3,146 +3,17 @@ title: 'Payout Events'
 description: 'Webhook events for affiliate payouts and payments'
 ---
 
-## Overview
-
-Payout events track the payment lifecycle for affiliate commissions. Use these webhooks to sync payout data with your accounting system, notify affiliates about payment status, or integrate with payment providers.
-
-<Note>
-  All payout events except `payout.created` and `payout.deleted` automatically trigger a `payout.updated` event as well, giving you a universal event for all changes.
-</Note>
+Payout events track the payment lifecycle for affiliate commissions.
 
 ## Events
 
-<AccordionGroup>
-  <Accordion title="payout.created" icon="plus">
-    Triggered when a new payout is created for an affiliate. This happens when commissions are batched for payment.
-
-    ```json
-    {
-      "id": "evt_abc123",
-      "type": "payout.created",
-      "createdAt": "2024-01-15T10:30:00.000Z",
-      "data": {
-        "payoutId": "pay_xyz789",
-        "affiliateId": "aff_abc123",
-        "affiliateProgramId": "prog_def456",
-        "invoiceNumber": 1042,
-        "amount": 250.00,
-        "status": "PENDING",
-        "isManagedPayout": false,
-        "paidAt": null,
-        "createdAt": "2024-01-15T10:30:00.000Z",
-        "updatedAt": "2024-01-15T10:30:00.000Z"
-      }
-    }
-    ```
-  </Accordion>
-
-  <Accordion title="payout.updated" icon="arrows-rotate">
-    Triggered whenever a payout is modified. This is a universal event that fires alongside other specific events (paid, failed).
-
-    ```json
-    {
-      "id": "evt_abc123",
-      "type": "payout.updated",
-      "createdAt": "2024-01-15T10:30:00.000Z",
-      "data": {
-        "payoutId": "pay_xyz789",
-        "affiliateId": "aff_abc123",
-        "affiliateProgramId": "prog_def456",
-        "invoiceNumber": 1042,
-        "amount": 250.00,
-        "status": "PROCESSING",
-        "isManagedPayout": true,
-        "paidAt": null,
-        "createdAt": "2024-01-15T10:30:00.000Z",
-        "updatedAt": "2024-01-15T12:00:00.000Z"
-      }
-    }
-    ```
-  </Accordion>
-
-  <Accordion title="payout.paid" icon="money-bill-transfer">
-    Triggered when a payout is marked as completed and the affiliate has been paid.
-
-    ```json
-    {
-      "id": "evt_abc123",
-      "type": "payout.paid",
-      "createdAt": "2024-01-15T10:30:00.000Z",
-      "data": {
-        "payoutId": "pay_xyz789",
-        "affiliateId": "aff_abc123",
-        "affiliateProgramId": "prog_def456",
-        "invoiceNumber": 1042,
-        "amount": 250.00,
-        "status": "COMPLETED",
-        "isManagedPayout": true,
-        "paidAt": "2024-01-15T14:00:00.000Z",
-        "createdAt": "2024-01-15T10:30:00.000Z",
-        "updatedAt": "2024-01-15T14:00:00.000Z"
-      }
-    }
-    ```
-  </Accordion>
-
-  <Accordion title="payout.failed" icon="circle-xmark">
-    Triggered when a payout fails. This can happen due to payment provider errors, invalid payment details, or insufficient funds.
-
-    ```json
-    {
-      "id": "evt_abc123",
-      "type": "payout.failed",
-      "createdAt": "2024-01-15T10:30:00.000Z",
-      "data": {
-        "payoutId": "pay_xyz789",
-        "affiliateId": "aff_abc123",
-        "affiliateProgramId": "prog_def456",
-        "invoiceNumber": 1042,
-        "amount": 250.00,
-        "status": "FAILED",
-        "isManagedPayout": true,
-        "paidAt": null,
-        "createdAt": "2024-01-15T10:30:00.000Z",
-        "updatedAt": "2024-01-15T14:00:00.000Z"
-      }
-    }
-    ```
-  </Accordion>
-
-  <Accordion title="payout.deleted" icon="trash">
-    Triggered when a payout is deleted from the system.
-
-    ```json
-    {
-      "id": "evt_abc123",
-      "type": "payout.deleted",
-      "createdAt": "2024-01-15T10:30:00.000Z",
-      "data": {
-        "payoutId": "pay_xyz789",
-        "affiliateId": "aff_abc123",
-        "affiliateProgramId": "prog_def456",
-        "invoiceNumber": 1042
-      }
-    }
-    ```
-  </Accordion>
-</AccordionGroup>
-
-## Payload Fields
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `payoutId` | string | Unique identifier for the payout |
-| `affiliateId` | string | The affiliate receiving this payout |
-| `affiliateProgramId` | string | The program this payout belongs to |
-| `invoiceNumber` | number | Sequential invoice number for the payout |
-| `amount` | number | Total payout amount |
-| `status` | string | Payout status (see below) |
-| `isManagedPayout` | boolean | Whether this is an auto-managed payout |
-| `paidAt` | string \| null | ISO 8601 timestamp when paid |
-| `createdAt` | string | ISO 8601 timestamp |
-| `updatedAt` | string | ISO 8601 timestamp |
+| Event | Description |
+|-------|-------------|
+| `payout.created` | New payout is created for an affiliate |
+| `payout.updated` | Payout is modified (universal event) |
+| `payout.paid` | Payout is marked as completed |
+| `payout.failed` | Payout fails |
+| `payout.deleted` | Payout is deleted |
 
 ## Payout Status Values
 
@@ -153,20 +24,124 @@ Payout events track the payment lifecycle for affiliate commissions. Use these w
 | `COMPLETED` | Payout successfully completed |
 | `FAILED` | Payout failed |
 
-## Common Use Cases
+## Payload
 
-<CardGroup cols={2}>
-  <Card title="Payment Notifications" icon="bell">
-    Notify affiliates when payments are sent
-  </Card>
-  <Card title="Accounting Sync" icon="file-invoice-dollar">
-    Create accounting entries when payouts complete
-  </Card>
-  <Card title="Failure Alerts" icon="triangle-exclamation">
-    Alert your team when payouts fail
-  </Card>
-  <Card title="Tax Reporting" icon="receipt">
-    Track payments for tax documentation
-  </Card>
-</CardGroup>
+<ResponseField name="id" type="string">
+  Unique event identifier
+</ResponseField>
 
+<ResponseField name="type" type="string">
+  Event type (e.g., `payout.paid`)
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  ISO 8601 timestamp of when the event occurred
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Event payload data.
+  
+<Expandable title="Data Object Properties">
+<ResponseField name="payoutId" type="string">
+  Unique identifier for the payout
+</ResponseField>
+
+<ResponseField name="affiliateId" type="string">
+  The affiliate receiving this payout
+</ResponseField>
+
+<ResponseField name="affiliateProgramId" type="string">
+  The program this payout belongs to
+</ResponseField>
+
+<ResponseField name="invoiceNumber" type="number">
+  Sequential invoice number for the payout
+</ResponseField>
+
+<ResponseField name="amount" type="number">
+  Total payout amount
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Payout status (see table above)
+</ResponseField>
+
+<ResponseField name="isManagedPayout" type="boolean">
+  Whether this is an auto-managed payout
+</ResponseField>
+
+<ResponseField name="paidAt" type="string | null">
+  ISO 8601 timestamp when paid
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  ISO 8601 timestamp
+</ResponseField>
+
+<ResponseField name="updatedAt" type="string">
+  ISO 8601 timestamp
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+## Example Payloads
+
+```json payout.created
+{
+  "id": "evt_abc123",
+  "type": "payout.created",
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "data": {
+    "payoutId": "pay_xyz789",
+    "affiliateId": "aff_abc123",
+    "affiliateProgramId": "prog_def456",
+    "invoiceNumber": 1042,
+    "amount": 250.00,
+    "status": "PENDING",
+    "isManagedPayout": false,
+    "paidAt": null,
+    "createdAt": "2024-01-15T10:30:00.000Z",
+    "updatedAt": "2024-01-15T10:30:00.000Z"
+  }
+}
+```
+
+```json payout.paid
+{
+  "id": "evt_abc123",
+  "type": "payout.paid",
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "data": {
+    "payoutId": "pay_xyz789",
+    "affiliateId": "aff_abc123",
+    "affiliateProgramId": "prog_def456",
+    "invoiceNumber": 1042,
+    "amount": 250.00,
+    "status": "COMPLETED",
+    "isManagedPayout": true,
+    "paidAt": "2024-01-15T14:00:00.000Z",
+    "createdAt": "2024-01-15T10:30:00.000Z",
+    "updatedAt": "2024-01-15T14:00:00.000Z"
+  }
+}
+```
+
+```json payout.failed
+{
+  "id": "evt_abc123",
+  "type": "payout.failed",
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "data": {
+    "payoutId": "pay_xyz789",
+    "affiliateId": "aff_abc123",
+    "affiliateProgramId": "prog_def456",
+    "invoiceNumber": 1042,
+    "amount": 250.00,
+    "status": "FAILED",
+    "isManagedPayout": true,
+    "paidAt": null,
+    "createdAt": "2024-01-15T10:30:00.000Z",
+    "updatedAt": "2024-01-15T14:00:00.000Z"
+  }
+}
+```

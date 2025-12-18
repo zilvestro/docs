@@ -3,116 +3,16 @@ title: 'Referral Events'
 description: 'Webhook events for referral tracking and conversions'
 ---
 
-## Overview
-
-Referral events track the customer journey from initial click to conversion. Use these webhooks to monitor affiliate performance, trigger marketing automation, or sync referral data with your analytics platform.
+Referral events track the customer journey from initial click to conversion.
 
 ## Events
 
-<AccordionGroup>
-  <Accordion title="referral.updated" icon="arrows-rotate">
-    Triggered whenever a referral is created or updated. This is a universal event that fires for all referral changes, making it ideal for keeping systems in sync.
-
-    ```json
-    {
-      "id": "evt_abc123",
-      "type": "referral.updated",
-      "createdAt": "2024-01-15T10:30:00.000Z",
-      "data": {
-        "referralId": "ref_xyz789",
-        "affiliateId": "aff_abc123",
-        "affiliateProgramId": "prog_def456",
-        "trackingId": "john-doe",
-        "status": "LEAD",
-        "email": "customer@example.com",
-        "customerId": "cus_stripe123",
-        "ip": "192.168.1.1",
-        "referrer": "https://blog.example.com/review"
-      }
-    }
-    ```
-  </Accordion>
-
-  <Accordion title="referral.lead" icon="user-tag">
-    Triggered when a referral transitions to a lead state (e.g., user signs up but hasn't purchased yet).
-
-    ```json
-    {
-      "id": "evt_abc123",
-      "type": "referral.lead",
-      "createdAt": "2024-01-15T10:30:00.000Z",
-      "data": {
-        "referralId": "ref_xyz789",
-        "affiliateId": "aff_abc123",
-        "affiliateProgramId": "prog_def456",
-        "trackingId": "john-doe",
-        "status": "LEAD",
-        "email": "customer@example.com",
-        "customerId": null,
-        "ip": "192.168.1.1",
-        "referrer": "https://blog.example.com/review"
-      }
-    }
-    ```
-  </Accordion>
-
-  <Accordion title="referral.converted" icon="circle-check">
-    Triggered when a referral converts to a paying customer. This indicates a successful sale attributed to an affiliate.
-
-    ```json
-    {
-      "id": "evt_abc123",
-      "type": "referral.converted",
-      "createdAt": "2024-01-15T10:30:00.000Z",
-      "data": {
-        "referralId": "ref_xyz789",
-        "affiliateId": "aff_abc123",
-        "affiliateProgramId": "prog_def456",
-        "trackingId": "john-doe",
-        "status": "CUSTOMER",
-        "email": "customer@example.com",
-        "customerId": "cus_stripe123",
-        "ip": "192.168.1.1",
-        "referrer": "https://blog.example.com/review"
-      }
-    }
-    ```
-  </Accordion>
-
-  <Accordion title="referral.deleted" icon="trash">
-    Triggered when a referral is deleted from the system.
-
-    ```json
-    {
-      "id": "evt_abc123",
-      "type": "referral.deleted",
-      "createdAt": "2024-01-15T10:30:00.000Z",
-      "data": {
-        "referralId": "ref_xyz789",
-        "affiliateId": "aff_abc123",
-        "affiliateProgramId": "prog_def456",
-        "trackingId": "john-doe",
-        "status": "CUSTOMER",
-        "email": "customer@example.com"
-      }
-    }
-    ```
-  </Accordion>
-</AccordionGroup>
-
-## Payload Fields
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `referralId` | string | Unique identifier for the referral |
-| `affiliateId` | string | The affiliate who referred this customer |
-| `affiliateProgramId` | string | The program this referral belongs to |
-| `trackingId` | string | The affiliate's tracking code used |
-| `status` | string | Referral status (see below) |
-| `email` | string \| null | Referred customer's email |
-| `customerId` | string \| null | Customer ID from your payment provider |
-| `ip` | string \| null | IP address of the referral click |
-| `referrer` | string \| null | The referring URL |
+| Event | Description |
+|-------|-------------|
+| `referral.updated` | Referral is created or updated (universal event) |
+| `referral.lead` | Referral transitions to lead state |
+| `referral.converted` | Referral converts to paying customer |
+| `referral.deleted` | Referral is deleted |
 
 ## Referral Statuses
 
@@ -126,20 +26,114 @@ Referral events track the customer journey from initial click to conversion. Use
 | `CANCELED` | Customer canceled their subscription |
 | `REJECTED` | Referral was rejected (fraud, policy violation) |
 
-## Common Use Cases
+## Payload
 
-<CardGroup cols={2}>
-  <Card title="Lead Nurturing" icon="seedling">
-    Trigger email sequences when `referral.lead` fires
-  </Card>
-  <Card title="Conversion Tracking" icon="chart-line">
-    Update analytics dashboards on `referral.converted`
-  </Card>
-  <Card title="Affiliate Notifications" icon="bell">
-    Notify affiliates in real-time about their conversions
-  </Card>
-  <Card title="Fraud Detection" icon="shield">
-    Monitor referral patterns for suspicious activity
-  </Card>
-</CardGroup>
+<ResponseField name="id" type="string">
+  Unique event identifier
+</ResponseField>
 
+<ResponseField name="type" type="string">
+  Event type (e.g., `referral.converted`)
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  ISO 8601 timestamp of when the event occurred
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Event payload data.
+  
+<Expandable title="Data Object Properties">
+<ResponseField name="referralId" type="string">
+  Unique identifier for the referral
+</ResponseField>
+
+<ResponseField name="affiliateId" type="string">
+  The affiliate who referred this customer
+</ResponseField>
+
+<ResponseField name="affiliateProgramId" type="string">
+  The program this referral belongs to
+</ResponseField>
+
+<ResponseField name="trackingId" type="string">
+  The affiliate's tracking code used
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Referral status (see table above)
+</ResponseField>
+
+<ResponseField name="email" type="string | null">
+  Referred customer's email
+</ResponseField>
+
+<ResponseField name="customerId" type="string | null">
+  Customer ID from your payment provider
+</ResponseField>
+
+<ResponseField name="ip" type="string | null">
+  IP address of the referral click
+</ResponseField>
+
+<ResponseField name="referrer" type="string | null">
+  The referring URL
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+## Example Payloads
+
+```json referral.lead
+{
+  "id": "evt_abc123",
+  "type": "referral.lead",
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "data": {
+    "referralId": "ref_xyz789",
+    "affiliateId": "aff_abc123",
+    "affiliateProgramId": "prog_def456",
+    "trackingId": "john-doe",
+    "status": "LEAD",
+    "email": "customer@example.com",
+    "customerId": null,
+    "ip": "192.168.1.1",
+    "referrer": "https://blog.example.com/review"
+  }
+}
+```
+
+```json referral.converted
+{
+  "id": "evt_abc123",
+  "type": "referral.converted",
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "data": {
+    "referralId": "ref_xyz789",
+    "affiliateId": "aff_abc123",
+    "affiliateProgramId": "prog_def456",
+    "trackingId": "john-doe",
+    "status": "CUSTOMER",
+    "email": "customer@example.com",
+    "customerId": "cus_stripe123",
+    "ip": "192.168.1.1",
+    "referrer": "https://blog.example.com/review"
+  }
+}
+```
+
+```json referral.deleted
+{
+  "id": "evt_abc123",
+  "type": "referral.deleted",
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "data": {
+    "referralId": "ref_xyz789",
+    "affiliateId": "aff_abc123",
+    "affiliateProgramId": "prog_def456",
+    "trackingId": "john-doe",
+    "status": "CUSTOMER",
+    "email": "customer@example.com"
+  }
+}
+```
