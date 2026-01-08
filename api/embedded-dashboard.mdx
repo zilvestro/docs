@@ -7,14 +7,9 @@ description: 'Embed your affiliate dashboard directly into your application'
 
 The Embedded Referral Dashboard allows you to display affiliate dashboards directly within your own application. Instead of redirecting affiliates to the Affonso portal, you can provide a seamless, native experience using an iframe or custom UI.
 
-<CardGroup cols={2}>
-  <Card title="iframe Integration" icon="window-maximize">
-    Embed a pre-built dashboard in your app with minimal code
-  </Card>
-  <Card title="Custom UI" icon="code">
-    Build your own dashboard using the embed data API
-  </Card>
-</CardGroup>
+<Card title="iframe Integration" icon="window-maximize">
+  Embed a pre-built dashboard in your app with minimal code
+</Card>
 
 ## How It Works
 
@@ -74,7 +69,7 @@ Response:
 
 ### 2. Embed the Dashboard (Client-side)
 
-**Option A: Using iframe (Recommended)**
+Use an iframe to display the pre-built dashboard:
 
 ```html
 <iframe
@@ -83,17 +78,6 @@ Response:
   height="600"
   frameborder="0"
 />
-```
-
-**Option B: Custom UI using API**
-
-```javascript
-const response = await fetch(
-  `https://api.affonso.io/v1/embed/data?token=${token}`
-);
-const { data } = await response.json();
-
-// Use data.stats, data.earnings, data.link, etc.
 ```
 
 ## Token Details
@@ -132,21 +116,13 @@ Colors must be valid HEX format (e.g., `#881337`).
 
 ## Self-Service Coupons
 
-If you've enabled self-service coupons for your program, affiliates can create their own coupon code directly from the embedded dashboard using the `/v1/embed/coupon` endpoint.
+If you've enabled self-service coupons for your program, affiliates can create their own coupon code directly from the embedded dashboard.
 
-## API Endpoints
+## API Endpoint
 
-<CardGroup cols={3}>
-  <Card title="Create Token" icon="key" href="/api-reference/endpoint/embed/create-token">
-    POST /v1/embed/token
-  </Card>
-  <Card title="Get Data" icon="chart-line" href="/api-reference/endpoint/embed/get-data">
-    GET /v1/embed/data
-  </Card>
-  <Card title="Create Coupon" icon="ticket" href="/api-reference/endpoint/embed/create-coupon">
-    POST /v1/embed/coupon
-  </Card>
-</CardGroup>
+<Card title="Create Embed Token" icon="key" href="/api-reference/endpoint/embed/create-token">
+  POST /v1/embed/token - Generate a token for the embedded dashboard
+</Card>
 
 ## Code Examples
 
@@ -203,39 +179,10 @@ export async function getEmbedToken(params: {
 }
 ```
 
-### React with Custom UI
-
-```tsx
-import { useEffect, useState } from 'react';
-
-function AffiliateWidget({ token }: { token: string }) {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    fetch(`https://api.affonso.io/v1/embed/data?token=${token}`)
-      .then(res => res.json())
-      .then(({ data }) => setData(data));
-  }, [token]);
-
-  if (!data) return <div>Loading...</div>;
-
-  return (
-    <div>
-      <h2>Your Referral Link</h2>
-      <input value={data.link} readOnly />
-
-      <h3>Stats</h3>
-      <p>Clicks: {data.stats.clicks}</p>
-      <p>Sales: {data.stats.sales}</p>
-      <p>Earnings: ${data.stats.earnings.paid}</p>
-    </div>
-  );
-}
-```
 
 ## Security Considerations
 
 - Always generate tokens server-side to protect your API key
 - Tokens are tied to specific affiliates and programs
 - Expired tokens are automatically cleaned up
-- Public endpoints (`/embed/data`, `/embed/coupon`) use token-based auth, not API keys
+- Tokens expire after 30 minutes - generate a new one on each page load

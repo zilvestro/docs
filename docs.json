@@ -78,9 +78,7 @@
           {
             "group": "Embed",
             "pages": [
-              "api/endpoint/embed/create-token",
-              "api/endpoint/embed/get-data",
-              "api/endpoint/embed/create-coupon"
+              "api/endpoint/embed/create-token"
             ]
           }
         ]
