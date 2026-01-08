@@ -1,37 +1,49 @@
 ---
 title: 'Embedded Referral Dashboard'
-description: 'Embed your affiliate dashboard directly into your application'
+description: 'Display affiliate dashboards directly in your application'
 ---
 
-With Affonso, you can build an embedded referral dashboard that lives directly inside your application. Your users can automatically enroll in your partner program **without needing to leave your app**.
+Integrate a fully functional referral dashboard into your product. Your users see their stats, referral links, and earnings - all within your app's interface.
 
-## How It Works
+## Overview
 
-1. Your server generates a short-lived embed token via the Affonso API
-2. You pass this token to an iframe that displays the referral dashboard
-3. The dashboard fetches data using the token and renders the affiliate's stats
+The embedded dashboard displays:
+- Referral link with copy functionality
+- Performance metrics (clicks, leads, sales)
+- Commission earnings and payout status
+- Coupon codes (with optional self-service creation)
+- Marketing resources and creatives
+
+## Integration Flow
 
 ```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  Your App       │     │  Affonso API    │     │  Embed Page     │
-│  (Server)       │────▶│  /embed/token   │────▶│  /embed/        │
-│                 │     │                 │     │  referrals      │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
+Your Server                    Affonso API                    Your Frontend
+     │                              │                              │
+     │  POST /v1/embed/token        │                              │
+     │  (with user data)            │                              │
+     │─────────────────────────────▶│                              │
+     │                              │                              │
+     │◀─────────────────────────────│                              │
+     │  { publicToken, link }       │                              │
+     │                              │                              │
+     │──────────────────────────────┼─────────────────────────────▶│
+     │                              │         Render iframe        │
+     │                              │         with token           │
 ```
 
-## Step 1: Generate Embed Token
+## Step 1: Generate Token
 
-Create a server-side API route that generates a public token. This token will be used by the embedded dashboard to fetch real-time data.
+Call the API from your server to create a short-lived access token.
 
-```bash cURL
+```bash
 curl -X POST "https://api.affonso.io/v1/embed/token" \
-  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "programId": "your_program_id",
+    "programId": "prog_abc123",
     "partner": {
       "email": "user@example.com",
-      "name": "John Doe"
+      "name": "Jane Smith"
     }
   }'
 ```
@@ -42,34 +54,34 @@ curl -X POST "https://api.affonso.io/v1/embed/token" \
 {
   "success": true,
   "data": {
-    "publicToken": "abc123...",
+    "publicToken": "tok_xyz789...",
     "expiresAt": "2024-01-15T10:30:00Z",
-    "link": "https://yourcompany.com?via=john-doe"
+    "link": "https://yoursite.com?via=jane-smith"
   }
 }
 ```
 
-### Request Parameters
+### Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `programId` | string | Yes | Your affiliate program ID |
-| `partner.email` | string | Yes | User's email address |
-| `partner.name` | string | No | User's display name |
-| `partner.image` | string | No | User's avatar URL |
-| `groupId` | string | No | Assign to specific affiliate group |
+| Field | Required | Description |
+|-------|----------|-------------|
+| `programId` | Yes | Your affiliate program ID |
+| `partner.email` | Yes | User's email (creates affiliate if new) |
+| `partner.name` | No | Display name for the affiliate |
+| `partner.image` | No | Avatar URL |
+| `groupId` | No | Assign to specific commission group |
 
 <Note>
-  If the affiliate doesn't exist, they will be automatically created and approved for the program.
+  New users are automatically registered as affiliates and approved for your program.
 </Note>
 
-## Step 2: Install the Embed
+## Step 2: Render the Dashboard
 
-With the `publicToken` from Step 1, add an iframe to your application:
+Add the iframe to your frontend using the token from Step 1.
 
 ```html
 <iframe
-  src="https://affonso.io/embed/referrals?token=YOUR_PUBLIC_TOKEN"
+  src="https://affonso.io/embed/referrals?token=tok_xyz789..."
   width="100%"
   height="600"
   frameborder="0"
@@ -77,26 +89,32 @@ With the `publicToken` from Step 1, add an iframe to your application:
 />
 ```
 
-### Next.js Example
+### Next.js Implementation
 
 ```tsx
 // app/referrals/page.tsx
-import { getEmbedToken } from '@/lib/affonso';
+async function getToken(user: User) {
+  const res = await fetch('https://api.affonso.io/v1/embed/token', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.AFFONSO_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      programId: process.env.AFFONSO_PROGRAM_ID,
+      partner: { email: user.email, name: user.name },
+    }),
+  });
+  return res.json();
+}
 
 export default async function ReferralsPage() {
   const user = await getCurrentUser();
-
-  const { publicToken } = await getEmbedToken({
-    programId: process.env.AFFONSO_PROGRAM_ID!,
-    partner: {
-      email: user.email,
-      name: user.name,
-    },
-  });
+  const { data } = await getToken(user);
 
   return (
     <iframe
-      src={`https://affonso.io/embed/referrals?token=${publicToken}`}
+      src={`https://affonso.io/embed/referrals?token=${data.publicToken}`}
       className="w-full h-screen border-0"
       allow="clipboard-write"
     />
@@ -104,62 +122,39 @@ export default async function ReferralsPage() {
 }
 ```
 
-```typescript
-// lib/affonso.ts
-export async function getEmbedToken(params: {
-  programId: string;
-  partner: { email: string; name?: string; image?: string };
-  groupId?: string;
-}) {
-  const response = await fetch('https://api.affonso.io/v1/embed/token', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${process.env.AFFONSO_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(params),
-  });
+## Token Lifecycle
 
-  const { data } = await response.json();
-  return data;
-}
-```
-
-## Token Details
-
-| Property | Value |
-|----------|-------|
-| **TTL** | 30 minutes |
-| **Auto-create** | Affiliate is created if not exists |
-| **Partnership** | Auto-approved for the program |
-| **Group** | Uses default group or custom `groupId` |
+| Property | Details |
+|----------|---------|
+| Validity | 30 minutes |
+| Refresh | Generate new token on each page load |
+| Cleanup | Old tokens are automatically invalidated |
 
 <Warning>
-  Generate a new token on each page load. Do not cache tokens long-term.
+  Always generate tokens server-side. Never expose your API key to the client.
 </Warning>
-
-## Dashboard Features
-
-The embedded dashboard includes:
-
-- **Referral Link** - Copy-to-clipboard functionality
-- **Performance Stats** - Clicks, leads, sales, and earnings
-- **Earnings Table** - Recent transactions with status
-- **Coupon Code** - Display and self-service creation (if enabled)
-- **Resources** - Marketing creatives and assets
-- **Settings Link** - Direct access to full affiliate portal
 
 ## Theming
 
-The embed automatically uses your program's brand colors from Portal Settings:
+The dashboard inherits your brand colors from Portal Settings:
 
-- **Primary Color** - Buttons and accents
-- **Secondary Color** - Highlights
+- **Primary Color** - Buttons, links, accents
+- **Secondary Color** - Highlights, backgrounds
 
-Colors must be valid HEX format (e.g., `#881337`).
+Configure colors in HEX format (e.g., `#881337`) in your Affonso dashboard under Portal Settings.
 
-## Security
+## Affiliate Groups
 
-- Always generate tokens **server-side** to protect your API key
-- Tokens are scoped to specific affiliates and programs
-- Expired tokens are automatically invalidated
+Assign users to different commission tiers by passing a `groupId`:
+
+```json
+{
+  "programId": "prog_abc123",
+  "partner": {
+    "email": "vip@example.com"
+  },
+  "groupId": "grp_premium"
+}
+```
+
+Users without a specified group are assigned to your program's default group.
