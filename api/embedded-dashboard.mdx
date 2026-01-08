@@ -57,7 +57,7 @@ Create an API route on your server that generates a token. This keeps your API k
 </ParamField>
 
 <ParamField body="groupId" type="string">
-  Affiliate group ID to assign the user to. If not specified, the user is assigned to your program's **default group**. Use this to place users in specific commission tiers.
+  Affiliate group ID to assign the user to. If not specified, the user is assigned to your program's **default group**. Use this to place users in specific commission tiers. Find your group IDs in **Dashboard → Affiliate Program → Groups**.
 </ParamField>
 
 ### Example Request
@@ -67,13 +67,13 @@ curl -X POST "https://api.affonso.io/v1/embed/token" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "programId": "prog_abc123",
+    "programId": "cm12x98yz0005bnp8h9ld2ff9",
     "partner": {
       "email": "user@example.com",
       "name": "Jane Smith",
       "image": "https://example.com/avatar.jpg"
     },
-    "groupId": "grp_premium"
+    "groupId": "e3e6e1b2-5a12-434f-a1b2-4bb0f12c3a89"
   }'
 ```
 
@@ -83,7 +83,7 @@ curl -X POST "https://api.affonso.io/v1/embed/token" \
 {
   "success": true,
   "data": {
-    "publicToken": "tok_xyz789...",
+    "publicToken": "emb_abc123def456...",
     "expiresAt": "2024-01-15T10:30:00Z",
     "link": "https://yoursite.com?via=jane-smith"
   }
@@ -100,7 +100,7 @@ Use the `publicToken` in an iframe to display the dashboard.
 
 ```html
 <iframe
-  src="https://affonso.io/embed/referrals?token=tok_xyz789..."
+  src="https://affonso.io/embed/referrals?token=emb_abc123def456..."
   width="100%"
   height="600"
   frameborder="0"
@@ -235,7 +235,7 @@ If an invalid language code is provided, the dashboard falls back to English.
 **Example with dark mode, custom background, and German:**
 ```html
 <iframe
-  src="https://affonso.io/embed/referrals?token=xxx&theme=dark&bg=0f0f0f&lang=de"
+  src="https://affonso.io/embed/referrals?token=emb_...&theme=dark&bg=0f0f0f&lang=de"
   ...
 />
 ```
@@ -243,7 +243,7 @@ If an invalid language code is provided, the dashboard falls back to English.
 **Example with light mode and Japanese:**
 ```html
 <iframe
-  src="https://affonso.io/embed/referrals?token=xxx&theme=light&lang=ja"
+  src="https://affonso.io/embed/referrals?token=emb_...&theme=light&lang=ja"
   ...
 />
 ```
