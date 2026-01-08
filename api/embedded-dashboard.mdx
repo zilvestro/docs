@@ -33,7 +33,37 @@ Your Server                    Affonso API                    Your Frontend
 
 ## Step 1: Generate Token
 
-Call the API from your server to create a short-lived access token.
+Create an API route on your server that generates a token. This keeps your API key secure.
+
+### Body Parameters
+
+<ParamField body="programId" type="string" required>
+  Your affiliate program ID.
+</ParamField>
+
+<ParamField body="partner" type="object" required>
+  Information about the user you want to display the dashboard for.
+
+  <Expandable title="Properties">
+    <ParamField body="email" type="string" required>
+      User's email address. If no affiliate exists with this email, one will be created automatically.
+    </ParamField>
+
+    <ParamField body="name" type="string">
+      Display name for the affiliate. Used when generating their tracking ID.
+    </ParamField>
+
+    <ParamField body="image" type="string">
+      URL to the user's avatar image.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="groupId" type="string">
+  Affiliate group ID to assign the user to. If not specified, the user is assigned to your program's **default group**. Use this to place users in specific commission tiers.
+</ParamField>
+
+### Example Request
 
 ```bash
 curl -X POST "https://api.affonso.io/v1/embed/token" \
@@ -43,12 +73,14 @@ curl -X POST "https://api.affonso.io/v1/embed/token" \
     "programId": "prog_abc123",
     "partner": {
       "email": "user@example.com",
-      "name": "Jane Smith"
-    }
+      "name": "Jane Smith",
+      "image": "https://example.com/avatar.jpg"
+    },
+    "groupId": "grp_premium"
   }'
 ```
 
-**Response:**
+### Response
 
 ```json
 {
@@ -61,23 +93,13 @@ curl -X POST "https://api.affonso.io/v1/embed/token" \
 }
 ```
 
-### Parameters
-
-| Field | Required | Description |
-|-------|----------|-------------|
-| `programId` | Yes | Your affiliate program ID |
-| `partner.email` | Yes | User's email (creates affiliate if new) |
-| `partner.name` | No | Display name for the affiliate |
-| `partner.image` | No | Avatar URL |
-| `groupId` | No | Assign to specific commission group |
-
 <Note>
   New users are automatically registered as affiliates and approved for your program.
 </Note>
 
 ## Step 2: Render the Dashboard
 
-Add the iframe to your frontend using the token from Step 1.
+Use the `publicToken` in an iframe to display the dashboard.
 
 ```html
 <iframe
@@ -89,12 +111,25 @@ Add the iframe to your frontend using the token from Step 1.
 />
 ```
 
-### Next.js Implementation
+## Next.js Example
 
-```tsx
-// app/referrals/page.tsx
-async function getToken(user: User) {
-  const res = await fetch('https://api.affonso.io/v1/embed/token', {
+### 1. Create API Route
+
+First, create a server-side API route that generates the token:
+
+```ts
+// app/api/embed-token/route.ts
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+
+export async function POST() {
+  const session = await getServerSession();
+
+  if (!session?.user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const response = await fetch('https://api.affonso.io/v1/embed/token', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${process.env.AFFONSO_API_KEY}`,
@@ -102,19 +137,50 @@ async function getToken(user: User) {
     },
     body: JSON.stringify({
       programId: process.env.AFFONSO_PROGRAM_ID,
-      partner: { email: user.email, name: user.name },
+      partner: {
+        email: session.user.email,
+        name: session.user.name,
+        image: session.user.image,
+      },
     }),
   });
-  return res.json();
-}
 
-export default async function ReferralsPage() {
-  const user = await getCurrentUser();
-  const { data } = await getToken(user);
+  const data = await response.json();
+  return NextResponse.json(data);
+}
+```
+
+### 2. Create the Page Component
+
+Then, fetch the token from your API route and render the iframe:
+
+```tsx
+// app/referrals/page.tsx
+'use client';
+
+import { useEffect, useState } from 'react';
+
+export default function ReferralsPage() {
+  const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchToken() {
+      const res = await fetch('/api/embed-token', { method: 'POST' });
+      const { data } = await res.json();
+      setToken(data.publicToken);
+      setLoading(false);
+    }
+    fetchToken();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <iframe
-      src={`https://affonso.io/embed/referrals?token=${data.publicToken}`}
+      src={`https://affonso.io/embed/referrals?token=${token}`}
       className="w-full h-screen border-0"
       allow="clipboard-write"
     />
@@ -142,19 +208,3 @@ The dashboard inherits your brand colors from Portal Settings:
 - **Secondary Color** - Highlights, backgrounds
 
 Configure colors in HEX format (e.g., `#881337`) in your Affonso dashboard under Portal Settings.
-
-## Affiliate Groups
-
-Assign users to different commission tiers by passing a `groupId`:
-
-```json
-{
-  "programId": "prog_abc123",
-  "partner": {
-    "email": "vip@example.com"
-  },
-  "groupId": "grp_premium"
-}
-```
-
-Users without a specified group are assigned to your program's default group.
