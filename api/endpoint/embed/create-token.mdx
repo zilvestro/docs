@@ -1,0 +1,184 @@
+---
+title: "Create Embed Token"
+api: "POST /v1/embed/token"
+description: "Generate a short-lived token for the embedded referral dashboard"
+---
+
+Generate a token to display an affiliate's dashboard within your application. The token automatically creates the affiliate account if it doesn't exist.
+
+## Body Parameters
+
+<ParamField body="programId" type="string" required>
+  The affiliate program ID. Must be an active program belonging to your team.
+</ParamField>
+
+<ParamField body="partner" type="object" required>
+  Partner/affiliate information.
+
+  <Expandable title="Partner Object Properties">
+    <ParamField body="email" type="string" required>
+      Partner's email address. Used to identify or create the affiliate account.
+    </ParamField>
+
+    <ParamField body="name" type="string">
+      Partner's display name. Used when creating a new affiliate.
+    </ParamField>
+
+    <ParamField body="image" type="string">
+      Partner's avatar URL. Must be a valid URL.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="groupId" type="string">
+  Optional affiliate group ID. If not provided, uses the program's default group. Use this to assign new affiliates to specific commission tiers or groups.
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses.
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  The embed token data.
+
+  <Expandable title="Data Object Properties">
+    <ResponseField name="publicToken" type="string">
+      The token to use for embed data requests. Valid for 30 minutes.
+    </ResponseField>
+
+    <ResponseField name="expiresAt" type="string">
+      ISO 8601 timestamp when the token expires.
+    </ResponseField>
+
+    <ResponseField name="link" type="string">
+      The affiliate's full referral link.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Behavior
+
+1. **User Lookup/Creation**: If no user exists with the provided email, a new user is created.
+2. **Affiliate Lookup/Creation**: If no affiliate exists for this user and program, one is created.
+3. **Group Assignment**: New affiliates are assigned to the specified `groupId` or the program's default group.
+4. **Partnership**: New affiliates are auto-approved for the program.
+5. **Tracking ID**: A unique tracking ID is generated from the name or email.
+6. **Token Cleanup**: Previous tokens for this affiliate/program are deleted.
+
+<RequestExample>
+```bash cURL
+curl -X POST "https://api.affonso.io/v1/embed/token" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "programId": "cm7xutqbb0001yfkcrnpextmp",
+    "partner": {
+      "email": "affiliate@example.com",
+      "name": "John Doe",
+      "image": "https://example.com/avatar.jpg"
+    }
+  }'
+```
+
+```javascript Node.js
+const response = await fetch('https://api.affonso.io/v1/embed/token', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer sk_live_your_api_key',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    programId: 'cm7xutqbb0001yfkcrnpextmp',
+    partner: {
+      email: 'affiliate@example.com',
+      name: 'John Doe',
+    },
+  }),
+});
+
+const { data } = await response.json();
+console.log(data.publicToken);
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    'https://api.affonso.io/v1/embed/token',
+    headers={
+        'Authorization': 'Bearer sk_live_your_api_key',
+        'Content-Type': 'application/json',
+    },
+    json={
+        'programId': 'cm7xutqbb0001yfkcrnpextmp',
+        'partner': {
+            'email': 'affiliate@example.com',
+            'name': 'John Doe',
+        },
+    }
+)
+
+data = response.json()['data']
+print(data['publicToken'])
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "publicToken": "a1b2c3d4e5f6789...",
+    "expiresAt": "2024-01-15T10:30:00.000Z",
+    "link": "https://yourcompany.affonso.io?via=john-doe"
+  }
+}
+```
+
+```json Error - Program Not Found
+{
+  "success": false,
+  "error": {
+    "code": "PROGRAM_NOT_FOUND",
+    "message": "Program not found or not active"
+  }
+}
+```
+
+```json Error - Validation Error
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request data",
+    "details": {
+      "partner": ["Required"]
+    }
+  }
+}
+```
+</ResponseExample>
+
+## With Custom Group
+
+Assign new affiliates to a specific group with different commission rates:
+
+```bash
+curl -X POST "https://api.affonso.io/v1/embed/token" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "programId": "cm7xutqbb0001yfkcrnpextmp",
+    "partner": {
+      "email": "vip@example.com",
+      "name": "VIP Partner"
+    },
+    "groupId": "cm8abc123vip_group_id"
+  }'
+```
+
+<Warning>
+  Tokens expire after 30 minutes. Generate a new token on each page load rather than caching tokens.
+</Warning>

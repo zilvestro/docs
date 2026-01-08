@@ -33,7 +33,8 @@
             "pages": [
               "api/introduction",
               "api/authentication",
-              "api/rate-limits"
+              "api/rate-limits",
+              "api/embedded-dashboard"
             ]
           },
           {
@@ -72,6 +73,14 @@
               "api/endpoint/payouts/list",
               "api/endpoint/payouts/get",
               "api/endpoint/payouts/update"
+            ]
+          },
+          {
+            "group": "Embed",
+            "pages": [
+              "api/endpoint/embed/create-token",
+              "api/endpoint/embed/get-data",
+              "api/endpoint/embed/create-coupon"
             ]
           }
         ]
