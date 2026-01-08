@@ -16,20 +16,17 @@ The embedded dashboard displays:
 
 ## Integration Flow
 
-```
-Your Server                    Affonso API                    Your Frontend
-     │                              │                              │
-     │  POST /v1/embed/token        │                              │
-     │  (with user data)            │                              │
-     │─────────────────────────────▶│                              │
-     │                              │                              │
-     │◀─────────────────────────────│                              │
-     │  { publicToken, link }       │                              │
-     │                              │                              │
-     │──────────────────────────────┼─────────────────────────────▶│
-     │                              │         Render iframe        │
-     │                              │         with token           │
-```
+<Steps>
+  <Step title="Your Server calls Affonso API">
+    `POST /v1/embed/token` with user data (email, name, image)
+  </Step>
+  <Step title="Affonso returns token">
+    Response includes `publicToken`, `expiresAt`, and affiliate `link`
+  </Step>
+  <Step title="Frontend renders iframe">
+    Embed the dashboard using the token in the iframe URL
+  </Step>
+</Steps>
 
 ## Step 1: Generate Token
 
@@ -200,7 +197,58 @@ export default function ReferralsPage() {
   Always generate tokens server-side. Never expose your API key to the client.
 </Warning>
 
-## Theming
+## Customization
+
+### URL Parameters
+
+Add these parameters to the iframe URL for customization:
+
+| Parameter | Values | Description |
+|-----------|--------|-------------|
+| `theme` | `light`, `dark`, `system` | Color scheme. Default: `light` |
+| `bg` | HEX color (without `#`) | Background color. Use this to match your app's background. Example: `0f0f0f` for dark, `ffffff` for white |
+| `lang` | Language code | UI language. Default: `en`. See supported languages below |
+
+### Supported Languages
+
+The dashboard supports 14 languages:
+
+| Code | Language |
+|------|----------|
+| `en` | English (default) |
+| `de` | Deutsch |
+| `fr` | Français |
+| `es` | Español |
+| `it` | Italiano |
+| `pt` | Português |
+| `nl` | Nederlands |
+| `pl` | Polski |
+| `tr` | Türkçe |
+| `ja` | 日本語 |
+| `zh` | 中文 |
+| `ko` | 한국어 |
+| `ru` | Русский |
+| `ar` | العربية |
+
+If an invalid language code is provided, the dashboard falls back to English.
+
+**Example with dark mode, custom background, and German:**
+```html
+<iframe
+  src="https://affonso.io/embed/referrals?token=xxx&theme=dark&bg=0f0f0f&lang=de"
+  ...
+/>
+```
+
+**Example with light mode and Japanese:**
+```html
+<iframe
+  src="https://affonso.io/embed/referrals?token=xxx&theme=light&lang=ja"
+  ...
+/>
+```
+
+### Brand Colors
 
 The dashboard inherits your brand colors from Portal Settings:
 
