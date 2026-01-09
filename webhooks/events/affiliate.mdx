@@ -55,6 +55,18 @@ Affiliate events are triggered when changes occur to affiliate accounts in your 
 <ResponseField name="name" type="string | null">
   Affiliate's display name
 </ResponseField>
+
+<ResponseField name="externalUserId" type="string | null">
+  Customer's external user ID for linking referral users
+</ResponseField>
+
+<ResponseField name="metadata" type="object | null">
+  Custom key-value data stored with the affiliate
+</ResponseField>
+
+<ResponseField name="groupId" type="string | null">
+  Affiliate's group ID
+</ResponseField>
 </Expandable>
 </ResponseField>
 
@@ -71,7 +83,13 @@ Affiliate events are triggered when changes occur to affiliate accounts in your 
     "trackingId": "john-doe",
     "status": "PENDING",
     "email": "john@example.com",
-    "name": "John Doe"
+    "name": "John Doe",
+    "externalUserId": "user_123",
+    "metadata": {
+      "plan": "pro",
+      "signup_source": "landing_page"
+    },
+    "groupId": "grp_abc123"
   }
 }
 ```
@@ -87,7 +105,12 @@ Affiliate events are triggered when changes occur to affiliate accounts in your 
     "trackingId": "john-doe",
     "status": "ACTIVE",
     "email": "john@example.com",
-    "name": "John Doe"
+    "name": "John Doe",
+    "externalUserId": "user_123",
+    "metadata": {
+      "plan": "pro"
+    },
+    "groupId": "grp_abc123"
   }
 }
 ```
@@ -103,7 +126,12 @@ Affiliate events are triggered when changes occur to affiliate accounts in your 
     "trackingId": "john-doe",
     "status": "ACTIVE",
     "email": "john@example.com",
-    "name": "John Doe"
+    "name": "John Doe",
+    "externalUserId": "user_456",
+    "metadata": {
+      "plan": "enterprise"
+    },
+    "groupId": "grp_abc123"
   }
 }
 ```
@@ -117,7 +145,11 @@ Affiliate events are triggered when changes occur to affiliate accounts in your 
     "affiliateId": "aff_xyz789",
     "affiliateProgramId": "prog_abc123",
     "trackingId": "john-doe",
-    "email": "john@example.com"
+    "email": "john@example.com",
+    "externalUserId": "user_123",
+    "metadata": {
+      "plan": "pro"
+    }
   }
 }
 ```

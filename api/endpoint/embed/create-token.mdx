@@ -34,6 +34,14 @@ Generate a token to display an affiliate's dashboard within your application. Th
   Optional affiliate group ID. If not provided, uses the program's default group. Use this to assign new affiliates to specific commission tiers or groups.
 </ParamField>
 
+<ParamField body="externalUserId" type="string">
+  Your external user ID for linking referral users to your own user system. Useful for matching affiliates back to users in your application. Maximum 255 characters. If provided and the affiliate already exists, this will update their external user ID.
+</ParamField>
+
+<ParamField body="metadata" type="object">
+  Custom key-value data for storing additional information about the affiliate (e.g., `{"plan": "pro", "signup_source": "app"}`). If provided and the affiliate already exists, this will update their metadata.
+</ParamField>
+
 ## Response
 
 <ResponseField name="success" type="boolean">
@@ -95,6 +103,10 @@ const response = await fetch('https://api.affonso.io/v1/embed/token', {
       email: 'affiliate@example.com',
       name: 'John Doe',
     },
+    externalUserId: 'user_123',
+    metadata: {
+      plan: 'pro',
+    },
   }),
 });
 
@@ -116,6 +128,10 @@ response = requests.post(
         'partner': {
             'email': 'affiliate@example.com',
             'name': 'John Doe',
+        },
+        'externalUserId': 'user_123',
+        'metadata': {
+            'plan': 'pro',
         },
     }
 )

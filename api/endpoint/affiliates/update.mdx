@@ -52,6 +52,14 @@ All body parameters are optional. Only include the fields you want to update.
   Partnership approval status. Valid values: `pending`, `approved`, `rejected`.
 </ParamField>
 
+<ParamField body="external_user_id" type="string | null">
+  Your external user ID for linking referral users to your own user system. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="metadata" type="object | null">
+  Custom key-value data for storing additional information about the affiliate. Set to `null` to clear.
+</ParamField>
+
 ## Response
 
 The response includes the updated affiliate object with the same structure as the create endpoint.
@@ -100,6 +108,14 @@ The response includes the updated affiliate object with the same structure as th
   The affiliate group ID if assigned, otherwise `null`
 </ResponseField>
 
+<ResponseField name="external_user_id" type="string | null">
+  Your external user ID if set, otherwise `null`
+</ResponseField>
+
+<ResponseField name="metadata" type="object | null">
+  Custom key-value data if set, otherwise `null`
+</ResponseField>
+
 <ResponseField name="created_at" type="string">
   ISO 8601 timestamp of when the affiliate was created
 </ResponseField>
@@ -118,7 +134,11 @@ curl -X PUT "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak" \
     "payout_details": {
       "email": "john@example.com"
     },
-    "status": "approved"
+    "status": "approved",
+    "external_user_id": "user_456",
+    "metadata": {
+      "plan": "enterprise"
+    }
   }'
 ```
 </RequestExample>
@@ -137,6 +157,10 @@ curl -X PUT "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak" \
     "onboarding_completed": false,
     "program_id": "cm7xutqbb0001yfkcrnpextmp",
     "group_id": null,
+    "external_user_id": "user_456",
+    "metadata": {
+      "plan": "enterprise"
+    },
     "created_at": "2024-01-15T10:30:00Z"
   }
 }
