@@ -34,6 +34,14 @@ description: "Create a new referral or convert an existing click to a referral"
   Optional ISO 8601 timestamp to backdate the referral creation. If not provided, uses the current timestamp.
 </ParamField>
 
+<ParamField body="name" type="string">
+  The customer's name. Used to identify the referred customer.
+</ParamField>
+
+<ParamField body="metadata" type="object">
+  Custom key-value data for storing additional information about the referral. You can store any JSON-serializable data here.
+</ParamField>
+
 ## Response
 
 The response includes the created referral object.
@@ -74,6 +82,14 @@ The response includes the created referral object.
   The referral status (lowercase): `lead`, `trialing`, `customer`, `active`, `canceled`, `rejected`
 </ResponseField>
 
+<ResponseField name="name" type="string | null">
+  The customer's name if provided
+</ResponseField>
+
+<ResponseField name="metadata" type="object | null">
+  Custom key-value data if provided
+</ResponseField>
+
 <ResponseField name="created_at" type="string">
   ISO 8601 timestamp of when the referral was created
 </ResponseField>
@@ -93,7 +109,12 @@ curl -X POST "https://api.affonso.io/v1/referrals" \
     "affiliate_id": "aff_123abc",
     "email": "newcustomer@example.com",
     "customer_id": "cust_456",
-    "status": "customer"
+    "status": "customer",
+    "name": "John Doe",
+    "metadata": {
+      "plan": "enterprise",
+      "source": "webinar"
+    }
   }'
 ```
 </RequestExample>
@@ -110,6 +131,11 @@ curl -X POST "https://api.affonso.io/v1/referrals" \
     "customer_id": "cust_456",
     "subscription_id": null,
     "status": "customer",
+    "name": "John Doe",
+    "metadata": {
+      "plan": "enterprise",
+      "source": "webinar"
+    },
     "created_at": "2024-01-20T15:30:00Z",
     "converted_at": "2024-01-20T15:30:00Z"
   }

@@ -1,7 +1,7 @@
 ---
 title: "Update Commission"
 api: "PUT /v1/commissions/{id}"
-description: "Update a commission's status, transaction status, or hold period"
+description: "Update a commission's status, transaction status, hold period, or amounts"
 ---
 
 ## Path Parameters
@@ -24,6 +24,22 @@ All body parameters are optional. Only include the fields you want to update.
 
 <ParamField body="hold_period_days" type="integer">
   Number of days to hold commission before it's ready for payment. Must be a non-negative integer.
+</ParamField>
+
+<ParamField body="sale_amount" type="number">
+  Update the sale/transaction amount. Must be a positive number.
+</ParamField>
+
+<ParamField body="sale_amount_currency" type="string">
+  Update the currency code for the sale amount. Must be a 3-letter currency code (e.g., `USD`, `EUR`).
+</ParamField>
+
+<ParamField body="commission_amount" type="number">
+  Update the commission amount to be paid. Must be a non-negative number.
+</ParamField>
+
+<ParamField body="commission_currency" type="string">
+  Update the currency code for the commission. Must be a 3-letter currency code (e.g., `USD`, `EUR`).
 </ParamField>
 
 ## Response
@@ -104,7 +120,11 @@ curl -X PUT "https://api.affonso.io/v1/commissions/com_abc123" \
   -H "Authorization: Bearer sk_live_your_api_key" \
   -H "Content-Type: application/json" \
   -d '{
-    "status": "paid"
+    "status": "ready_for_payment",
+    "sale_amount": 149.00,
+    "sale_amount_currency": "USD",
+    "commission_amount": 14.90,
+    "commission_currency": "USD"
   }'
 ```
 </RequestExample>
@@ -118,11 +138,11 @@ curl -X PUT "https://api.affonso.io/v1/commissions/com_abc123" \
     "referral_id": "ref_456def",
     "affiliate_id": "aff_789ghi",
     "program_id": "prog_123xyz",
-    "sale_amount": 99.00,
+    "sale_amount": 149.00,
     "sale_amount_currency": "USD",
-    "commission_amount": 9.90,
+    "commission_amount": 14.90,
     "commission_currency": "USD",
-    "status": "paid",
+    "status": "ready_for_payment",
     "sales_status": "complete",
     "hold_period_days": null,
     "payment_intent_id": null,
