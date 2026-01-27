@@ -86,6 +86,7 @@ curl -X POST "https://api.affonso.io/v1/embed/token" \
     "publicToken": "emb_abc123def456...",
     "expiresAt": "2024-01-15T10:30:00Z",
     "link": "https://yoursite.com?via=jane-smith",
+    "portalUrl": "https://affiliates.yoursite.com",
     "partnershipStatus": "APPROVED"
   }
 }
@@ -93,7 +94,7 @@ curl -X POST "https://api.affonso.io/v1/embed/token" \
 
 <Note>
   New users are automatically registered as affiliates. Their partnership status depends on your program's **Access Mode** setting:
-  - **Open** (auto-approve): `partnershipStatus` is `APPROVED` – affiliate can start referring immediately
+  - **Public** (auto-approve): `partnershipStatus` is `APPROVED` – affiliate can start referring immediately
   - **Private** (manual approval): `partnershipStatus` is `PENDING` – requires manual approval in your dashboard
 </Note>
 
