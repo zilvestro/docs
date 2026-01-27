@@ -21,7 +21,7 @@ The embedded dashboard displays:
     `POST /v1/embed/token` with user data (email, name, image)
   </Step>
   <Step title="Affonso returns token">
-    Response includes `publicToken`, `expiresAt`, and affiliate `link`
+    Response includes `publicToken`, `expiresAt`, affiliate `link`, and `partnershipStatus`
   </Step>
   <Step title="Frontend renders iframe">
     Embed the dashboard using the token in the iframe URL
@@ -85,13 +85,16 @@ curl -X POST "https://api.affonso.io/v1/embed/token" \
   "data": {
     "publicToken": "emb_abc123def456...",
     "expiresAt": "2024-01-15T10:30:00Z",
-    "link": "https://yoursite.com?via=jane-smith"
+    "link": "https://yoursite.com?via=jane-smith",
+    "partnershipStatus": "APPROVED"
   }
 }
 ```
 
 <Note>
-  New users are automatically registered as affiliates and approved for your program.
+  New users are automatically registered as affiliates. Their partnership status depends on your program's **Access Mode** setting:
+  - **Open** (auto-approve): `partnershipStatus` is `APPROVED` – affiliate can start referring immediately
+  - **Private** (manual approval): `partnershipStatus` is `PENDING` – requires manual approval in your dashboard
 </Note>
 
 ## Step 2: Render the Dashboard

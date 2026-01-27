@@ -63,6 +63,14 @@ Generate a token to display an affiliate's dashboard within your application. Th
     <ResponseField name="link" type="string">
       The affiliate's full referral link.
     </ResponseField>
+
+    <ResponseField name="partnershipStatus" type="string">
+      The affiliate's partnership status with the program. Either `APPROVED` or `PENDING`.
+      - `APPROVED`: Affiliate can immediately start referring
+      - `PENDING`: Affiliate needs manual approval before they can earn commissions
+
+      This depends on your program's **Access Mode** setting (Public vs Private).
+    </ResponseField>
   </Expandable>
 </ResponseField>
 
@@ -71,7 +79,9 @@ Generate a token to display an affiliate's dashboard within your application. Th
 1. **User Lookup/Creation**: If no user exists with the provided email, a new user is created.
 2. **Affiliate Lookup/Creation**: If no affiliate exists for this user and program, one is created.
 3. **Group Assignment**: New affiliates are assigned to the specified `groupId` or the program's default group.
-4. **Partnership**: New affiliates are auto-approved for the program.
+4. **Partnership**: New affiliates are enrolled in the program with a status based on your program's **Access Mode** setting:
+   - **Public** (auto-approve) → Partnership status is `APPROVED` (affiliate can start referring immediately)
+   - **Private** (manual approval) → Partnership status is `PENDING` (requires manual approval in dashboard)
 5. **Tracking ID**: A unique tracking ID is generated from the name or email.
 6. **Token Cleanup**: Previous tokens for this affiliate/program are deleted.
 
@@ -148,7 +158,8 @@ print(data['publicToken'])
   "data": {
     "publicToken": "a1b2c3d4e5f6789...",
     "expiresAt": "2024-01-15T10:30:00.000Z",
-    "link": "https://yourcompany.com?via=john-doe"
+    "link": "https://yourcompany.com?via=john-doe",
+    "partnershipStatus": "APPROVED"
   }
 }
 ```
