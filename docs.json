@@ -136,7 +136,8 @@
               "webhooks/events/affiliate",
               "webhooks/events/referral",
               "webhooks/events/transaction",
-              "webhooks/events/payout"
+              "webhooks/events/payout",
+              "webhooks/events/coupon"
             ]
           },
           {

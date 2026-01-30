@@ -1,0 +1,91 @@
+---
+title: 'Coupon Events'
+description: 'Webhook events for affiliate coupon lifecycle changes'
+---
+
+Coupon events are triggered when coupons are created or deleted for affiliates in your program.
+
+## Events
+
+| Event | Description |
+|-------|-------------|
+| `coupon.created` | New coupon is created for an affiliate |
+| `coupon.deleted` | Coupon is deleted |
+
+## Payload
+
+<ResponseField name="id" type="string">
+  Unique event identifier
+</ResponseField>
+
+<ResponseField name="type" type="string">
+  Event type (e.g., `coupon.created`)
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  ISO 8601 timestamp of when the event occurred
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Event payload data.
+
+<Expandable title="Data Object Properties">
+<ResponseField name="id" type="string">
+  Unique identifier for the coupon
+</ResponseField>
+
+<ResponseField name="affiliate_id" type="string">
+  The affiliate this coupon belongs to
+</ResponseField>
+
+<ResponseField name="program_id" type="string">
+  The program this coupon belongs to
+</ResponseField>
+
+<ResponseField name="code" type="string">
+  The coupon/promo code string
+</ResponseField>
+
+<ResponseField name="provider" type="string | null">
+  Payment provider (e.g., `stripe`, `paddle`)
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp when the coupon was created
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+## Example Payloads
+
+```json coupon.created
+{
+  "id": "evt_abc123",
+  "type": "coupon.created",
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "data": {
+    "id": "cpn_xyz789",
+    "affiliate_id": "aff_abc123",
+    "program_id": "prog_def456",
+    "code": "JOHN20",
+    "provider": "stripe",
+    "created_at": "2024-01-15T10:30:00.000Z"
+  }
+}
+```
+
+```json coupon.deleted
+{
+  "id": "evt_abc123",
+  "type": "coupon.deleted",
+  "createdAt": "2024-01-15T10:30:00.000Z",
+  "data": {
+    "id": "cpn_xyz789",
+    "affiliate_id": "aff_abc123",
+    "program_id": "prog_def456",
+    "code": "JOHN20",
+    "provider": "stripe",
+    "created_at": "2024-01-15T10:30:00.000Z"
+  }
+}
+```
