@@ -119,7 +119,7 @@ Retrieve detailed information about a specific affiliate.
 </ParamField>
 
 <ParamField body="expand" type="array">
-  Include related data: `promoCodes`, `commissionOverrides`
+  Include related data: `promoCodes`, `commissionOverrides`, `invoiceDetails`, `payoutMethod`, `onboardingResponses`
 </ParamField>
 
 <ParamField body="responseFormat" type="string" default="markdown">
@@ -132,6 +132,7 @@ Retrieve detailed information about a specific affiliate.
 Get affiliate aff_abc123
 Show me details for affiliate aff_xyz789 with their promo codes
 Get affiliate info including commission overrides
+Show affiliate aff_abc123 with their onboarding responses
 ```
 
 ### Response
@@ -167,6 +168,31 @@ Get affiliate info including commission overrides
       "active": true
     }
   ],
+  "onboardingResponses": {
+    "form_name": "Affiliate Onboarding",
+    "form_description": "Complete this form to get started",
+    "completed_at": "2024-01-15T10:00:00.000Z",
+    "questions": [
+      {
+        "id": "q1",
+        "question": "What is your primary marketing channel?",
+        "type": "single_choice",
+        "is_required": true,
+        "options": ["Social Media", "Email", "Blog", "Other"],
+        "order": 1,
+        "answer": "Social Media"
+      },
+      {
+        "id": "q2",
+        "question": "Tell us about your audience",
+        "type": "textarea",
+        "is_required": false,
+        "options": [],
+        "order": 2,
+        "answer": "Tech-savvy professionals aged 25-45"
+      }
+    ]
+  },
   "createdAt": "2024-01-15T10:00:00.000Z"
 }
 ```

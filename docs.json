@@ -93,6 +93,35 @@
         ]
       },
       {
+        "tab": "MCP",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "mcp/introduction",
+              "mcp/examples"
+            ]
+          },
+          {
+            "group": "Setup",
+            "pages": [
+              "mcp/setup/claude-desktop",
+              "mcp/setup/cursor",
+              "mcp/setup/other-clients"
+            ]
+          },
+          {
+            "group": "Tools",
+            "pages": [
+              "mcp/tools/affiliates",
+              "mcp/tools/referrals",
+              "mcp/tools/commissions",
+              "mcp/tools/payouts"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Webhooks",
         "groups": [
           {
