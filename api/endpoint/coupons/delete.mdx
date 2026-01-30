@@ -1,0 +1,66 @@
+---
+title: "Delete Coupon"
+api: "DELETE /v1/coupons/{id}"
+description: "Permanently remove a promotional coupon"
+---
+
+Permanently delete a coupon. The coupon is also deleted at your payment provider.
+
+<Warning>
+This action cannot be undone. Once deleted, the coupon code becomes available for reuse.
+</Warning>
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the coupon to delete.
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Confirmation object containing the deleted coupon's ID.
+
+<Expandable title="Data Object Properties">
+<ResponseField name="id" type="string">
+  The ID of the deleted coupon
+</ResponseField>
+
+<ResponseField name="deleted" type="boolean">
+  Always `true` to confirm deletion
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE "https://api.affonso.io/v1/coupons/cpn_abc123" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "cpn_abc123",
+    "deleted": true
+  }
+}
+```
+</ResponseExample>
+
+## Error Responses
+
+<ResponseField name="404 Not Found">
+  Returned when the coupon doesn't exist or has already been deleted.
+</ResponseField>
+
+<ResponseField name="502 Bad Gateway">
+  Returned when the payment provider fails to delete the coupon. The coupon remains in Affonso's database.
+</ResponseField>

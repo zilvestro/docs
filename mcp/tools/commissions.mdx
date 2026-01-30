@@ -1,0 +1,354 @@
+---
+title: 'Commission Tools'
+description: 'MCP tools for managing commission transactions'
+---
+
+## Overview
+
+The commission tools allow you to track and manage commission transactions for your affiliates. All tools support both **Markdown** and **JSON** response formats.
+
+## Available Tools
+
+| Tool | Description | Permission |
+|------|-------------|------------|
+| `affonso_list_commissions` | List commission transactions | `read:commissions` |
+| `affonso_get_commission` | Get a single commission | `read:commissions` |
+| `affonso_create_commission` | Create a new commission | `write:commissions` |
+| `affonso_update_commission` | Update commission status | `write:commissions` |
+| `affonso_delete_commission` | Delete a commission | `delete:commissions` |
+
+## Commission Statuses
+
+| Status | Description |
+|--------|-------------|
+| `PENDING` | Commission created, awaiting approval |
+| `APPROVED` | Commission approved, ready for payout |
+| `PAID` | Commission has been paid out |
+| `REJECTED` | Commission was rejected |
+| `REFUNDED` | Commission was refunded due to return/chargeback |
+
+---
+
+## affonso_list_commissions
+
+List and filter commission transactions.
+
+### Parameters
+
+<ParamField body="page" type="number" default="1">
+  Page number for pagination
+</ParamField>
+
+<ParamField body="limit" type="number" default="50">
+  Results per page (max 100)
+</ParamField>
+
+<ParamField body="affiliateId" type="string">
+  Filter by affiliate ID
+</ParamField>
+
+<ParamField body="status" type="string">
+  Filter by status: `PENDING`, `APPROVED`, `PAID`, `REJECTED`, `REFUNDED`
+</ParamField>
+
+<ParamField body="startDate" type="string">
+  Filter from date (ISO 8601)
+</ParamField>
+
+<ParamField body="endDate" type="string">
+  Filter to date (ISO 8601)
+</ParamField>
+
+<ParamField body="responseFormat" type="string" default="markdown">
+  Response format: `markdown` or `json`
+</ParamField>
+
+### Example Prompts
+
+```
+List all commissions
+Show pending commissions
+Get commissions for affiliate aff_abc123
+Show approved commissions from last month
+What commissions are ready for payout?
+```
+
+### Response
+
+<CodeGroup>
+```markdown Markdown Format
+## Commissions (Page 1 of 3)
+
+### txn_abc123
+- **Affiliate:** John Smith (aff_123)
+- **Amount:** $9.90
+- **Sale Amount:** $99.00
+- **Status:** APPROVED
+- **Created:** Jan 15, 2024
+
+### txn_def456
+- **Affiliate:** Jane Doe (aff_456)
+- **Amount:** $15.00
+- **Sale Amount:** $150.00
+- **Status:** PENDING
+- **Created:** Jan 14, 2024
+
+---
+**Total:** $24.90 across 2 commissions
+```
+
+```json JSON Format
+{
+  "commissions": [
+    {
+      "id": "txn_abc123",
+      "affiliateId": "aff_123",
+      "affiliateName": "John Smith",
+      "amount": 990,
+      "saleAmount": 9900,
+      "status": "APPROVED",
+      "createdAt": "2024-01-15T10:00:00.000Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 50,
+    "total": 25,
+    "totalPages": 1
+  },
+  "summary": {
+    "totalAmount": 2490
+  }
+}
+```
+</CodeGroup>
+
+---
+
+## affonso_get_commission
+
+Get detailed information about a specific commission.
+
+### Parameters
+
+<ParamField body="id" type="string" required>
+  The commission ID (starts with `txn_`)
+</ParamField>
+
+<ParamField body="responseFormat" type="string" default="markdown">
+  Response format: `markdown` or `json`
+</ParamField>
+
+### Example Prompts
+
+```
+Get commission txn_abc123
+Show details for commission txn_xyz789
+What's the status of transaction txn_pending123
+```
+
+### Response
+
+<CodeGroup>
+```markdown Markdown Format
+## Commission: txn_abc123
+
+| Field | Value |
+|-------|-------|
+| Affiliate | John Smith (aff_123) |
+| Commission | $9.90 |
+| Sale Amount | $99.00 |
+| Rate | 10% |
+| Status | APPROVED |
+| Referral | ref_xyz789 |
+| Created | Jan 15, 2024 |
+| Approved | Jan 16, 2024 |
+
+### Notes
+Commission approved after 30-day refund window.
+```
+
+```json JSON Format
+{
+  "id": "txn_abc123",
+  "affiliateId": "aff_123",
+  "affiliateName": "John Smith",
+  "amount": 990,
+  "saleAmount": 9900,
+  "rate": 10,
+  "status": "APPROVED",
+  "referralId": "ref_xyz789",
+  "createdAt": "2024-01-15T10:00:00.000Z",
+  "approvedAt": "2024-01-16T10:00:00.000Z"
+}
+```
+</CodeGroup>
+
+---
+
+## affonso_create_commission
+
+Create a new commission transaction manually.
+
+### Parameters
+
+<ParamField body="affiliateId" type="string" required>
+  The affiliate ID for this commission
+</ParamField>
+
+<ParamField body="amount" type="number" required>
+  Commission amount in cents
+</ParamField>
+
+<ParamField body="saleAmount" type="number">
+  Original sale amount in cents
+</ParamField>
+
+<ParamField body="referralId" type="string">
+  Associated referral ID
+</ParamField>
+
+<ParamField body="status" type="string" default="PENDING">
+  Initial status: `PENDING`, `APPROVED`
+</ParamField>
+
+<ParamField body="description" type="string">
+  Description or notes
+</ParamField>
+
+<ParamField body="responseFormat" type="string" default="markdown">
+  Response format: `markdown` or `json`
+</ParamField>
+
+### Example Prompts
+
+```
+Create a $50 commission for affiliate aff_abc123
+Add a commission of $25.50 for aff_xyz from sale of $255
+Create an approved commission for aff_123 with amount $100
+Record a bonus commission of $50 for affiliate aff_top with description "Q1 bonus"
+```
+
+### Response
+
+```markdown
+## Commission Created
+
+| Field | Value |
+|-------|-------|
+| ID | txn_new123 |
+| Affiliate | John Smith (aff_abc123) |
+| Commission | $50.00 |
+| Status | PENDING |
+| Created | Jan 15, 2024 |
+
+The commission is pending approval.
+```
+
+---
+
+## affonso_update_commission
+
+Update an existing commission's status or information.
+
+### Parameters
+
+<ParamField body="id" type="string" required>
+  The commission ID to update
+</ParamField>
+
+<ParamField body="status" type="string">
+  New status: `PENDING`, `APPROVED`, `REJECTED`, `REFUNDED`
+</ParamField>
+
+<ParamField body="amount" type="number">
+  Updated commission amount in cents
+</ParamField>
+
+<ParamField body="description" type="string">
+  Updated description
+</ParamField>
+
+<ParamField body="responseFormat" type="string" default="markdown">
+  Response format: `markdown` or `json`
+</ParamField>
+
+### Example Prompts
+
+```
+Approve commission txn_abc123
+Reject commission txn_xyz due to fraud
+Mark commission txn_123 as refunded
+Update commission txn_456 amount to $75
+```
+
+### Response
+
+```markdown
+## Commission Updated
+
+**txn_abc123** has been updated:
+- Status: PENDING → APPROVED
+
+This commission is now ready for payout.
+```
+
+---
+
+## affonso_delete_commission
+
+<Warning>
+This is a destructive operation. Commissions that have been paid cannot be deleted.
+</Warning>
+
+### Parameters
+
+<ParamField body="id" type="string" required>
+  The commission ID to delete
+</ParamField>
+
+<ParamField body="responseFormat" type="string" default="markdown">
+  Response format: `markdown` or `json`
+</ParamField>
+
+### Example Prompts
+
+```
+Delete commission txn_abc123
+Remove commission txn_test456
+```
+
+### Response
+
+```markdown
+## Commission Deleted
+
+Commission **txn_abc123** has been permanently deleted.
+```
+
+---
+
+## Bulk Operations
+
+### Approve Multiple Commissions
+
+```
+"List all pending commissions from before January 1st"
+"Approve commissions txn_abc, txn_def, and txn_ghi"
+```
+
+### Monthly Commission Report
+
+```
+"Show me all approved commissions from last month grouped by affiliate"
+"What's the total commission amount for January?"
+```
+
+## Error Handling
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| `NOT_FOUND` | Commission ID doesn't exist | Verify the ID is correct |
+| `ALREADY_PAID` | Cannot modify paid commission | Commission is locked after payout |
+| `INVALID_TRANSITION` | Invalid status change | Check allowed status transitions |
+| `PERMISSION_DENIED` | Missing required scope | Check your API key permissions |

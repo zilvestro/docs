@@ -1,0 +1,352 @@
+---
+title: 'Referral Tools'
+description: 'MCP tools for tracking referrals, clicks, leads, and conversions'
+---
+
+## Overview
+
+The referral tools allow you to track and manage the complete referral lifecycle from initial click to conversion. All tools support both **Markdown** and **JSON** response formats.
+
+## Available Tools
+
+| Tool | Description | Permission |
+|------|-------------|------------|
+| `affonso_list_referrals` | List referrals with filtering | `read:referrals` |
+| `affonso_get_referral` | Get a single referral by ID | `read:referrals` |
+| `affonso_create_referral` | Create a new referral/click | `write:referrals` |
+| `affonso_update_referral` | Update referral status | `write:referrals` |
+| `affonso_delete_referral` | Delete a referral | `delete:referrals` |
+
+## Referral Types
+
+| Type | Description |
+|------|-------------|
+| `CLICK` | Initial click on affiliate link |
+| `LEAD` | Signed up but not converted |
+| `CONVERSION` | Completed purchase/signup |
+| `REJECTED` | Referral was rejected |
+| `CANCELLED` | Referral was cancelled |
+
+---
+
+## affonso_list_referrals
+
+List and filter referrals across your program.
+
+### Parameters
+
+<ParamField body="page" type="number" default="1">
+  Page number for pagination
+</ParamField>
+
+<ParamField body="limit" type="number" default="50">
+  Results per page (max 100)
+</ParamField>
+
+<ParamField body="affiliateId" type="string">
+  Filter by affiliate ID
+</ParamField>
+
+<ParamField body="type" type="string">
+  Filter by type: `CLICK`, `LEAD`, `CONVERSION`, `REJECTED`, `CANCELLED`
+</ParamField>
+
+<ParamField body="startDate" type="string">
+  Filter from date (ISO 8601)
+</ParamField>
+
+<ParamField body="endDate" type="string">
+  Filter to date (ISO 8601)
+</ParamField>
+
+<ParamField body="responseFormat" type="string" default="markdown">
+  Response format: `markdown` or `json`
+</ParamField>
+
+### Example Prompts
+
+```
+List all referrals
+Show conversions from last month
+List referrals for affiliate aff_abc123
+Show all pending leads
+Get referrals between January 1 and January 31
+```
+
+### Response
+
+<CodeGroup>
+```markdown Markdown Format
+## Referrals (Page 1 of 5)
+
+### ref_abc123
+- **Type:** CONVERSION
+- **Affiliate:** John Smith (aff_123)
+- **Customer:** customer@example.com
+- **Amount:** $99.00
+- **Created:** Jan 15, 2024
+
+### ref_def456
+- **Type:** LEAD
+- **Affiliate:** Jane Doe (aff_456)
+- **Customer:** lead@example.com
+- **Created:** Jan 14, 2024
+
+---
+Showing 2 of 50 referrals
+```
+
+```json JSON Format
+{
+  "referrals": [
+    {
+      "id": "ref_abc123",
+      "type": "CONVERSION",
+      "affiliateId": "aff_123",
+      "affiliateName": "John Smith",
+      "customerEmail": "customer@example.com",
+      "amount": 9900,
+      "createdAt": "2024-01-15T10:00:00.000Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 50,
+    "total": 50,
+    "totalPages": 1
+  }
+}
+```
+</CodeGroup>
+
+---
+
+## affonso_get_referral
+
+Get detailed information about a specific referral.
+
+### Parameters
+
+<ParamField body="id" type="string" required>
+  The referral ID (starts with `ref_`)
+</ParamField>
+
+<ParamField body="responseFormat" type="string" default="markdown">
+  Response format: `markdown` or `json`
+</ParamField>
+
+### Example Prompts
+
+```
+Get referral ref_abc123
+Show details for referral ref_xyz789
+What's the status of referral ref_pending123
+```
+
+### Response
+
+<CodeGroup>
+```markdown Markdown Format
+## Referral: ref_abc123
+
+| Field | Value |
+|-------|-------|
+| Type | CONVERSION |
+| Affiliate | John Smith (aff_123) |
+| Customer | customer@example.com |
+| Amount | $99.00 |
+| Commission | $9.90 |
+| Source | Direct Link |
+| Created | Jan 15, 2024 |
+
+### Timeline
+1. **Click** - Jan 15, 2024 10:00 AM
+2. **Lead** - Jan 15, 2024 10:05 AM
+3. **Conversion** - Jan 15, 2024 10:15 AM
+```
+
+```json JSON Format
+{
+  "id": "ref_abc123",
+  "type": "CONVERSION",
+  "affiliateId": "aff_123",
+  "affiliateName": "John Smith",
+  "customerEmail": "customer@example.com",
+  "amount": 9900,
+  "commission": 990,
+  "source": "direct",
+  "createdAt": "2024-01-15T10:00:00.000Z",
+  "convertedAt": "2024-01-15T10:15:00.000Z"
+}
+```
+</CodeGroup>
+
+---
+
+## affonso_create_referral
+
+Create a new referral, typically representing a click or initial tracking event.
+
+### Parameters
+
+<ParamField body="affiliateId" type="string" required>
+  The affiliate ID for this referral
+</ParamField>
+
+<ParamField body="type" type="string" default="CLICK">
+  Referral type: `CLICK`, `LEAD`, `CONVERSION`
+</ParamField>
+
+<ParamField body="customerEmail" type="string">
+  Customer's email address
+</ParamField>
+
+<ParamField body="amount" type="number">
+  Transaction amount in cents (for conversions)
+</ParamField>
+
+<ParamField body="externalId" type="string">
+  Your system's reference ID
+</ParamField>
+
+<ParamField body="metadata" type="object">
+  Additional custom data
+</ParamField>
+
+<ParamField body="responseFormat" type="string" default="markdown">
+  Response format: `markdown` or `json`
+</ParamField>
+
+### Example Prompts
+
+```
+Track a click for affiliate aff_abc123
+Create a conversion for aff_xyz with amount $150
+Record a lead from customer@example.com for affiliate aff_123
+Create a referral with external ID "order_12345"
+```
+
+### Response
+
+```markdown
+## Referral Created
+
+| Field | Value |
+|-------|-------|
+| ID | ref_new123 |
+| Type | CLICK |
+| Affiliate | John Smith (aff_abc123) |
+| Created | Jan 15, 2024 |
+
+The referral is now being tracked.
+```
+
+---
+
+## affonso_update_referral
+
+Update an existing referral's status or information.
+
+### Parameters
+
+<ParamField body="id" type="string" required>
+  The referral ID to update
+</ParamField>
+
+<ParamField body="type" type="string">
+  New referral type
+</ParamField>
+
+<ParamField body="amount" type="number">
+  Updated transaction amount in cents
+</ParamField>
+
+<ParamField body="customerEmail" type="string">
+  Updated customer email
+</ParamField>
+
+<ParamField body="responseFormat" type="string" default="markdown">
+  Response format: `markdown` or `json`
+</ParamField>
+
+### Example Prompts
+
+```
+Convert referral ref_abc123 to a conversion with amount $99
+Update referral ref_xyz to type LEAD
+Change the amount on referral ref_123 to $150
+Mark referral ref_456 as rejected
+```
+
+### Response
+
+```markdown
+## Referral Updated
+
+**ref_abc123** has been updated:
+- Type: LEAD → CONVERSION
+- Amount: $0.00 → $99.00
+
+A commission will be calculated automatically.
+```
+
+---
+
+## affonso_delete_referral
+
+<Warning>
+This is a destructive operation. The referral and associated data will be permanently deleted.
+</Warning>
+
+### Parameters
+
+<ParamField body="id" type="string" required>
+  The referral ID to delete
+</ParamField>
+
+<ParamField body="responseFormat" type="string" default="markdown">
+  Response format: `markdown` or `json`
+</ParamField>
+
+### Example Prompts
+
+```
+Delete referral ref_abc123
+Remove referral ref_test456
+```
+
+### Response
+
+```markdown
+## Referral Deleted
+
+Referral **ref_abc123** has been permanently deleted.
+```
+
+---
+
+## Common Workflows
+
+### Track a Complete Conversion
+
+```
+1. "Create a click referral for affiliate aff_abc123"
+2. "Update referral ref_xxx to type LEAD with email customer@example.com"
+3. "Convert referral ref_xxx with amount $99"
+```
+
+### Analyze Affiliate Performance
+
+```
+"List all conversions for affiliate aff_abc123 from last month"
+"Show me the referral funnel for aff_xyz - how many clicks vs conversions?"
+```
+
+## Error Handling
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| `NOT_FOUND` | Referral ID doesn't exist | Verify the ID is correct |
+| `INVALID_AFFILIATE` | Affiliate ID not found | Check the affiliate exists |
+| `INVALID_TRANSITION` | Invalid status change | Check allowed type transitions |
+| `PERMISSION_DENIED` | Missing required scope | Check your API key permissions |

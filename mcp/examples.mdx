@@ -1,0 +1,250 @@
+---
+title: 'Example Queries'
+description: 'Sample prompts and use cases for Affonso MCP'
+---
+
+## Overview
+
+This page provides example prompts you can use with AI assistants connected to Affonso MCP. Use these as starting points and adapt them to your specific needs.
+
+## Affiliate Management
+
+### Listing & Searching
+
+```
+List all my affiliates
+Show me affiliates who joined this month
+Find affiliates with "agency" in their name
+List pending affiliate applications
+Show my top 10 affiliates sorted by name
+How many approved affiliates do I have?
+```
+
+### Getting Details
+
+```
+Get details for affiliate aff_abc123
+Show me John Smith's affiliate profile with their promo codes
+What commission overrides does affiliate aff_xyz have?
+When did affiliate aff_123 sign up?
+```
+
+### Creating Affiliates
+
+```
+Create an affiliate for john@example.com named "John Smith"
+Add a new affiliate with email partner@company.com and tracking ID "partner-co"
+Create an approved affiliate for vip@example.com
+```
+
+### Updating Affiliates
+
+```
+Approve affiliate aff_pending123
+Update affiliate aff_abc123's email to newemail@example.com
+Change John Smith's tracking ID to "john-smith-2024"
+Reject affiliate application aff_xyz789
+```
+
+---
+
+## Referral Tracking
+
+### Viewing Referrals
+
+```
+List all referrals from this month
+Show conversions for affiliate aff_abc123
+How many clicks did we get last week?
+List all pending leads
+Show referrals between January 1 and January 31
+What's our click-to-conversion rate this month?
+```
+
+### Creating Referrals
+
+```
+Track a click for affiliate aff_abc123
+Create a conversion for aff_xyz with amount $150
+Record a lead from customer@example.com for affiliate aff_123
+```
+
+### Updating Referrals
+
+```
+Convert lead ref_abc123 with sale amount $99
+Mark referral ref_xyz as rejected
+Update the amount on referral ref_123 to $200
+```
+
+---
+
+## Commission Management
+
+### Viewing Commissions
+
+```
+List all commissions
+Show pending commissions awaiting approval
+Get commissions for affiliate aff_abc123 this month
+What's the total pending commission amount?
+Show approved commissions ready for payout
+List commissions from the last 30 days sorted by amount
+```
+
+### Creating Commissions
+
+```
+Create a $50 commission for affiliate aff_abc123
+Add a bonus commission of $100 for aff_top with description "Q1 performance bonus"
+Record a commission of $25.50 for aff_xyz from sale of $255
+```
+
+### Updating Commissions
+
+```
+Approve commission txn_abc123
+Approve all pending commissions from before January 1st
+Reject commission txn_xyz due to fraud
+Mark commission txn_123 as refunded
+```
+
+---
+
+## Payout Processing
+
+### Viewing Payouts
+
+```
+List all payouts
+Show pending payouts ready for processing
+Get payout details for pay_abc123
+What payouts are currently processing?
+Show completed payouts from this month
+What's the total amount in pending payouts?
+```
+
+### Processing Payouts
+
+```
+Mark payout pay_abc123 as processing
+Set payout pay_xyz to completed
+Cancel payout pay_pending456
+Mark payout pay_123 as failed with note "Bank rejected"
+```
+
+---
+
+## Analytics & Reports
+
+### Performance Analysis
+
+```
+How many new affiliates joined this month?
+What's our total commission payout this year?
+Which affiliate has the most conversions?
+Show me the referral funnel - clicks vs leads vs conversions
+What's our average commission per conversion?
+```
+
+### Time-Based Reports
+
+```
+Compare this month's commissions to last month
+Show weekly referral counts for January
+What days have the most affiliate signups?
+List all activity for affiliate aff_abc123 in Q1
+```
+
+### Financial Reports
+
+```
+What's the total approved but unpaid commission amount?
+Show commissions by status breakdown
+Calculate total payouts by month for 2024
+What's the average payout amount per affiliate?
+```
+
+---
+
+## Bulk Operations
+
+### Multiple Updates
+
+```
+Approve all pending commissions older than 30 days
+List affiliates with status PENDING and approve the ones from @company.com
+Update all referrals from affiliate aff_old to type CANCELLED
+```
+
+### Data Export
+
+```
+Export all affiliate data as JSON
+Get all commissions from 2024 in JSON format
+List all conversions with full details for reporting
+```
+
+---
+
+## Troubleshooting
+
+### Finding Issues
+
+```
+Are there any failed payouts?
+Show rejected referrals from last month
+List affiliates with no conversions
+Find commissions stuck in pending status
+```
+
+### Investigating Specific Cases
+
+```
+Why was referral ref_abc123 rejected?
+What happened to affiliate aff_xyz's commission?
+Show the full history for payout pay_123
+When was commission txn_456 last updated?
+```
+
+---
+
+## Tips for Effective Queries
+
+<CardGroup cols={2}>
+  <Card title="Be Specific" icon="bullseye">
+    Include IDs, date ranges, and filters when you know them
+  </Card>
+  <Card title="Use Natural Language" icon="comments">
+    Ask questions how you would ask a colleague
+  </Card>
+  <Card title="Chain Requests" icon="link">
+    Start broad, then drill down into specific items
+  </Card>
+  <Card title="Request JSON for Data" icon="code">
+    Add "in JSON format" when you need structured data
+  </Card>
+</CardGroup>
+
+### Good vs Better Queries
+
+| Good | Better |
+|------|--------|
+| "Show affiliates" | "Show approved affiliates from this month sorted by signup date" |
+| "List commissions" | "List pending commissions over $50 for affiliate aff_abc123" |
+| "Get payout" | "Get payout pay_xyz123 with all transaction details" |
+
+## Response Format Tips
+
+Most queries return **Markdown** by default for readability. Request **JSON** when you:
+
+- Need to process data programmatically
+- Want complete field details
+- Are debugging or investigating issues
+- Need precise numeric values (cents vs dollars)
+
+```
+List all affiliates in JSON format
+Get commission txn_abc123 as JSON
+Show referral statistics with responseFormat json
+```

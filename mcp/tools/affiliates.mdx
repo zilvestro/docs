@@ -1,0 +1,318 @@
+---
+title: 'Affiliate Tools'
+description: 'MCP tools for managing affiliates in your program'
+---
+
+## Overview
+
+The affiliate tools allow you to manage your affiliate users through natural language commands. All tools support both **Markdown** and **JSON** response formats.
+
+## Available Tools
+
+| Tool | Description | Permission |
+|------|-------------|------------|
+| `affonso_list_affiliates` | List affiliates with filtering and pagination | `read:affiliates` |
+| `affonso_get_affiliate` | Get a single affiliate by ID | `read:affiliates` |
+| `affonso_create_affiliate` | Create a new affiliate | `write:affiliates` |
+| `affonso_update_affiliate` | Update an existing affiliate | `write:affiliates` |
+| `affonso_delete_affiliate` | Delete an affiliate | `delete:affiliates` |
+
+---
+
+## affonso_list_affiliates
+
+List and search affiliates with powerful filtering options.
+
+### Parameters
+
+<ParamField body="page" type="number" default="1">
+  Page number for pagination
+</ParamField>
+
+<ParamField body="limit" type="number" default="50">
+  Number of results per page (max 100)
+</ParamField>
+
+<ParamField body="search" type="string">
+  Search by name, email, or tracking ID
+</ParamField>
+
+<ParamField body="status" type="string">
+  Filter by partnership status: `APPROVED`, `PENDING`, `REJECTED`
+</ParamField>
+
+<ParamField body="sortBy" type="string" default="createdAt">
+  Sort field: `createdAt`, `name`, `email`
+</ParamField>
+
+<ParamField body="sortOrder" type="string" default="desc">
+  Sort order: `asc` or `desc`
+</ParamField>
+
+<ParamField body="responseFormat" type="string" default="markdown">
+  Response format: `markdown` or `json`
+</ParamField>
+
+### Example Prompts
+
+```
+List all my affiliates
+Show me pending affiliates
+Find affiliates with "john" in their name
+List top 10 affiliates sorted by name
+```
+
+### Response
+
+<CodeGroup>
+```markdown Markdown Format
+## Affiliates (Page 1 of 3)
+
+### John Smith
+- **Email:** john@example.com
+- **Tracking ID:** john-smith
+- **Status:** APPROVED
+- **Created:** Jan 15, 2024
+
+### Jane Doe
+- **Email:** jane@example.com
+- **Tracking ID:** jane-doe
+- **Status:** PENDING
+- **Created:** Jan 14, 2024
+
+---
+Showing 2 of 25 affiliates
+```
+
+```json JSON Format
+{
+  "affiliates": [
+    {
+      "id": "aff_abc123",
+      "name": "John Smith",
+      "email": "john@example.com",
+      "trackingId": "john-smith",
+      "partnershipStatus": "APPROVED",
+      "createdAt": "2024-01-15T10:00:00.000Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 50,
+    "total": 25,
+    "totalPages": 1
+  }
+}
+```
+</CodeGroup>
+
+---
+
+## affonso_get_affiliate
+
+Retrieve detailed information about a specific affiliate.
+
+### Parameters
+
+<ParamField body="id" type="string" required>
+  The affiliate ID (starts with `aff_`)
+</ParamField>
+
+<ParamField body="expand" type="array">
+  Include related data: `promoCodes`, `commissionOverrides`
+</ParamField>
+
+<ParamField body="responseFormat" type="string" default="markdown">
+  Response format: `markdown` or `json`
+</ParamField>
+
+### Example Prompts
+
+```
+Get affiliate aff_abc123
+Show me details for affiliate aff_xyz789 with their promo codes
+Get affiliate info including commission overrides
+```
+
+### Response
+
+<CodeGroup>
+```markdown Markdown Format
+## Affiliate: John Smith
+
+| Field | Value |
+|-------|-------|
+| ID | aff_abc123 |
+| Email | john@example.com |
+| Tracking ID | john-smith |
+| Status | APPROVED |
+| Created | Jan 15, 2024 |
+
+### Promo Codes
+- **JOHN20** - 20% off (Active)
+- **JOHNVIP** - 30% off (Inactive)
+```
+
+```json JSON Format
+{
+  "id": "aff_abc123",
+  "name": "John Smith",
+  "email": "john@example.com",
+  "trackingId": "john-smith",
+  "partnershipStatus": "APPROVED",
+  "promoCodes": [
+    {
+      "code": "JOHN20",
+      "discountPercent": 20,
+      "active": true
+    }
+  ],
+  "createdAt": "2024-01-15T10:00:00.000Z"
+}
+```
+</CodeGroup>
+
+---
+
+## affonso_create_affiliate
+
+Create a new affiliate in your program.
+
+### Parameters
+
+<ParamField body="email" type="string" required>
+  Affiliate's email address
+</ParamField>
+
+<ParamField body="name" type="string">
+  Affiliate's display name
+</ParamField>
+
+<ParamField body="trackingId" type="string">
+  Custom tracking ID (auto-generated if not provided)
+</ParamField>
+
+<ParamField body="status" type="string" default="PENDING">
+  Initial partnership status: `APPROVED`, `PENDING`
+</ParamField>
+
+<ParamField body="responseFormat" type="string" default="markdown">
+  Response format: `markdown` or `json`
+</ParamField>
+
+### Example Prompts
+
+```
+Create an affiliate for john@example.com
+Add a new affiliate named "Jane Doe" with email jane@example.com
+Create an approved affiliate for partner@company.com with tracking ID "partner-co"
+```
+
+### Response
+
+```markdown
+## Affiliate Created Successfully
+
+| Field | Value |
+|-------|-------|
+| ID | aff_new123 |
+| Email | john@example.com |
+| Tracking ID | john-example |
+| Status | PENDING |
+
+The affiliate will receive an invitation email.
+```
+
+---
+
+## affonso_update_affiliate
+
+Update an existing affiliate's information.
+
+### Parameters
+
+<ParamField body="id" type="string" required>
+  The affiliate ID to update
+</ParamField>
+
+<ParamField body="name" type="string">
+  New display name
+</ParamField>
+
+<ParamField body="email" type="string">
+  New email address
+</ParamField>
+
+<ParamField body="status" type="string">
+  New partnership status: `APPROVED`, `PENDING`, `REJECTED`
+</ParamField>
+
+<ParamField body="responseFormat" type="string" default="markdown">
+  Response format: `markdown` or `json`
+</ParamField>
+
+### Example Prompts
+
+```
+Approve affiliate aff_abc123
+Update affiliate aff_xyz to have email new@example.com
+Change the name of affiliate aff_123 to "John Smith Jr."
+Reject affiliate aff_pending456
+```
+
+### Response
+
+```markdown
+## Affiliate Updated
+
+**aff_abc123** has been updated:
+- Status: PENDING → APPROVED
+
+The affiliate is now active and can start promoting.
+```
+
+---
+
+## affonso_delete_affiliate
+
+<Warning>
+This is a destructive operation. The affiliate and all their data will be permanently deleted.
+</Warning>
+
+### Parameters
+
+<ParamField body="id" type="string" required>
+  The affiliate ID to delete
+</ParamField>
+
+<ParamField body="responseFormat" type="string" default="markdown">
+  Response format: `markdown` or `json`
+</ParamField>
+
+### Example Prompts
+
+```
+Delete affiliate aff_abc123
+Remove affiliate aff_old789
+```
+
+### Response
+
+```markdown
+## Affiliate Deleted
+
+Affiliate **aff_abc123** (john@example.com) has been permanently deleted.
+```
+
+---
+
+## Error Handling
+
+Common errors you may encounter:
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| `NOT_FOUND` | Affiliate ID doesn't exist | Verify the ID is correct |
+| `DUPLICATE_ERROR` | Email already exists | Use a different email |
+| `PERMISSION_DENIED` | Missing required scope | Check your API key permissions |
+| `VALIDATION_ERROR` | Invalid parameter value | Check parameter format |

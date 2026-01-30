@@ -1,0 +1,164 @@
+---
+title: 'Claude Desktop Setup'
+description: 'Configure Affonso MCP in Claude Desktop for natural language affiliate management'
+---
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- **Claude Desktop** installed ([Download](https://claude.ai/download))
+- An **Affonso API key** from your [dashboard](https://affonso.io/app/settings/api)
+- Claude Desktop version **0.7.0 or later** (for Streamable HTTP support)
+
+## Configuration
+
+### Step 1: Locate the Config File
+
+The Claude Desktop configuration file location depends on your operating system:
+
+<CodeGroup>
+```bash macOS
+~/Library/Application Support/Claude/claude_desktop_config.json
+```
+
+```bash Windows
+%APPDATA%\Claude\claude_desktop_config.json
+```
+
+```bash Linux
+~/.config/Claude/claude_desktop_config.json
+```
+</CodeGroup>
+
+### Step 2: Add Affonso MCP Server
+
+Open the config file and add the Affonso MCP server configuration:
+
+```json claude_desktop_config.json
+{
+  "mcpServers": {
+    "affonso": {
+      "url": "https://api.affonso.io/mcp",
+      "headers": {
+        "Authorization": "Bearer sk_live_your_api_key_here"
+      },
+      "transport": "streamable-http"
+    }
+  }
+}
+```
+
+<Warning>
+Replace `sk_live_your_api_key_here` with your actual API key from the Affonso dashboard.
+</Warning>
+
+### Step 3: Restart Claude Desktop
+
+After saving the configuration file, restart Claude Desktop to load the MCP server.
+
+## Verify Connection
+
+Once Claude Desktop restarts, you should see the Affonso tools available. Try asking:
+
+```
+What Affonso tools are available?
+```
+
+Or test with a simple query:
+
+```
+List my affiliates
+```
+
+## Local Development
+
+For testing against a local Affonso API instance:
+
+```json claude_desktop_config.json
+{
+  "mcpServers": {
+    "affonso-local": {
+      "url": "http://localhost:3000/mcp",
+      "headers": {
+        "Authorization": "Bearer sk_dev_your_dev_api_key"
+      },
+      "transport": "streamable-http"
+    }
+  }
+}
+```
+
+## Multiple Environments
+
+You can configure multiple Affonso environments:
+
+```json claude_desktop_config.json
+{
+  "mcpServers": {
+    "affonso-prod": {
+      "url": "https://api.affonso.io/mcp",
+      "headers": {
+        "Authorization": "Bearer sk_live_production_key"
+      },
+      "transport": "streamable-http"
+    },
+    "affonso-staging": {
+      "url": "https://staging-api.affonso.io/mcp",
+      "headers": {
+        "Authorization": "Bearer sk_live_staging_key"
+      },
+      "transport": "streamable-http"
+    }
+  }
+}
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Tools not appearing">
+    1. Verify your API key is correct
+    2. Check that the config file is valid JSON
+    3. Restart Claude Desktop completely (quit and reopen)
+    4. Check Claude Desktop logs for errors
+  </Accordion>
+
+  <Accordion title="Authentication errors">
+    1. Ensure your API key starts with `sk_live_` or `sk_dev_`
+    2. Verify the key is active in your Affonso dashboard
+    3. Check that the key has the required permissions
+  </Accordion>
+
+  <Accordion title="Connection timeout">
+    1. Check your internet connection
+    2. Verify `https://api.affonso.io` is accessible
+    3. Check if a firewall is blocking the connection
+  </Accordion>
+
+  <Accordion title="Rate limit errors">
+    1. Wait a moment before retrying
+    2. Check your plan's rate limits
+    3. Consider upgrading for higher limits
+  </Accordion>
+</AccordionGroup>
+
+## Security Best Practices
+
+<Info>
+- Use separate API keys for different environments
+- Rotate your API keys periodically
+- Use keys with minimal required permissions
+- Never share your configuration file
+</Info>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Explore Tools" icon="wrench" href="/mcp/tools/affiliates">
+    See all available MCP tools
+  </Card>
+  <Card title="Example Queries" icon="lightbulb" href="/mcp/examples">
+    Learn what you can ask Claude
+  </Card>
+</CardGroup>

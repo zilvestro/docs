@@ -80,6 +80,15 @@
             "pages": [
               "api/endpoint/embed/create-token"
             ]
+          },
+          {
+            "group": "Coupons",
+            "pages": [
+              "api/endpoint/coupons/list",
+              "api/endpoint/coupons/get",
+              "api/endpoint/coupons/create",
+              "api/endpoint/coupons/delete"
+            ]
           }
         ]
       },

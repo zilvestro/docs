@@ -1,0 +1,148 @@
+---
+title: 'Cursor Setup'
+description: 'Configure Affonso MCP in Cursor IDE for AI-powered affiliate management'
+---
+
+## Prerequisites
+
+- **Cursor IDE** installed ([Download](https://cursor.sh))
+- An **Affonso API key** from your [dashboard](https://affonso.io/app/settings/api)
+- Cursor version with MCP support
+
+## Configuration
+
+### Step 1: Open Cursor Settings
+
+1. Open Cursor
+2. Go to **Settings** (Cmd/Ctrl + ,)
+3. Navigate to **Features** > **MCP**
+
+### Step 2: Add MCP Server
+
+Add the following configuration:
+
+```json
+{
+  "mcpServers": {
+    "affonso": {
+      "url": "https://api.affonso.io/mcp",
+      "headers": {
+        "Authorization": "Bearer sk_live_your_api_key_here"
+      },
+      "transport": "streamable-http"
+    }
+  }
+}
+```
+
+<Warning>
+Replace `sk_live_your_api_key_here` with your actual Affonso API key.
+</Warning>
+
+### Step 3: Restart Cursor
+
+After saving the configuration, restart Cursor to activate the MCP connection.
+
+## Verify Setup
+
+In the Cursor chat, try:
+
+```
+@affonso List my top affiliates
+```
+
+Or ask about available tools:
+
+```
+What can I do with Affonso?
+```
+
+## Configuration File Location
+
+Alternatively, you can edit the Cursor configuration file directly:
+
+<CodeGroup>
+```bash macOS
+~/.cursor/mcp.json
+```
+
+```bash Windows
+%USERPROFILE%\.cursor\mcp.json
+```
+
+```bash Linux
+~/.cursor/mcp.json
+```
+</CodeGroup>
+
+## Using MCP in Cursor
+
+### In Chat
+
+Use the `@affonso` mention to interact with your affiliate data:
+
+```
+@affonso Show me all pending affiliates
+@affonso Create an affiliate for test@example.com
+@affonso What's the total commission for affiliate aff_123?
+```
+
+### In Composer
+
+When writing code, Cursor can use Affonso data to help you:
+
+```
+Help me build a dashboard that shows affiliate performance.
+Use @affonso to get the current affiliate data structure.
+```
+
+## Local Development
+
+For development with a local Affonso API:
+
+```json
+{
+  "mcpServers": {
+    "affonso-local": {
+      "url": "http://localhost:3000/mcp",
+      "headers": {
+        "Authorization": "Bearer sk_dev_your_dev_key"
+      },
+      "transport": "streamable-http"
+    }
+  }
+}
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="MCP not connecting">
+    1. Check that the URL is correct: `https://api.affonso.io/mcp`
+    2. Verify your API key is valid
+    3. Restart Cursor completely
+  </Accordion>
+
+  <Accordion title="Permission denied errors">
+    1. Check your API key has the required scopes
+    2. Verify the key is active in your dashboard
+    3. Ensure you're using the correct environment (live vs dev)
+  </Accordion>
+
+  <Accordion title="Slow responses">
+    1. Check your internet connection
+    2. Large data requests may take longer
+    3. Use filters to reduce response size
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="All Tools" icon="wrench" href="/mcp/tools/affiliates">
+    Explore available MCP tools
+  </Card>
+  <Card title="Examples" icon="lightbulb" href="/mcp/examples">
+    See sample queries and use cases
+  </Card>
+</CardGroup>

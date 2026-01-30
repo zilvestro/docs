@@ -1,0 +1,141 @@
+---
+title: "List Coupons"
+api: "GET /v1/coupons"
+description: "Get a paginated list of affiliate promotional coupons"
+---
+
+## Query Parameters
+
+<ParamField query="page" type="integer" default="1">
+  Page number for pagination. Must be a positive integer.
+</ParamField>
+
+<ParamField query="limit" type="integer" default="50">
+  Number of results per page. Maximum value is 200. Default is 50.
+</ParamField>
+
+<ParamField query="affiliate_id" type="string">
+  Filter coupons by affiliate ID.
+</ParamField>
+
+<ParamField query="program_id" type="string">
+  Filter coupons by program ID.
+</ParamField>
+
+<ParamField query="search" type="string">
+  Search by coupon code. Case-insensitive partial matching. Maximum 100 characters.
+</ParamField>
+
+<ParamField query="sort" type="string">
+  Sort field and direction in the format `field:direction`. Valid fields: `created_at`, `code`. Valid directions: `asc`, `desc`. Example: `created_at:desc`.
+</ParamField>
+
+<ParamField query="expand" type="string">
+  Comma-separated list of related data to include in the response. Valid values: `affiliate`.
+</ParamField>
+
+## Response
+
+The response includes a paginated list of coupons and pagination metadata.
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of coupon objects. Each coupon object has the same structure as the single coupon response (see Get Coupon endpoint).
+
+<Expandable title="Data Object Properties">
+<ResponseField name="id" type="string">
+  Unique identifier for the coupon
+</ResponseField>
+
+<ResponseField name="code" type="string">
+  The coupon code (always uppercase)
+</ResponseField>
+
+<ResponseField name="affiliate_id" type="string">
+  The ID of the affiliate who owns this coupon
+</ResponseField>
+
+<ResponseField name="discount_type" type="string">
+  Type of discount: `percentage` or `fixed`
+</ResponseField>
+
+<ResponseField name="discount_value" type="number">
+  The discount amount. For percentage: 0-100. For fixed: amount in the specified currency.
+</ResponseField>
+
+<ResponseField name="duration" type="string">
+  How long the discount applies: `forever`, `once`, or `repeating`
+</ResponseField>
+
+<ResponseField name="duration_in_months" type="integer | null">
+  Number of months the discount repeats (only applicable when duration is `repeating`)
+</ResponseField>
+
+<ResponseField name="currency" type="string | null">
+  Three-letter currency code (only applicable when discount_type is `fixed`)
+</ResponseField>
+
+<ResponseField name="product_ids" type="array">
+  Array of product IDs this coupon is restricted to. Empty array means all products.
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp of when the coupon was created
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseField name="pagination" type="object">
+  Pagination metadata object containing:
+  - `page` (integer): Current page number
+  - `limit` (integer): Number of results per page
+  - `total` (integer): Total number of coupons matching the filters
+  - `totalPages` (integer): Total number of pages
+  - `hasNextPage` (boolean): Whether there is a next page
+  - `hasPrevPage` (boolean): Whether there is a previous page
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/coupons?limit=10" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+
+```bash cURL with Filter
+curl -X GET "https://api.affonso.io/v1/coupons?affiliate_id=aff_123&expand=affiliate" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": [
+    {
+      "id": "cpn_abc123",
+      "code": "SAVE25",
+      "affiliate_id": "aff_123",
+      "discount_type": "percentage",
+      "discount_value": 25,
+      "duration": "forever",
+      "duration_in_months": null,
+      "currency": null,
+      "product_ids": [],
+      "created_at": "2024-01-15T10:30:00Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1,
+    "totalPages": 1,
+    "hasNextPage": false,
+    "hasPrevPage": false
+  }
+}
+```
+</ResponseExample>

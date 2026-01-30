@@ -1,0 +1,143 @@
+---
+title: 'Other MCP Clients'
+description: 'Configure Affonso MCP with any MCP-compatible client'
+---
+
+## Overview
+
+Affonso MCP uses the **Streamable HTTP** transport, which is the standard for cloud-hosted MCP servers. Any client that supports this transport can connect to Affonso.
+
+## Connection Details
+
+| Setting | Value |
+|---------|-------|
+| **URL** | `https://api.affonso.io/mcp` |
+| **Transport** | Streamable HTTP |
+| **Authentication** | Bearer token (API key) |
+
+## Generic Configuration
+
+Most MCP clients accept a configuration in this format:
+
+```json
+{
+  "url": "https://api.affonso.io/mcp",
+  "headers": {
+    "Authorization": "Bearer sk_live_your_api_key_here"
+  },
+  "transport": "streamable-http"
+}
+```
+
+## HTTP Request Format
+
+For custom implementations, MCP requests are standard HTTP POST:
+
+```bash
+curl -X POST https://api.affonso.io/mcp \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "affonso_list_affiliates",
+      "arguments": {
+        "limit": 10
+      }
+    }
+  }'
+```
+
+## Supported Clients
+
+### Confirmed Compatible
+
+| Client | Transport Support | Notes |
+|--------|------------------|-------|
+| Claude Desktop | Streamable HTTP | Full support |
+| Cursor | Streamable HTTP | Full support |
+| Continue.dev | Streamable HTTP | Full support |
+| Cline | Streamable HTTP | Full support |
+
+### Building Custom Clients
+
+If you're building a custom MCP client, use the official MCP SDK:
+
+<CodeGroup>
+```bash npm
+npm install @modelcontextprotocol/sdk
+```
+
+```bash pip
+pip install mcp
+```
+</CodeGroup>
+
+Example TypeScript client:
+
+```typescript
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+
+const transport = new StreamableHTTPClientTransport(
+  new URL("https://api.affonso.io/mcp"),
+  {
+    requestInit: {
+      headers: {
+        Authorization: "Bearer sk_live_your_api_key"
+      }
+    }
+  }
+);
+
+const client = new Client({
+  name: "my-app",
+  version: "1.0.0"
+});
+
+await client.connect(transport);
+
+// List available tools
+const tools = await client.listTools();
+
+// Call a tool
+const result = await client.callTool({
+  name: "affonso_list_affiliates",
+  arguments: { limit: 10 }
+});
+```
+
+## Server Capabilities
+
+The Affonso MCP server supports:
+
+| Capability | Supported |
+|------------|-----------|
+| Tools | Yes (18 tools) |
+| Resources | No |
+| Prompts | No |
+| Sampling | No |
+
+## Rate Limits
+
+MCP requests share the same rate limits as REST API requests:
+
+| Plan | Requests/min |
+|------|-------------|
+| Launch | 300 |
+| Growth | 600 |
+| Elite | 1,200 |
+| Enterprise | 3,000+ |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Claude Desktop" icon="message-bot" href="/mcp/setup/claude-desktop">
+    Detailed Claude Desktop setup
+  </Card>
+  <Card title="Cursor" icon="i-cursor" href="/mcp/setup/cursor">
+    Detailed Cursor setup
+  </Card>
+</CardGroup>
