@@ -132,11 +132,11 @@
   "redirects": [
     {
       "source": "/",
-      "destination": "/api/introduction"
+      "destination": "/api-reference"
     },
     {
-      "source": "/api-reference/:path*",
-      "destination": "/api/:path*"
+      "source": "/api/:path*",
+      "destination": "/api-reference/:path*"
     }
   ],
   "footer": {
