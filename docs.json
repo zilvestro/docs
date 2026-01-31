@@ -8,75 +8,11 @@
     "dark": "#881337"
   },
   "favicon": "/favicon.ico",
-  "openapi": "https://api.affonso.io/openapi.json",
   "navigation": {
     "tabs": [
       {
         "tab": "API Reference",
-        "groups": [
-          {
-            "group": "Overview",
-            "pages": [
-              "api/introduction",
-              "api/authentication",
-              "api/rate-limits",
-              "api/embedded-dashboard"
-            ]
-          },
-          {
-            "group": "Affiliates",
-            "pages": [
-              "api/endpoint/affiliates/list",
-              "api/endpoint/affiliates/get",
-              "api/endpoint/affiliates/create",
-              "api/endpoint/affiliates/update",
-              "api/endpoint/affiliates/delete"
-            ]
-          },
-          {
-            "group": "Referrals",
-            "pages": [
-              "api/endpoint/referrals/list",
-              "api/endpoint/referrals/get",
-              "api/endpoint/referrals/create",
-              "api/endpoint/referrals/update",
-              "api/endpoint/referrals/delete"
-            ]
-          },
-          {
-            "group": "Commissions",
-            "pages": [
-              "api/endpoint/commissions/list",
-              "api/endpoint/commissions/get",
-              "api/endpoint/commissions/create",
-              "api/endpoint/commissions/update",
-              "api/endpoint/commissions/delete"
-            ]
-          },
-          {
-            "group": "Payouts",
-            "pages": [
-              "api/endpoint/payouts/list",
-              "api/endpoint/payouts/get",
-              "api/endpoint/payouts/update"
-            ]
-          },
-          {
-            "group": "Embed",
-            "pages": [
-              "api/endpoint/embed/create-token"
-            ]
-          },
-          {
-            "group": "Coupons",
-            "pages": [
-              "api/endpoint/coupons/list",
-              "api/endpoint/coupons/get",
-              "api/endpoint/coupons/create",
-              "api/endpoint/coupons/delete"
-            ]
-          }
-        ]
+        "openapi": "https://api.affonso.io/openapi.json"
       },
       {
         "tab": "MCP",
