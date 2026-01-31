@@ -8,21 +8,6 @@
     "dark": "#881337"
   },
   "favicon": "/favicon.ico",
-  "openapi": "https://api.affonso.io/openapi.json",
-  "api": {
-    "baseUrl": "https://api.affonso.io",
-    "auth": {
-      "method": "bearer"
-    },
-    "mdx": {
-      "auth": {
-        "method": "bearer"
-      }
-    },
-    "playground": {
-      "display": "interactive"
-    }
-  },
   "navigation": {
     "tabs": [
       {
@@ -197,15 +182,15 @@
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "redirects": [
     {
