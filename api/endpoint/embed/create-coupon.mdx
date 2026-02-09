@@ -1,0 +1,201 @@
+---
+title: "Create Self-Service Coupon"
+api: "POST /v1/embed/coupon"
+description: "Allow affiliates to create their own coupon code"
+---
+
+Create a self-service coupon code for an affiliate. This endpoint is **public** and uses token-based authentication in the request body.
+
+<Note>
+  This endpoint does not require API key authentication. Instead, it uses the `token` in the request body for authentication.
+</Note>
+
+## Prerequisites
+
+Self-service coupons must be enabled for the program:
+1. Configure a **Coupon Blueprint** in your program settings
+2. The blueprint defines the discount type and value for affiliate coupons
+3. Affiliates can only create one coupon per program
+
+## Body Parameters
+
+<ParamField body="token" type="string" required>
+  The embed token from `POST /v1/embed/token`.
+</ParamField>
+
+<ParamField body="code" type="string" required>
+  The coupon code to create. Must be 3-20 alphanumeric characters. Will be automatically uppercased and special characters removed.
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses.
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  The created coupon.
+
+  <Expandable title="Data Object Properties">
+    <ResponseField name="code" type="string">
+      The created coupon code (uppercased).
+    </ResponseField>
+
+    <ResponseField name="discountType" type="string">
+      "percentage" or "flat" - determined by the coupon blueprint.
+    </ResponseField>
+
+    <ResponseField name="discountValue" type="number">
+      Discount amount - determined by the coupon blueprint.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Validation Rules
+
+- Code must be 3-20 alphanumeric characters
+- Code is converted to uppercase
+- Non-alphanumeric characters are stripped
+- Code must be unique within the program
+- Affiliate can only have one coupon per program
+
+<RequestExample>
+```bash cURL
+curl -X POST "https://api.affonso.io/v1/embed/coupon" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "token": "a1b2c3d4e5f6789...",
+    "code": "JOHN20"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.affonso.io/v1/embed/coupon', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    token: embedToken,
+    code: 'JOHN20',
+  }),
+});
+
+const { data, error } = await response.json();
+
+if (error) {
+  if (error.code === 'ALREADY_EXISTS') {
+    console.log('You already have a coupon');
+  } else if (error.code === 'CODE_TAKEN') {
+    console.log('This code is already in use');
+  }
+} else {
+  console.log(`Created coupon: ${data.code}`);
+}
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    'https://api.affonso.io/v1/embed/coupon',
+    json={
+        'token': 'a1b2c3d4e5f6789...',
+        'code': 'JOHN20'
+    }
+)
+
+result = response.json()
+if result.get('success'):
+    print(f"Created coupon: {result['data']['code']}")
+else:
+    print(f"Error: {result['error']['message']}")
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "code": "JOHN20",
+    "discountType": "percentage",
+    "discountValue": 20
+  }
+}
+```
+
+```json Error - Already Has Coupon
+{
+  "success": false,
+  "error": {
+    "code": "ALREADY_EXISTS",
+    "message": "You already have a coupon code"
+  }
+}
+```
+
+```json Error - Code Taken
+{
+  "success": false,
+  "error": {
+    "code": "CODE_TAKEN",
+    "message": "This code is already taken"
+  }
+}
+```
+
+```json Error - Self-Service Not Enabled
+{
+  "success": false,
+  "error": {
+    "code": "NO_BLUEPRINT",
+    "message": "Self-service coupons are not enabled"
+  }
+}
+```
+
+```json Error - Invalid Code Format
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_CODE",
+    "message": "Code must be 3-20 alphanumeric characters"
+  }
+}
+```
+
+```json Error - Token Expired
+{
+  "success": false,
+  "error": {
+    "code": "TOKEN_EXPIRED",
+    "message": "Token has expired"
+  }
+}
+```
+</ResponseExample>
+
+## Checking Coupon Status
+
+Use `GET /v1/embed/data` to check if an affiliate already has a coupon:
+
+```javascript
+const { data } = await fetch(`https://api.affonso.io/v1/embed/data?token=${token}`)
+  .then(r => r.json());
+
+if (data.coupon) {
+  // Affiliate already has a coupon
+  console.log(`Your code: ${data.coupon.code}`);
+} else if (data.couponBlueprint) {
+  // Can create a coupon
+  console.log('You can create a coupon!');
+} else {
+  // Self-service coupons not enabled
+  console.log('Coupon creation not available');
+}
+```
+
+<Warning>
+  Once created, coupon codes cannot be changed. Affiliates should choose their code carefully.
+</Warning>
