@@ -8,7 +8,6 @@
     "dark": "#881337"
   },
   "favicon": "/favicon.ico",
-  "openapi": "https://api.affonso.io/openapi.json",
   "api": {
     "mdx": {
       "server": "https://api.affonso.io/v1",
