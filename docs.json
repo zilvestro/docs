@@ -10,11 +10,8 @@
   "favicon": "/favicon.ico",
   "openapi": "https://api.affonso.io/openapi.json",
   "api": {
-    "baseUrl": "https://api.affonso.io/v1",
-    "auth": {
-      "method": "bearer"
-    },
     "mdx": {
+      "server": "https://api.affonso.io/v1",
       "auth": {
         "method": "bearer"
       }
