@@ -1,0 +1,137 @@
+---
+title: "Get Program"
+api: "GET https://api.affonso.io/v1/programs/{id}"
+description: "Get details for a single public affiliate program"
+---
+
+Retrieve a single marketplace program by ID. This endpoint is **public** and does not require authentication.
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the program to retrieve.
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  The marketplace program object.
+
+<Expandable title="Data Object Properties">
+<ResponseField name="name" type="string">
+  Program name
+</ResponseField>
+
+<ResponseField name="description" type="string | null">
+  Program description
+</ResponseField>
+
+<ResponseField name="tagline" type="string | null">
+  Short tagline for the program
+</ResponseField>
+
+<ResponseField name="category" type="string | null">
+  Program category
+</ResponseField>
+
+<ResponseField name="website_url" type="string">
+  The program's website URL
+</ResponseField>
+
+<ResponseField name="logo_url" type="string | null">
+  URL to the program's logo image
+</ResponseField>
+
+<ResponseField name="auto_approve" type="boolean">
+  Whether affiliate applications are automatically approved
+</ResponseField>
+
+<ResponseField name="currency" type="string">
+  Three-letter currency code (e.g. `USD`, `EUR`)
+</ResponseField>
+
+<ResponseField name="commission" type="object | null">
+  Commission details for the program's default tier.
+
+<Expandable title="Commission Properties">
+<ResponseField name="type" type="string">
+  Commission type (e.g. `COMMISSION`)
+</ResponseField>
+
+<ResponseField name="value" type="number">
+  Commission amount
+</ResponseField>
+
+<ResponseField name="is_percentage" type="boolean">
+  Whether the value is a percentage (`true`) or a fixed amount (`false`)
+</ResponseField>
+
+<ResponseField name="apply_to" type="string">
+  What the commission applies to
+</ResponseField>
+
+<ResponseField name="has_multiple_tiers" type="boolean">
+  Whether the program has multiple commission tiers
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseField name="terms" type="object | null">
+  Program terms and conditions.
+
+<Expandable title="Terms Properties">
+<ResponseField name="cookie_lifetime_days" type="integer">
+  Number of days the referral cookie is valid
+</ResponseField>
+
+<ResponseField name="payment_frequency" type="string">
+  How often affiliates are paid
+</ResponseField>
+
+<ResponseField name="payment_threshold" type="number">
+  Minimum earnings before a payout is issued
+</ResponseField>
+</Expandable>
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/programs/prg_abc123"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "name": "Acme SaaS",
+    "description": "The best project management tool for teams",
+    "tagline": "Manage projects effortlessly",
+    "category": "SaaS",
+    "website_url": "https://acme.com",
+    "logo_url": "https://cdn.affonso.io/logos/acme.png",
+    "auto_approve": true,
+    "currency": "USD",
+    "commission": {
+      "type": "COMMISSION",
+      "value": 30,
+      "is_percentage": true,
+      "apply_to": "FIRST_PAYMENT",
+      "has_multiple_tiers": false
+    },
+    "terms": {
+      "cookie_lifetime_days": 60,
+      "payment_frequency": "MONTHLY",
+      "payment_threshold": 50
+    }
+  }
+}
+```
+</ResponseExample>

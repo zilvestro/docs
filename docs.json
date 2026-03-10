@@ -92,6 +92,13 @@
             "pages": [
               "api/endpoint/clicks/create"
             ]
+          },
+          {
+            "group": "Programs",
+            "pages": [
+              "api/endpoint/programs/list",
+              "api/endpoint/programs/get"
+            ]
           }
         ]
       },

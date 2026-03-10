@@ -1,0 +1,169 @@
+---
+title: "List Programs"
+api: "GET https://api.affonso.io/v1/programs"
+description: "Get a paginated list of all public affiliate programs in the marketplace"
+---
+
+This endpoint is **public** and does not require authentication. It returns all active affiliate programs that have joined the marketplace.
+
+## Query Parameters
+
+<ParamField query="page" type="integer" default="1">
+  Page number for pagination. Must be a positive integer.
+</ParamField>
+
+<ParamField query="limit" type="integer" default="50">
+  Number of results per page. Minimum 1, maximum 200. Default is 50.
+</ParamField>
+
+<ParamField query="category" type="string">
+  Filter programs by category. Maximum 100 characters.
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of marketplace program objects.
+
+<Expandable title="Data Object Properties">
+<ResponseField name="name" type="string">
+  Program name
+</ResponseField>
+
+<ResponseField name="description" type="string | null">
+  Program description
+</ResponseField>
+
+<ResponseField name="tagline" type="string | null">
+  Short tagline for the program
+</ResponseField>
+
+<ResponseField name="category" type="string | null">
+  Program category
+</ResponseField>
+
+<ResponseField name="website_url" type="string">
+  The program's website URL
+</ResponseField>
+
+<ResponseField name="logo_url" type="string | null">
+  URL to the program's logo image
+</ResponseField>
+
+<ResponseField name="auto_approve" type="boolean">
+  Whether affiliate applications are automatically approved
+</ResponseField>
+
+<ResponseField name="currency" type="string">
+  Three-letter currency code (e.g. `USD`, `EUR`)
+</ResponseField>
+
+<ResponseField name="commission" type="object | null">
+  Commission details for the program's default tier.
+
+<Expandable title="Commission Properties">
+<ResponseField name="type" type="string">
+  Commission type (e.g. `COMMISSION`)
+</ResponseField>
+
+<ResponseField name="value" type="number">
+  Commission amount
+</ResponseField>
+
+<ResponseField name="is_percentage" type="boolean">
+  Whether the value is a percentage (`true`) or a fixed amount (`false`)
+</ResponseField>
+
+<ResponseField name="apply_to" type="string">
+  What the commission applies to
+</ResponseField>
+
+<ResponseField name="has_multiple_tiers" type="boolean">
+  Whether the program has multiple commission tiers
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseField name="terms" type="object | null">
+  Program terms and conditions.
+
+<Expandable title="Terms Properties">
+<ResponseField name="cookie_lifetime_days" type="integer">
+  Number of days the referral cookie is valid
+</ResponseField>
+
+<ResponseField name="payment_frequency" type="string">
+  How often affiliates are paid
+</ResponseField>
+
+<ResponseField name="payment_threshold" type="number">
+  Minimum earnings before a payout is issued
+</ResponseField>
+</Expandable>
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseField name="pagination" type="object">
+  Pagination metadata object containing:
+  - `page` (integer): Current page number
+  - `limit` (integer): Number of results per page
+  - `total` (integer): Total number of programs matching the filters
+  - `totalPages` (integer): Total number of pages
+  - `hasNextPage` (boolean): Whether there is a next page
+  - `hasPrevPage` (boolean): Whether there is a previous page
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/programs?limit=10"
+```
+
+```bash cURL with Filter
+curl -X GET "https://api.affonso.io/v1/programs?category=SaaS&limit=10"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": [
+    {
+      "name": "Acme SaaS",
+      "description": "The best project management tool for teams",
+      "tagline": "Manage projects effortlessly",
+      "category": "SaaS",
+      "website_url": "https://acme.com",
+      "logo_url": "https://cdn.affonso.io/logos/acme.png",
+      "auto_approve": true,
+      "currency": "USD",
+      "commission": {
+        "type": "COMMISSION",
+        "value": 30,
+        "is_percentage": true,
+        "apply_to": "FIRST_PAYMENT",
+        "has_multiple_tiers": false
+      },
+      "terms": {
+        "cookie_lifetime_days": 60,
+        "payment_frequency": "MONTHLY",
+        "payment_threshold": 50
+      }
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1,
+    "totalPages": 1,
+    "hasNextPage": false,
+    "hasPrevPage": false
+  }
+}
+```
+</ResponseExample>
