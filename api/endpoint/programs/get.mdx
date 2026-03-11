@@ -22,6 +22,10 @@ Retrieve a single marketplace program by ID. This endpoint is **public** and doe
   The marketplace program object.
 
 <Expandable title="Data Object Properties">
+<ResponseField name="id" type="string">
+  Unique encoded identifier for the program
+</ResponseField>
+
 <ResponseField name="name" type="string">
   Program name
 </ResponseField>
@@ -111,6 +115,7 @@ curl -X GET "https://api.affonso.io/v1/programs/prg_abc123"
 {
   "success": true,
   "data": {
+    "id": "prog_a1b2c3d4",
     "name": "Acme SaaS",
     "description": "The best project management tool for teams",
     "tagline": "Manage projects effortlessly",
