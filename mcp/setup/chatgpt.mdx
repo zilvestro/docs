@@ -1,0 +1,98 @@
+---
+title: 'ChatGPT Setup'
+description: 'Connect Affonso to ChatGPT using MCP for natural language affiliate management'
+---
+
+## Prerequisites
+
+- A **ChatGPT Plus, Team, or Enterprise** account (MCP requires a paid plan)
+- An **Affonso account** with at least one active team
+
+## Setup
+
+### Step 1: Add MCP Server
+
+1. Open [chatgpt.com](https://chatgpt.com)
+2. Go to **Settings** > **Connected Apps** (or look for MCP/integrations in your settings)
+3. Click **Add MCP Server**
+4. Enter the server URL:
+
+```
+https://api.affonso.io/mcp
+```
+
+### Step 2: Authorize
+
+ChatGPT will open a browser window with the Affonso login page:
+
+1. **Log in** with your Affonso email and password
+2. **Select your team** (if you have multiple)
+3. **Approve** the requested permissions (read, write, delete access to your affiliate data)
+
+Once approved, you're redirected back to ChatGPT and the connection is active.
+
+### Step 3: Start Using It
+
+Try asking ChatGPT:
+
+```
+List my affiliates
+```
+
+```
+Show me all pending commissions
+```
+
+```
+Create a new affiliate with email partner@example.com and name "Jane Doe"
+```
+
+```
+What's my total revenue from referrals this month?
+```
+
+## What You Can Do
+
+ChatGPT can use all 18 Affonso MCP tools:
+
+| Domain | Examples |
+|--------|----------|
+| **Affiliates** | List, search, create, update, approve, delete affiliates |
+| **Referrals** | Track clicks, leads, conversions |
+| **Commissions** | View, create, approve commission transactions |
+| **Payouts** | Check payout status, process payouts |
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="MCP option not available">
+    MCP support in ChatGPT requires a paid plan (Plus, Team, or Enterprise). Make sure your plan supports MCP integrations.
+  </Accordion>
+
+  <Accordion title="Authorization fails">
+    1. Make sure you have an active Affonso account
+    2. Check that your team is active in the [dashboard](https://affonso.io/app)
+    3. Try again — if the issue persists, clear your browser cookies for `api.affonso.io`
+  </Accordion>
+
+  <Accordion title="Tools not showing up">
+    1. Try starting a new conversation
+    2. Check if the integration is still connected in Settings > Connected Apps
+    3. Disconnect and reconnect the integration
+  </Accordion>
+
+  <Accordion title="Permission denied errors">
+    The scopes you approved during authorization determine what ChatGPT can do. To change permissions, disconnect and reconnect the integration.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Explore Tools" icon="wrench" href="/mcp/tools/affiliates">
+    See all available MCP tools
+  </Card>
+  <Card title="Example Queries" icon="lightbulb" href="/mcp/examples">
+    See sample prompts and use cases
+  </Card>
+</CardGroup>

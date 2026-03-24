@@ -13,11 +13,23 @@ Affonso MCP uses the **Streamable HTTP** transport, which is the standard for cl
 |---------|-------|
 | **URL** | `https://api.affonso.io/mcp` |
 | **Transport** | Streamable HTTP |
-| **Authentication** | Bearer token (API key) |
+| **Authentication** | OAuth 2.1 (automatic) or Bearer token (API key) |
 
-## Generic Configuration
+## Authentication
 
-Most MCP clients accept a configuration in this format:
+### OAuth 2.1 (Recommended)
+
+Clients that support OAuth (like Claude.ai, ChatGPT, Claude Desktop) handle authentication automatically. Just enter the server URL and you'll be guided through a login flow — no API key needed.
+
+The server publishes OAuth metadata at:
+- `/.well-known/oauth-protected-resource`
+- `/.well-known/oauth-authorization-server`
+
+Clients discover these endpoints automatically per the MCP specification.
+
+### API Key
+
+For clients that don't support OAuth, authenticate with a Bearer token:
 
 ```json
 {
@@ -54,12 +66,14 @@ curl -X POST https://api.affonso.io/mcp \
 
 ### Confirmed Compatible
 
-| Client | Transport Support | Notes |
-|--------|------------------|-------|
-| Claude Desktop | Streamable HTTP | Full support |
-| Cursor | Streamable HTTP | Full support |
-| Continue.dev | Streamable HTTP | Full support |
-| Cline | Streamable HTTP | Full support |
+| Client | Auth Method | Notes |
+|--------|------------|-------|
+| Claude.ai | OAuth | Just enter the URL — [Setup guide](/mcp/setup/claude) |
+| ChatGPT | OAuth | Just enter the URL — [Setup guide](/mcp/setup/chatgpt) |
+| Claude Desktop | OAuth or API key | [Setup guide](/mcp/setup/claude) |
+| Cursor | API key | [Setup guide](/mcp/setup/cursor) |
+| Continue.dev | API key | Use generic config above |
+| Cline | API key | Use generic config above |
 
 ### Building Custom Clients
 
@@ -134,10 +148,13 @@ MCP requests share the same rate limits as REST API requests:
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="Claude Desktop" icon="message-bot" href="/mcp/setup/claude-desktop">
-    Detailed Claude Desktop setup
+  <Card title="Claude" icon="message-bot" href="/mcp/setup/claude">
+    Claude.ai & Claude Desktop setup
+  </Card>
+  <Card title="ChatGPT" icon="brain" href="/mcp/setup/chatgpt">
+    ChatGPT setup
   </Card>
   <Card title="Cursor" icon="i-cursor" href="/mcp/setup/cursor">
-    Detailed Cursor setup
+    Cursor IDE setup
   </Card>
 </CardGroup>
