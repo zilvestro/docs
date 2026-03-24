@@ -115,7 +115,8 @@
           {
             "group": "Setup",
             "pages": [
-              "mcp/setup/claude-desktop",
+              "mcp/setup/claude",
+              "mcp/setup/chatgpt",
               "mcp/setup/cursor",
               "mcp/setup/other-clients"
             ]
@@ -225,6 +226,10 @@
     {
       "source": "/api-reference/:path*",
       "destination": "/api/:path*"
+    },
+    {
+      "source": "/mcp/setup/claude-desktop",
+      "destination": "/mcp/setup/claude"
     }
   ],
   "footer": {

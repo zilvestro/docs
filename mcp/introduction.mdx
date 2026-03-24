@@ -3,10 +3,6 @@ title: 'MCP Introduction'
 description: 'Connect AI assistants directly to your Affonso affiliate data using the Model Context Protocol'
 ---
 
-<Note>
-**Beta Feature**: MCP integration is currently in beta and not available to all users yet. Interested in getting access? [Contact us](mailto:hello@affonso.io) to join the beta program.
-</Note>
-
 ## What is MCP?
 
 The **Model Context Protocol (MCP)** is an open standard that enables AI assistants like Claude, Cursor, and others to interact directly with external services. With Affonso's MCP integration, you can manage your affiliate program using natural language commands.
@@ -75,7 +71,22 @@ The MCP server uses **Streamable HTTP** transport, which is supported by Claude 
 
 ## Authentication
 
-MCP uses the same API keys as the REST API. You'll need a valid API key with appropriate permissions:
+Affonso MCP supports two authentication methods:
+
+### OAuth 2.1 (Recommended for AI Apps)
+
+When you add `https://api.affonso.io/mcp` in Claude, ChatGPT, or another AI app, the OAuth flow starts automatically:
+
+1. You're redirected to log in with your Affonso account
+2. Select your team (if you have multiple)
+3. Approve the requested permissions
+4. Done — the AI app is connected
+
+No API key or manual configuration required.
+
+### API Key (For IDEs & Custom Clients)
+
+For clients like Cursor, Claude Desktop (local config), or custom integrations, you can authenticate with an API key:
 
 - **Production**: `sk_live_` + 32 characters
 - **Development**: `sk_dev_` + 32 characters
@@ -98,11 +109,17 @@ Specify the format using the `responseFormat` parameter on any tool.
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="Claude Desktop Setup" icon="message-bot" href="/mcp/setup/claude-desktop">
-    Configure MCP in Claude Desktop
+  <Card title="Claude Setup" icon="message-bot" href="/mcp/setup/claude">
+    Connect via Claude.ai or Claude Desktop
+  </Card>
+  <Card title="ChatGPT Setup" icon="brain" href="/mcp/setup/chatgpt">
+    Connect via ChatGPT
   </Card>
   <Card title="Cursor Setup" icon="i-cursor" href="/mcp/setup/cursor">
     Set up MCP in Cursor IDE
+  </Card>
+  <Card title="Other Clients" icon="plug" href="/mcp/setup/other-clients">
+    Any MCP-compatible client
   </Card>
   <Card title="View All Tools" icon="wrench" href="/mcp/tools/affiliates">
     Explore available MCP tools

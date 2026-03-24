@@ -1,0 +1,173 @@
+---
+title: 'Claude Setup'
+description: 'Connect Affonso to Claude.ai or Claude Desktop using OAuth or API key'
+---
+
+## Claude.ai (Web)
+
+The quickest way to connect — no API key or config file needed.
+
+### Step 1: Add MCP Server
+
+1. Open [claude.ai](https://claude.ai)
+2. Go to **Settings** > **Integrations** or start a new conversation
+3. Click **Add MCP Server** (or use the integrations menu)
+4. Enter the server URL:
+
+```
+https://api.affonso.io/mcp
+```
+
+### Step 2: Authorize
+
+Claude will open a login page:
+
+1. **Log in** with your Affonso email and password
+2. **Select your team** (if you have multiple)
+3. **Approve** the requested permissions
+
+That's it — Claude now has access to your affiliate data.
+
+### Step 3: Try It
+
+Ask Claude something like:
+
+```
+List my affiliates
+```
+
+```
+Show me my top affiliates by revenue
+```
+
+```
+Create a new affiliate for partner@example.com
+```
+
+---
+
+## Claude Desktop
+
+Claude Desktop supports two methods: **OAuth** (recommended) or **API key**.
+
+### Option A: OAuth (Recommended)
+
+<Steps>
+  <Step title="Open Settings">
+    Go to **Settings** > **MCP Servers** > **Add Server**
+  </Step>
+  <Step title="Enter URL">
+    Enter `https://api.affonso.io/mcp` as the server URL
+  </Step>
+  <Step title="Authorize">
+    A browser window opens — log in with your Affonso account, select your team, and approve permissions
+  </Step>
+</Steps>
+
+No API key needed. Claude Desktop handles the OAuth flow automatically.
+
+### Option B: API Key (Config File)
+
+If you prefer using an API key directly:
+
+#### Locate the config file
+
+<CodeGroup>
+```bash macOS
+~/Library/Application Support/Claude/claude_desktop_config.json
+```
+
+```bash Windows
+%APPDATA%\Claude\claude_desktop_config.json
+```
+
+```bash Linux
+~/.config/Claude/claude_desktop_config.json
+```
+</CodeGroup>
+
+#### Add the configuration
+
+```json claude_desktop_config.json
+{
+  "mcpServers": {
+    "affonso": {
+      "url": "https://api.affonso.io/mcp",
+      "headers": {
+        "Authorization": "Bearer sk_live_your_api_key_here"
+      },
+      "transport": "streamable-http"
+    }
+  }
+}
+```
+
+<Warning>
+Replace `sk_live_your_api_key_here` with your actual API key from the [Affonso dashboard](https://affonso.io/app/settings/api).
+</Warning>
+
+#### Restart Claude Desktop
+
+After saving, restart Claude Desktop to load the MCP server.
+
+---
+
+## Local Development
+
+For testing against a local Affonso API instance:
+
+```json claude_desktop_config.json
+{
+  "mcpServers": {
+    "affonso-local": {
+      "url": "http://localhost:3000/mcp",
+      "headers": {
+        "Authorization": "Bearer sk_dev_your_dev_api_key"
+      },
+      "transport": "streamable-http"
+    }
+  }
+}
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="OAuth login page doesn't load">
+    1. Make sure you're using `https://api.affonso.io/mcp` (with HTTPS)
+    2. Check your internet connection
+    3. Try again — the OAuth server may have been temporarily unavailable
+  </Accordion>
+
+  <Accordion title="'No active teams found' after login">
+    Your Affonso account needs at least one active team. Log in to your [dashboard](https://affonso.io/app) and make sure your team is set up.
+  </Accordion>
+
+  <Accordion title="Tools not appearing (API key method)">
+    1. Verify your API key is correct
+    2. Check that the config file is valid JSON
+    3. Restart Claude Desktop completely (quit and reopen)
+    4. Check Claude Desktop logs for errors
+  </Accordion>
+
+  <Accordion title="Authentication errors">
+    1. For OAuth: try disconnecting and reconnecting the integration
+    2. For API key: ensure the key starts with `sk_live_` or `sk_dev_` and is active
+  </Accordion>
+
+  <Accordion title="Rate limit errors">
+    1. Wait a moment before retrying
+    2. Check your plan's rate limits in the dashboard
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Explore Tools" icon="wrench" href="/mcp/tools/affiliates">
+    See all available MCP tools
+  </Card>
+  <Card title="Example Queries" icon="lightbulb" href="/mcp/examples">
+    Learn what you can ask Claude
+  </Card>
+</CardGroup>
