@@ -1,0 +1,141 @@
+---
+title: "Get Payment Terms"
+api: "GET https://api.affonso.io/v1/program/payment-terms"
+description: "Get commission and payment configuration for your program"
+---
+
+Retrieve the payment terms configuration including commission rates, payment frequency, cookie lifetime, and invoicing settings.
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="object | null">
+  The payment terms object, or `null` if not yet configured.
+
+<Expandable title="Data Object Properties">
+<ResponseField name="commission_type" type="string">
+  Commission type: `percentage`, `fixed`, or `credits`
+</ResponseField>
+
+<ResponseField name="commission_rate" type="number">
+  Commission rate (percentage or fixed amount)
+</ResponseField>
+
+<ResponseField name="commission_duration" type="string">
+  Duration model: `lifetime`, `time_limited`, or `payment_limited`
+</ResponseField>
+
+<ResponseField name="commissions_limit" type="integer | null">
+  Maximum commissions per referral, or `null` for unlimited
+</ResponseField>
+
+<ResponseField name="commissions_hold_days" type="integer | null">
+  Days to hold commissions before approval
+</ResponseField>
+
+<ResponseField name="payment_threshold" type="integer">
+  Minimum payout threshold (in cents)
+</ResponseField>
+
+<ResponseField name="payment_frequency" type="string">
+  Payout frequency: `weekly` or `monthly`
+</ResponseField>
+
+<ResponseField name="payment_methods" type="array">
+  List of accepted payment methods
+</ResponseField>
+
+<ResponseField name="cookie_lifetime" type="integer">
+  Cookie lifetime in days (1–365)
+</ResponseField>
+
+<ResponseField name="auto_payout" type="boolean">
+  Whether automatic payouts are enabled
+</ResponseField>
+
+<ResponseField name="invoice_rule" type="string">
+  Invoice handling: `none`, `owner_provides`, `affiliate_provides`, or `self_billing`
+</ResponseField>
+
+<ResponseField name="invoice_prefix" type="string | null">
+  Invoice number prefix
+</ResponseField>
+
+<ResponseField name="require_tax_forms" type="boolean">
+  Whether affiliates must submit tax forms
+</ResponseField>
+
+<ResponseField name="owner_company_name" type="string | null">
+  Company name for invoices
+</ResponseField>
+
+<ResponseField name="owner_address_line_1" type="string | null">
+  Address line 1
+</ResponseField>
+
+<ResponseField name="owner_address_line_2" type="string | null">
+  Address line 2
+</ResponseField>
+
+<ResponseField name="owner_city" type="string | null">
+  City
+</ResponseField>
+
+<ResponseField name="owner_postal_code" type="string | null">
+  Postal code
+</ResponseField>
+
+<ResponseField name="owner_country" type="string | null">
+  ISO 3166-1 alpha-2 country code (e.g. `US`, `DE`)
+</ResponseField>
+
+<ResponseField name="owner_vat_id" type="string | null">
+  VAT ID
+</ResponseField>
+
+<ResponseField name="owner_vat_rate" type="number | null">
+  VAT rate percentage
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/program/payment-terms" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "commission_type": "percentage",
+    "commission_rate": 30,
+    "commission_duration": "lifetime",
+    "commissions_limit": null,
+    "commissions_hold_days": 14,
+    "payment_threshold": 5000,
+    "payment_frequency": "monthly",
+    "payment_methods": ["paypal", "wise"],
+    "cookie_lifetime": 60,
+    "auto_payout": false,
+    "invoice_rule": "none",
+    "invoice_prefix": null,
+    "require_tax_forms": false,
+    "owner_company_name": "Acme Inc.",
+    "owner_address_line_1": "123 Main St",
+    "owner_address_line_2": null,
+    "owner_city": "San Francisco",
+    "owner_postal_code": "94105",
+    "owner_country": "US",
+    "owner_vat_id": null,
+    "owner_vat_rate": null
+  }
+}
+```
+</ResponseExample>

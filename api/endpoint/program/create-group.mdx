@@ -1,0 +1,76 @@
+---
+title: "Create Group"
+api: "POST https://api.affonso.io/v1/program/groups"
+description: "Create a new affiliate group"
+---
+
+Create a new affiliate group. The number of groups is limited by your plan tier:
+
+| Plan | Group Limit |
+|------|-------------|
+| Launch | 3 |
+| Growth | 5 |
+| Elite | Unlimited |
+| Enterprise | Unlimited |
+
+## Body Parameters
+
+<ParamField body="name" type="string" required>
+  Group name. Must be between 1 and 255 characters.
+</ParamField>
+
+<ParamField body="description" type="string | null">
+  Group description. Set to `null` or omit for no description.
+</ParamField>
+
+<ParamField body="custom_website_url" type="string | null">
+  Custom website URL for this group. Must be a valid URL. Set to `null` or omit to use default.
+</ParamField>
+
+<ParamField body="is_default" type="boolean" default="false">
+  Set as the default group for new affiliates.
+</ParamField>
+
+## Response
+
+Returns the created group object (HTTP 201).
+
+<RequestExample>
+```bash cURL
+curl -X POST "https://api.affonso.io/v1/program/groups" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Premium Partners",
+    "description": "High-performing affiliates with higher commissions",
+    "custom_website_url": "https://partners.acme.com"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response (201)
+{
+  "success": true,
+  "data": {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Premium Partners",
+    "description": "High-performing affiliates with higher commissions",
+    "custom_website_url": "https://partners.acme.com",
+    "is_default": false,
+    "created_at": "2024-06-15T14:30:00.000Z"
+  }
+}
+```
+
+```json Plan Limit Reached (403)
+{
+  "success": false,
+  "error": {
+    "code": "PLAN_LIMIT_REACHED",
+    "message": "Your Launch plan allows up to 3 groups. Upgrade to Growth for up to 5, or Elite for unlimited.",
+    "current_limit": 3
+  }
+}
+```
+</ResponseExample>

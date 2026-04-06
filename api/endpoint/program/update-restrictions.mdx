@@ -1,0 +1,91 @@
+---
+title: "Update Restrictions"
+api: "PATCH https://api.affonso.io/v1/program/restrictions"
+description: "Update allowed traffic sources and restrictions"
+---
+
+Update your program's traffic source restrictions. All fields are optional. If no restrictions exist yet, they will be created.
+
+## Body Parameters
+
+<ParamField body="websites" type="boolean">
+  Allow website traffic.
+</ParamField>
+
+<ParamField body="social_marketing" type="boolean">
+  Allow paid social marketing.
+</ParamField>
+
+<ParamField body="organic_social" type="boolean">
+  Allow organic social traffic.
+</ParamField>
+
+<ParamField body="email_marketing" type="boolean">
+  Allow email marketing.
+</ParamField>
+
+<ParamField body="mobile_traffic" type="boolean">
+  Allow mobile traffic.
+</ParamField>
+
+<ParamField body="search_engine_marketing" type="boolean">
+  Allow paid search (SEM).
+</ParamField>
+
+<ParamField body="organic_search" type="boolean">
+  Allow organic search traffic.
+</ParamField>
+
+<ParamField body="rebrokering" type="boolean">
+  Allow rebrokering.
+</ParamField>
+
+<ParamField body="incent" type="boolean">
+  Allow incentivized traffic.
+</ParamField>
+
+<ParamField body="brand_bidding" type="boolean">
+  Allow brand bidding.
+</ParamField>
+
+<ParamField body="additional_restrictions" type="string | null">
+  Free-text additional restrictions. Set to `null` to clear.
+</ParamField>
+
+## Response
+
+Returns the updated restrictions object. Same structure as the [Get Restrictions](/api/endpoint/program/get-restrictions) response.
+
+<RequestExample>
+```bash cURL
+curl -X PATCH "https://api.affonso.io/v1/program/restrictions" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "brand_bidding": false,
+    "incent": false,
+    "additional_restrictions": "No adult content"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "websites": true,
+    "social_marketing": true,
+    "organic_social": true,
+    "email_marketing": true,
+    "mobile_traffic": true,
+    "search_engine_marketing": false,
+    "organic_search": true,
+    "rebrokering": false,
+    "incent": false,
+    "brand_bidding": false,
+    "additional_restrictions": "No adult content"
+  }
+}
+```
+</ResponseExample>

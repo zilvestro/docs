@@ -1,0 +1,129 @@
+---
+title: "List Creatives"
+api: "GET https://api.affonso.io/v1/program/creatives"
+description: "Get a paginated list of creatives for your program"
+---
+
+Retrieve a paginated list of creative assets (banners, logos, videos, etc.) for your program. Optionally filter by category.
+
+## Query Parameters
+
+<ParamField query="page" type="integer" default="1">
+  Page number for pagination.
+</ParamField>
+
+<ParamField query="limit" type="integer" default="50">
+  Number of results per page. Maximum 200.
+</ParamField>
+
+<ParamField query="category" type="string">
+  Filter by creative category. Valid values: `brand`, `banner`, `product`, `content`, `video`, `document`.
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of creative objects.
+
+<Expandable title="Creative Object Properties">
+<ResponseField name="id" type="string">
+  Unique identifier
+</ResponseField>
+
+<ResponseField name="name" type="string | null">
+  Creative name
+</ResponseField>
+
+<ResponseField name="description" type="string | null">
+  Creative description
+</ResponseField>
+
+<ResponseField name="category" type="string | null">
+  Category: `brand`, `banner`, `product`, `content`, `video`, or `document`
+</ResponseField>
+
+<ResponseField name="subcategory" type="string | null">
+  Subcategory
+</ResponseField>
+
+<ResponseField name="url" type="string | null">
+  Asset URL
+</ResponseField>
+
+<ResponseField name="content" type="string | null">
+  HTML or text content
+</ResponseField>
+
+<ResponseField name="tags" type="array">
+  Tags for categorization
+</ResponseField>
+
+<ResponseField name="dimensions" type="object | null">
+  Asset dimensions (`width` and `height` in pixels)
+</ResponseField>
+
+<ResponseField name="usage_notes" type="string | null">
+  Usage instructions for affiliates
+</ResponseField>
+
+<ResponseField name="restrictions" type="string | null">
+  Usage restrictions
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp
+</ResponseField>
+
+<ResponseField name="updated_at" type="string">
+  ISO 8601 timestamp
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseField name="pagination" type="object">
+  Pagination metadata with `page`, `limit`, `total`, `totalPages`, `hasNextPage`, `hasPrevPage`.
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/program/creatives?category=banner&limit=10" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": [
+    {
+      "id": "creative_abc123",
+      "name": "Summer Sale Banner",
+      "description": "728x90 leaderboard banner for summer promotion",
+      "category": "banner",
+      "subcategory": "leaderboard",
+      "url": "https://cdn.acme.com/banners/summer-728x90.png",
+      "content": null,
+      "tags": ["summer", "sale", "leaderboard"],
+      "dimensions": { "width": 728, "height": 90 },
+      "usage_notes": "Use on blog sidebars and headers",
+      "restrictions": null,
+      "created_at": "2024-05-01T10:00:00.000Z",
+      "updated_at": "2024-05-01T10:00:00.000Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1,
+    "totalPages": 1,
+    "hasNextPage": false,
+    "hasPrevPage": false
+  }
+}
+```
+</ResponseExample>

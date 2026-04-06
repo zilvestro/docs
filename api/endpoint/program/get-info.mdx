@@ -1,0 +1,129 @@
+---
+title: "Get Program Info"
+api: "GET https://api.affonso.io/v1/program"
+description: "Get your affiliate program configuration and plan features"
+---
+
+Retrieve your affiliate program settings including name, description, status, and your current plan features.
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  The program info object with plan features.
+
+<Expandable title="Data Object Properties">
+<ResponseField name="id" type="string">
+  Unique identifier for the program
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Program name
+</ResponseField>
+
+<ResponseField name="slug" type="string | null">
+  URL-friendly program slug
+</ResponseField>
+
+<ResponseField name="tagline" type="string | null">
+  Short tagline for the program
+</ResponseField>
+
+<ResponseField name="category" type="string | null">
+  Program category
+</ResponseField>
+
+<ResponseField name="description" type="string | null">
+  Program description
+</ResponseField>
+
+<ResponseField name="website_url" type="string">
+  The program's website URL
+</ResponseField>
+
+<ResponseField name="auto_approve" type="boolean">
+  Whether affiliate applications are automatically approved
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Program status (e.g. `active`, `inactive`)
+</ResponseField>
+
+<ResponseField name="affiliate_links_enabled" type="boolean">
+  Whether affiliate links are enabled
+</ResponseField>
+
+<ResponseField name="logo_url" type="string | null">
+  URL to the program's logo image
+</ResponseField>
+
+<ResponseField name="default_referral_parameter" type="string">
+  Default referral query parameter name
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp of when the program was created
+</ResponseField>
+
+<ResponseField name="updated_at" type="string">
+  ISO 8601 timestamp of the last update
+</ResponseField>
+
+<ResponseField name="plan" type="object">
+  Your current plan features and limits.
+
+<Expandable title="Plan Properties">
+<ResponseField name="tier" type="string | null">
+  Plan tier: `launch`, `growth`, `elite`, `enterprise`, or `null` if no active plan
+</ResponseField>
+
+<ResponseField name="postbacks" type="boolean">
+  Whether postback URLs are available on your plan
+</ResponseField>
+
+<ResponseField name="groups_limit" type="integer | null">
+  Maximum number of affiliate groups allowed (`null` = unlimited)
+</ResponseField>
+</Expandable>
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/program" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "cm7xutqbb0001yfkcrnpextmp",
+    "name": "Acme SaaS",
+    "slug": "acme-saas",
+    "tagline": "Manage projects effortlessly",
+    "category": "SaaS",
+    "description": "The best project management tool for teams",
+    "website_url": "https://acme.com",
+    "auto_approve": true,
+    "status": "active",
+    "affiliate_links_enabled": true,
+    "logo_url": "https://cdn.affonso.io/logos/acme.png",
+    "default_referral_parameter": "ref",
+    "created_at": "2024-01-10T08:00:00.000Z",
+    "updated_at": "2024-06-15T14:30:00.000Z",
+    "plan": {
+      "tier": "growth",
+      "postbacks": true,
+      "groups_limit": 5
+    }
+  }
+}
+```
+</ResponseExample>

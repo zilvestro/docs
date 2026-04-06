@@ -1,0 +1,93 @@
+---
+title: "Create Creative"
+api: "POST https://api.affonso.io/v1/program/creatives"
+description: "Create a new creative asset for your program"
+---
+
+Create a new creative asset (banner, logo, video, etc.) for your affiliate program.
+
+## Body Parameters
+
+<ParamField body="name" type="string | null">
+  Creative name. Maximum 255 characters.
+</ParamField>
+
+<ParamField body="description" type="string | null">
+  Creative description.
+</ParamField>
+
+<ParamField body="category" type="string | null">
+  Creative category. Valid values: `brand`, `banner`, `product`, `content`, `video`, `document`.
+</ParamField>
+
+<ParamField body="subcategory" type="string | null">
+  Creative subcategory (e.g. `leaderboard`, `skyscraper`).
+</ParamField>
+
+<ParamField body="url" type="string | null">
+  Asset URL. Must be a valid URL.
+</ParamField>
+
+<ParamField body="content" type="string | null">
+  HTML or text content (for text-based creatives).
+</ParamField>
+
+<ParamField body="tags" type="array">
+  Tags for categorization. Array of strings.
+</ParamField>
+
+<ParamField body="dimensions" type="object | null">
+  Asset dimensions in pixels. Object with `width` (integer) and `height` (integer).
+</ParamField>
+
+<ParamField body="usage_notes" type="string | null">
+  Usage instructions for affiliates.
+</ParamField>
+
+<ParamField body="restrictions" type="string | null">
+  Usage restrictions.
+</ParamField>
+
+## Response
+
+Returns the created creative object (HTTP 201). Same structure as items in the [List Creatives](/api/endpoint/program/list-creatives) response.
+
+<RequestExample>
+```bash cURL
+curl -X POST "https://api.affonso.io/v1/program/creatives" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Summer Sale Banner",
+    "category": "banner",
+    "subcategory": "leaderboard",
+    "url": "https://cdn.acme.com/banners/summer-728x90.png",
+    "tags": ["summer", "sale"],
+    "dimensions": { "width": 728, "height": 90 },
+    "usage_notes": "Use on blog sidebars and headers"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response (201)
+{
+  "success": true,
+  "data": {
+    "id": "creative_abc123",
+    "name": "Summer Sale Banner",
+    "description": null,
+    "category": "banner",
+    "subcategory": "leaderboard",
+    "url": "https://cdn.acme.com/banners/summer-728x90.png",
+    "content": null,
+    "tags": ["summer", "sale"],
+    "dimensions": { "width": 728, "height": 90 },
+    "usage_notes": "Use on blog sidebars and headers",
+    "restrictions": null,
+    "created_at": "2024-06-15T14:30:00.000Z",
+    "updated_at": "2024-06-15T14:30:00.000Z"
+  }
+}
+```
+</ResponseExample>

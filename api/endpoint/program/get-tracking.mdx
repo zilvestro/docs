@@ -1,0 +1,61 @@
+---
+title: "Get Tracking Settings"
+api: "GET https://api.affonso.io/v1/program/tracking"
+description: "Get referral tracking configuration including referral parameters and postbacks"
+---
+
+Retrieve your program's referral tracking configuration, including which referral parameters are enabled and whether postback URLs are active.
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  The tracking settings object.
+
+<Expandable title="Data Object Properties">
+<ResponseField name="default_referral_parameter" type="string">
+  Default referral query parameter name (e.g. `ref`)
+</ResponseField>
+
+<ResponseField name="enabled_referral_parameters" type="array">
+  List of accepted referral parameter names
+</ResponseField>
+
+<ResponseField name="email_tracking_enabled" type="boolean">
+  Whether referral tracking by email is enabled
+</ResponseField>
+
+<ResponseField name="name_tracking_enabled" type="boolean">
+  Whether referral tracking by name is enabled
+</ResponseField>
+
+<ResponseField name="postbacks_enabled" type="boolean">
+  Whether postback URLs are enabled (requires Growth plan or higher)
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/program/tracking" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "default_referral_parameter": "ref",
+    "enabled_referral_parameters": ["ref", "via", "aff"],
+    "email_tracking_enabled": true,
+    "name_tracking_enabled": false,
+    "postbacks_enabled": false
+  }
+}
+```
+</ResponseExample>

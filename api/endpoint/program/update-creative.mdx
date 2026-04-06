@@ -1,0 +1,94 @@
+---
+title: "Update Creative"
+api: "PATCH https://api.affonso.io/v1/program/creatives/{id}"
+description: "Update a creative asset"
+---
+
+Update an existing creative asset. All fields are optional — only include the fields you want to change.
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the creative to update.
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="name" type="string | null">
+  Creative name. Maximum 255 characters. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="description" type="string | null">
+  Creative description. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="category" type="string | null">
+  Creative category. Valid values: `brand`, `banner`, `product`, `content`, `video`, `document`. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="subcategory" type="string | null">
+  Creative subcategory. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="url" type="string | null">
+  Asset URL. Must be a valid URL. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="content" type="string | null">
+  HTML or text content. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="tags" type="array">
+  Tags for categorization.
+</ParamField>
+
+<ParamField body="dimensions" type="object | null">
+  Asset dimensions (`width` and `height` in pixels). Set to `null` to clear.
+</ParamField>
+
+<ParamField body="usage_notes" type="string | null">
+  Usage instructions. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="restrictions" type="string | null">
+  Usage restrictions. Set to `null` to clear.
+</ParamField>
+
+## Response
+
+Returns the updated creative object. Same structure as items in the [List Creatives](/api/endpoint/program/list-creatives) response.
+
+<RequestExample>
+```bash cURL
+curl -X PATCH "https://api.affonso.io/v1/program/creatives/creative_abc123" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Summer Sale Banner v2",
+    "dimensions": { "width": 300, "height": 250 }
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "creative_abc123",
+    "name": "Summer Sale Banner v2",
+    "description": "728x90 leaderboard banner for summer promotion",
+    "category": "banner",
+    "subcategory": "leaderboard",
+    "url": "https://cdn.acme.com/banners/summer-728x90.png",
+    "content": null,
+    "tags": ["summer", "sale", "leaderboard"],
+    "dimensions": { "width": 300, "height": 250 },
+    "usage_notes": "Use on blog sidebars and headers",
+    "restrictions": null,
+    "created_at": "2024-05-01T10:00:00.000Z",
+    "updated_at": "2024-06-15T15:00:00.000Z"
+  }
+}
+```
+</ResponseExample>

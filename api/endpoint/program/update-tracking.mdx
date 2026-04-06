@@ -1,0 +1,65 @@
+---
+title: "Update Tracking Settings"
+api: "PATCH https://api.affonso.io/v1/program/tracking"
+description: "Update referral tracking configuration including referral parameters and postbacks"
+---
+
+Update your program's referral tracking configuration. All fields are optional.
+
+<Note>
+  Enabling postback URLs requires the **Growth plan** or higher. Attempting to enable postbacks on the Launch plan will return a `403 PLAN_UPGRADE_REQUIRED` error.
+</Note>
+
+## Body Parameters
+
+<ParamField body="default_referral_parameter" type="string">
+  Default referral query parameter name. Must be between 1 and 50 characters.
+</ParamField>
+
+<ParamField body="enabled_referral_parameters" type="array">
+  List of accepted referral parameter names. Each must be between 1 and 50 characters.
+</ParamField>
+
+<ParamField body="email_tracking_enabled" type="boolean">
+  Enable referral tracking by email address.
+</ParamField>
+
+<ParamField body="name_tracking_enabled" type="boolean">
+  Enable referral tracking by affiliate name.
+</ParamField>
+
+<ParamField body="postbacks_enabled" type="boolean">
+  Enable postback URLs. Requires Growth plan or higher.
+</ParamField>
+
+## Response
+
+Returns the updated tracking settings object. Same structure as the [Get Tracking Settings](/api/endpoint/program/get-tracking) response.
+
+<RequestExample>
+```bash cURL
+curl -X PATCH "https://api.affonso.io/v1/program/tracking" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "default_referral_parameter": "ref",
+    "enabled_referral_parameters": ["ref", "via"],
+    "email_tracking_enabled": true
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "default_referral_parameter": "ref",
+    "enabled_referral_parameters": ["ref", "via"],
+    "email_tracking_enabled": true,
+    "name_tracking_enabled": false,
+    "postbacks_enabled": false
+  }
+}
+```
+</ResponseExample>

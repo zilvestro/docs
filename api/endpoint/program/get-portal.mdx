@@ -1,0 +1,101 @@
+---
+title: "Get Portal Settings"
+api: "GET https://api.affonso.io/v1/program/portal"
+description: "Get the affiliate portal appearance and configuration settings"
+---
+
+Retrieve the affiliate portal settings including branding, colors, legal pages, and leaderboard configuration.
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="object | null">
+  The portal settings object, or `null` if not yet configured.
+
+<Expandable title="Data Object Properties">
+<ResponseField name="single_program_portal" type="boolean">
+  Show only one program in the portal
+</ResponseField>
+
+<ResponseField name="hide_branding" type="boolean">
+  Hide Affonso branding from the portal
+</ResponseField>
+
+<ResponseField name="hide_details" type="boolean">
+  Hide program details from affiliates
+</ResponseField>
+
+<ResponseField name="primary_color" type="string | null">
+  Primary brand color (hex code)
+</ResponseField>
+
+<ResponseField name="secondary_color" type="string | null">
+  Secondary brand color (hex code)
+</ResponseField>
+
+<ResponseField name="show_leaderboard" type="boolean">
+  Show the affiliate leaderboard
+</ResponseField>
+
+<ResponseField name="terms_conditions_status" type="boolean">
+  Whether terms & conditions are enabled
+</ResponseField>
+
+<ResponseField name="terms_conditions_value" type="string | null">
+  Terms & conditions content or URL
+</ResponseField>
+
+<ResponseField name="privacy_policy_status" type="boolean">
+  Whether privacy policy is enabled
+</ResponseField>
+
+<ResponseField name="privacy_policy_value" type="string | null">
+  Privacy policy content or URL
+</ResponseField>
+
+<ResponseField name="support_email_status" type="boolean">
+  Whether support email is displayed
+</ResponseField>
+
+<ResponseField name="support_email_value" type="string | null">
+  Support email address
+</ResponseField>
+
+<ResponseField name="custom_texts" type="object | null">
+  Custom text overrides for portal UI elements
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/program/portal" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "single_program_portal": false,
+    "hide_branding": true,
+    "hide_details": false,
+    "primary_color": "#881337",
+    "secondary_color": "#f0f0f0",
+    "show_leaderboard": true,
+    "terms_conditions_status": true,
+    "terms_conditions_value": "https://acme.com/terms",
+    "privacy_policy_status": true,
+    "privacy_policy_value": "https://acme.com/privacy",
+    "support_email_status": true,
+    "support_email_value": "affiliates@acme.com",
+    "custom_texts": null
+  }
+}
+```
+</ResponseExample>
