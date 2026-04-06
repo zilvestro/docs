@@ -186,7 +186,13 @@ curl -X GET "https://api.affonso.io/v1/affiliates?limit=10&expand=promoCodes,com
           "amount": 15,
           "is_percentage": true,
           "apply_to": "all_plans",
-          "product_ids": []
+          "product_ids": [],
+          "approval_type": "hold_period",
+          "hold_period_days": 30,
+          "incentive_length": "customer_lifetime",
+          "length_value": null,
+          "variable_commission": false,
+          "variable_config": null
         }
       ],
       "invoiceDetails": {
