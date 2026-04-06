@@ -1,0 +1,64 @@
+---
+title: "Get Group"
+api: "GET https://api.affonso.io/v1/program/groups/{id}"
+description: "Get a single affiliate group by ID"
+---
+
+Retrieve a single affiliate group by its ID. Use the `expand` parameter to include nested incentive data.
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the group.
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="expand" type="string">
+  Comma-separated list of fields to expand. Valid values: `incentives`, `multi_level_incentives`.
+</ParamField>
+
+## Response
+
+Returns a single group object. Same structure as items in the [List Groups](/api/endpoint/program/list-groups) response.
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/program/groups/efbf3f29-efb1-4837-8924-7322606858f3?expand=incentives" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "efbf3f29-efb1-4837-8924-7322606858f3",
+    "name": "Default",
+    "description": "Default affiliate group",
+    "custom_website_url": null,
+    "is_default": true,
+    "created_at": "2024-01-10T08:00:00.000Z",
+    "incentives": [
+      {
+        "id": "gi_abc123",
+        "incentive_id": "inc_def456",
+        "name": "Standard Commission",
+        "incentive_type": "commission",
+        "amount": 30,
+        "is_percentage": true,
+        "incentive_length": "customer_lifetime",
+        "length_value": null,
+        "approval_type": "hold_period",
+        "hold_period_days": 14,
+        "variable_commission": false,
+        "variable_config": null,
+        "apply_to": "all_plans",
+        "product_ids": []
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

@@ -1,0 +1,63 @@
+---
+title: "Update Group"
+api: "PATCH https://api.affonso.io/v1/program/groups/{id}"
+description: "Update an affiliate group"
+---
+
+Update an affiliate group. All fields are optional — only include the fields you want to change.
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the group to update.
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="name" type="string">
+  Group name. Must be between 1 and 255 characters.
+</ParamField>
+
+<ParamField body="description" type="string | null">
+  Group description. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="custom_website_url" type="string | null">
+  Custom website URL. Must be a valid URL. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="is_default" type="boolean">
+  Set as the default group for new affiliates.
+</ParamField>
+
+## Response
+
+Returns the updated group object. Same structure as items in the [List Groups](/api/endpoint/program/list-groups) response.
+
+<RequestExample>
+```bash cURL
+curl -X PATCH "https://api.affonso.io/v1/program/groups/a1b2c3d4-e5f6-7890-abcd-ef1234567890" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "VIP Partners",
+    "description": "Top-tier affiliate partners"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "VIP Partners",
+    "description": "Top-tier affiliate partners",
+    "custom_website_url": "https://partners.acme.com",
+    "is_default": false,
+    "created_at": "2024-03-01T12:00:00.000Z"
+  }
+}
+```
+</ResponseExample>

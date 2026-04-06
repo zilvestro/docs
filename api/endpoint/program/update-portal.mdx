@@ -1,0 +1,103 @@
+---
+title: "Update Portal Settings"
+api: "PATCH https://api.affonso.io/v1/program/portal"
+description: "Update portal appearance, branding, and policy settings"
+---
+
+Update your affiliate portal settings. All fields are optional. If no portal settings exist yet, they will be created.
+
+## Body Parameters
+
+<ParamField body="single_program_portal" type="boolean">
+  Show only one program in the portal.
+</ParamField>
+
+<ParamField body="hide_branding" type="boolean">
+  Hide Affonso branding from the portal.
+</ParamField>
+
+<ParamField body="hide_details" type="boolean">
+  Hide program details from affiliates.
+</ParamField>
+
+<ParamField body="primary_color" type="string | null">
+  Primary brand color (hex code). Maximum 255 characters. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="secondary_color" type="string | null">
+  Secondary brand color (hex code). Maximum 255 characters. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="show_leaderboard" type="boolean">
+  Show the affiliate leaderboard.
+</ParamField>
+
+<ParamField body="terms_conditions_status" type="boolean">
+  Enable terms & conditions.
+</ParamField>
+
+<ParamField body="terms_conditions_value" type="string | null">
+  Terms & conditions content or URL. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="privacy_policy_status" type="boolean">
+  Enable privacy policy.
+</ParamField>
+
+<ParamField body="privacy_policy_value" type="string | null">
+  Privacy policy content or URL. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="support_email_status" type="boolean">
+  Show support email in the portal.
+</ParamField>
+
+<ParamField body="support_email_value" type="string | null">
+  Support email address. Must be a valid email, max 255 characters. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="custom_texts" type="object | null">
+  Custom text overrides for portal UI elements. Set to `null` to clear.
+</ParamField>
+
+## Response
+
+Returns the updated portal settings object. Same structure as the [Get Portal Settings](/api/endpoint/program/get-portal) response.
+
+<RequestExample>
+```bash cURL
+curl -X PATCH "https://api.affonso.io/v1/program/portal" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "primary_color": "#881337",
+    "hide_branding": true,
+    "show_leaderboard": true,
+    "support_email_status": true,
+    "support_email_value": "affiliates@acme.com"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "single_program_portal": false,
+    "hide_branding": true,
+    "hide_details": false,
+    "primary_color": "#881337",
+    "secondary_color": null,
+    "show_leaderboard": true,
+    "terms_conditions_status": false,
+    "terms_conditions_value": null,
+    "privacy_policy_status": false,
+    "privacy_policy_value": null,
+    "support_email_status": true,
+    "support_email_value": "affiliates@acme.com",
+    "custom_texts": null
+  }
+}
+```
+</ResponseExample>

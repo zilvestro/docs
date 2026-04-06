@@ -1,0 +1,171 @@
+---
+title: "List Groups"
+api: "GET https://api.affonso.io/v1/program/groups"
+description: "List all affiliate groups for your program"
+---
+
+List all affiliate groups for your program. Use the `expand` parameter to include nested incentive and multi-level incentive data.
+
+## Query Parameters
+
+<ParamField query="expand" type="string">
+  Comma-separated list of fields to expand. Valid values: `incentives`, `multi_level_incentives`.
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of group objects.
+
+<Expandable title="Group Object Properties">
+<ResponseField name="id" type="string">
+  Unique identifier for the group
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Group name
+</ResponseField>
+
+<ResponseField name="description" type="string | null">
+  Group description
+</ResponseField>
+
+<ResponseField name="custom_website_url" type="string | null">
+  Custom website URL for this group
+</ResponseField>
+
+<ResponseField name="is_default" type="boolean">
+  Whether this is the default group for new affiliates
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp
+</ResponseField>
+
+<ResponseField name="incentives" type="array">
+  Included when `expand=incentives`. Array of incentive objects.
+
+<Expandable title="Incentive Properties">
+<ResponseField name="id" type="string">
+  Group-incentive link ID
+</ResponseField>
+
+<ResponseField name="incentive_id" type="string">
+  Incentive ID
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Incentive name
+</ResponseField>
+
+<ResponseField name="incentive_type" type="string">
+  Type (e.g. `commission`)
+</ResponseField>
+
+<ResponseField name="amount" type="number">
+  Commission amount
+</ResponseField>
+
+<ResponseField name="is_percentage" type="boolean">
+  Whether amount is a percentage
+</ResponseField>
+
+<ResponseField name="incentive_length" type="string">
+  Duration (e.g. `customer_lifetime`, `time_limited`)
+</ResponseField>
+
+<ResponseField name="length_value" type="integer | null">
+  Duration value (for time-limited)
+</ResponseField>
+
+<ResponseField name="approval_type" type="string">
+  Approval type (e.g. `automatic`, `hold_period`)
+</ResponseField>
+
+<ResponseField name="hold_period_days" type="integer | null">
+  Hold period in days
+</ResponseField>
+
+<ResponseField name="variable_commission" type="boolean">
+  Whether variable commission is enabled
+</ResponseField>
+
+<ResponseField name="variable_config" type="object | null">
+  Variable commission configuration
+</ResponseField>
+
+<ResponseField name="apply_to" type="string">
+  What the incentive applies to
+</ResponseField>
+
+<ResponseField name="product_ids" type="array">
+  Product IDs this incentive applies to
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseField name="multi_level_incentives" type="array">
+  Included when `expand=multi_level_incentives`. Array of MLM tier objects.
+
+<Expandable title="Multi-Level Incentive Properties">
+<ResponseField name="id" type="string">
+  Unique identifier
+</ResponseField>
+
+<ResponseField name="level" type="integer">
+  MLM tier level (1-based)
+</ResponseField>
+
+<ResponseField name="calculation_type" type="string">
+  Calculation type (e.g. `percentage`)
+</ResponseField>
+
+<ResponseField name="amount" type="number">
+  Commission amount for this level
+</ResponseField>
+</Expandable>
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/program/groups" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+
+```bash cURL with Expand
+curl -X GET "https://api.affonso.io/v1/program/groups?expand=incentives,multi_level_incentives" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": [
+    {
+      "id": "efbf3f29-efb1-4837-8924-7322606858f3",
+      "name": "Default",
+      "description": "Default affiliate group",
+      "custom_website_url": null,
+      "is_default": true,
+      "created_at": "2024-01-10T08:00:00.000Z"
+    },
+    {
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "Premium Partners",
+      "description": "High-performing affiliates with higher commissions",
+      "custom_website_url": "https://partners.acme.com",
+      "is_default": false,
+      "created_at": "2024-03-01T12:00:00.000Z"
+    }
+  ]
+}
+```
+</ResponseExample>

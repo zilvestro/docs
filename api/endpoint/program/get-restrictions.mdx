@@ -1,0 +1,91 @@
+---
+title: "Get Restrictions"
+api: "GET https://api.affonso.io/v1/program/restrictions"
+description: "Get allowed traffic sources and restrictions for your program"
+---
+
+Retrieve the traffic source restrictions configured for your affiliate program.
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="object | null">
+  The restrictions object, or `null` if not yet configured.
+
+<Expandable title="Data Object Properties">
+<ResponseField name="websites" type="boolean">
+  Allow website traffic
+</ResponseField>
+
+<ResponseField name="social_marketing" type="boolean">
+  Allow paid social marketing
+</ResponseField>
+
+<ResponseField name="organic_social" type="boolean">
+  Allow organic social traffic
+</ResponseField>
+
+<ResponseField name="email_marketing" type="boolean">
+  Allow email marketing
+</ResponseField>
+
+<ResponseField name="mobile_traffic" type="boolean">
+  Allow mobile traffic
+</ResponseField>
+
+<ResponseField name="search_engine_marketing" type="boolean">
+  Allow paid search (SEM)
+</ResponseField>
+
+<ResponseField name="organic_search" type="boolean">
+  Allow organic search traffic
+</ResponseField>
+
+<ResponseField name="rebrokering" type="boolean">
+  Allow rebrokering
+</ResponseField>
+
+<ResponseField name="incent" type="boolean">
+  Allow incentivized traffic
+</ResponseField>
+
+<ResponseField name="brand_bidding" type="boolean">
+  Allow brand bidding
+</ResponseField>
+
+<ResponseField name="additional_restrictions" type="string | null">
+  Free-text additional restrictions
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/program/restrictions" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "websites": true,
+    "social_marketing": true,
+    "organic_social": true,
+    "email_marketing": true,
+    "mobile_traffic": true,
+    "search_engine_marketing": false,
+    "organic_search": true,
+    "rebrokering": false,
+    "incent": false,
+    "brand_bidding": false,
+    "additional_restrictions": "No adult content or gambling sites"
+  }
+}
+```
+</ResponseExample>

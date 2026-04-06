@@ -1,0 +1,88 @@
+---
+title: "Get Fraud Rules"
+api: "GET https://api.affonso.io/v1/program/fraud-rules"
+description: "Get fraud detection rule settings for your program"
+---
+
+Retrieve the fraud detection rule configurations for your program. Each rule can be set to `off`, `detect` (flag but allow), or `block` (prevent the action).
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="object | null">
+  The fraud rules object, or `null` if not yet configured.
+
+<Expandable title="Data Object Properties">
+<ResponseField name="self_referral_mode" type="string">
+  Self-referral detection: `off`, `detect`, or `block`
+</ResponseField>
+
+<ResponseField name="cross_program_ban_mode" type="string">
+  Cross-program ban detection: `off`, `detect`, or `block`
+</ResponseField>
+
+<ResponseField name="duplicate_payout_mode" type="string">
+  Duplicate payout detection: `off`, `detect`, or `block`
+</ResponseField>
+
+<ResponseField name="suspicious_email_mode" type="string">
+  Suspicious email detection: `off`, `detect`, or `block`
+</ResponseField>
+
+<ResponseField name="banned_referral_mode" type="string">
+  Banned referral detection: `off`, `detect`, or `block`
+</ResponseField>
+
+<ResponseField name="paid_traffic_mode" type="string">
+  Paid traffic detection: `off`, `detect`, or `block`
+</ResponseField>
+
+<ResponseField name="blocked_country_mode" type="string">
+  Blocked country detection: `off`, `detect`, or `block`
+</ResponseField>
+
+<ResponseField name="banned_referral_config" type="object | null">
+  Configuration for banned referral detection
+</ResponseField>
+
+<ResponseField name="blocked_country_config" type="object | null">
+  Configuration for blocked country detection (e.g. country list)
+</ResponseField>
+
+<ResponseField name="paid_traffic_config" type="object | null">
+  Configuration for paid traffic detection
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/program/fraud-rules" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "self_referral_mode": "detect",
+    "cross_program_ban_mode": "off",
+    "duplicate_payout_mode": "block",
+    "suspicious_email_mode": "detect",
+    "banned_referral_mode": "off",
+    "paid_traffic_mode": "off",
+    "blocked_country_mode": "block",
+    "banned_referral_config": null,
+    "blocked_country_config": {
+      "countries": ["CN", "RU", "NG"]
+    },
+    "paid_traffic_config": null
+  }
+}
+```
+</ResponseExample>

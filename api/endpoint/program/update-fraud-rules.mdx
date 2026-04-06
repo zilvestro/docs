@@ -1,0 +1,96 @@
+---
+title: "Update Fraud Rules"
+api: "PATCH https://api.affonso.io/v1/program/fraud-rules"
+description: "Update fraud detection rule modes and configurations"
+---
+
+Update your program's fraud detection rules. All fields are optional. If no fraud rules exist yet, they will be created with defaults.
+
+Each rule mode accepts one of three values:
+- `off` — Rule is disabled
+- `detect` — Flag suspicious activity but allow the action
+- `block` — Prevent the action entirely
+
+## Body Parameters
+
+<ParamField body="self_referral_mode" type="string">
+  Self-referral detection mode. Valid values: `off`, `detect`, `block`.
+</ParamField>
+
+<ParamField body="cross_program_ban_mode" type="string">
+  Cross-program ban detection mode. Valid values: `off`, `detect`, `block`.
+</ParamField>
+
+<ParamField body="duplicate_payout_mode" type="string">
+  Duplicate payout detection mode. Valid values: `off`, `detect`, `block`.
+</ParamField>
+
+<ParamField body="suspicious_email_mode" type="string">
+  Suspicious email detection mode. Valid values: `off`, `detect`, `block`.
+</ParamField>
+
+<ParamField body="banned_referral_mode" type="string">
+  Banned referral detection mode. Valid values: `off`, `detect`, `block`.
+</ParamField>
+
+<ParamField body="paid_traffic_mode" type="string">
+  Paid traffic detection mode. Valid values: `off`, `detect`, `block`.
+</ParamField>
+
+<ParamField body="blocked_country_mode" type="string">
+  Blocked country detection mode. Valid values: `off`, `detect`, `block`.
+</ParamField>
+
+<ParamField body="banned_referral_config" type="object | null">
+  Configuration for banned referral detection. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="blocked_country_config" type="object | null">
+  Configuration for blocked country detection (e.g. `{"countries": ["CN", "RU"]}`). Set to `null` to clear.
+</ParamField>
+
+<ParamField body="paid_traffic_config" type="object | null">
+  Configuration for paid traffic detection. Set to `null` to clear.
+</ParamField>
+
+## Response
+
+Returns the updated fraud rules object. Same structure as the [Get Fraud Rules](/api/endpoint/program/get-fraud-rules) response.
+
+<RequestExample>
+```bash cURL
+curl -X PATCH "https://api.affonso.io/v1/program/fraud-rules" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "self_referral_mode": "block",
+    "duplicate_payout_mode": "block",
+    "blocked_country_mode": "block",
+    "blocked_country_config": {
+      "countries": ["CN", "RU", "NG"]
+    }
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "self_referral_mode": "block",
+    "cross_program_ban_mode": "off",
+    "duplicate_payout_mode": "block",
+    "suspicious_email_mode": "detect",
+    "banned_referral_mode": "off",
+    "paid_traffic_mode": "off",
+    "blocked_country_mode": "block",
+    "banned_referral_config": null,
+    "blocked_country_config": {
+      "countries": ["CN", "RU", "NG"]
+    },
+    "paid_traffic_config": null
+  }
+}
+```
+</ResponseExample>

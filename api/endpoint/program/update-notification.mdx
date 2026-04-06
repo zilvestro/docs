@@ -1,0 +1,65 @@
+---
+title: "Update Notification Setting"
+api: "PATCH https://api.affonso.io/v1/program/notifications/{emailTypeId}"
+description: "Update a notification setting by email type ID"
+---
+
+Update a notification setting for a specific email type. If no custom setting exists yet, it will be created. All fields are optional.
+
+## Path Parameters
+
+<ParamField path="emailTypeId" type="string" required>
+  The notification type ID to update settings for.
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="is_active" type="boolean">
+  Enable or disable this notification.
+</ParamField>
+
+<ParamField body="custom_subject" type="string | null">
+  Custom email subject line. Set to `null` to revert to default.
+</ParamField>
+
+<ParamField body="custom_body" type="string | null">
+  Custom email body content. Set to `null` to revert to default.
+</ParamField>
+
+## Response
+
+Returns the updated notification setting object. Same structure as items in the [List Notification Settings](/api/endpoint/program/list-notifications) response.
+
+<RequestExample>
+```bash cURL
+curl -X PATCH "https://api.affonso.io/v1/program/notifications/nt_welcome" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "is_active": true,
+    "custom_subject": "Welcome to the Acme affiliate family!"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "ns_abc123",
+    "email_type_id": "nt_welcome",
+    "is_active": true,
+    "custom_subject": "Welcome to the Acme affiliate family!",
+    "custom_body": null,
+    "type": {
+      "name": "Welcome Email",
+      "description": "Sent when an affiliate is approved",
+      "icon": "mail",
+      "is_customizable": true,
+      "target_audience": "affiliate"
+    }
+  }
+}
+```
+</ResponseExample>

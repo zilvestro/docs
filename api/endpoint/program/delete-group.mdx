@@ -1,0 +1,39 @@
+---
+title: "Delete Group"
+api: "DELETE https://api.affonso.io/v1/program/groups/{id}"
+description: "Delete an affiliate group"
+---
+
+Permanently delete an affiliate group. This action cannot be undone.
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the group to delete.
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful deletion
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE "https://api.affonso.io/v1/program/groups/a1b2c3d4-e5f6-7890-abcd-ef1234567890" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "message": "Group deleted successfully"
+}
+```
+</ResponseExample>

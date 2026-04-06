@@ -1,0 +1,142 @@
+---
+title: "Update Payment Terms"
+api: "PATCH https://api.affonso.io/v1/program/payment-terms"
+description: "Update commission rates, payment frequency, cookie lifetime, and other payment settings"
+---
+
+Update your program's payment terms. All fields are optional — only include the fields you want to change. If no payment terms exist yet, they will be created with sensible defaults for any fields not provided.
+
+## Body Parameters
+
+<ParamField body="commission_type" type="string">
+  Commission type. Valid values: `FIXED`, `PERCENTAGE`, `CREDITS`.
+</ParamField>
+
+<ParamField body="commission_rate" type="number">
+  Commission rate. Must be >= 0.
+</ParamField>
+
+<ParamField body="commission_duration" type="string">
+  Duration model. Valid values: `lifetime`, `time_limited`, `payment_limited`.
+</ParamField>
+
+<ParamField body="commissions_limit" type="integer | null">
+  Maximum commissions per referral. Set to `null` for unlimited.
+</ParamField>
+
+<ParamField body="commissions_hold_days" type="integer | null">
+  Days to hold commissions before approval. Set to `null` to disable.
+</ParamField>
+
+<ParamField body="payment_threshold" type="integer">
+  Minimum payout threshold in cents. Must be >= 0.
+</ParamField>
+
+<ParamField body="payment_frequency" type="string">
+  Payout frequency. Valid values: `weekly`, `monthly`.
+</ParamField>
+
+<ParamField body="payment_methods" type="array">
+  List of accepted payment method strings.
+</ParamField>
+
+<ParamField body="cookie_lifetime" type="integer">
+  Referral cookie lifetime in days. Must be between 1 and 365.
+</ParamField>
+
+<ParamField body="auto_payout" type="boolean">
+  Enable automatic payouts.
+</ParamField>
+
+<ParamField body="invoice_rule" type="string">
+  Invoice handling rule. Valid values: `NONE`, `OWNER_PROVIDES`, `AFFILIATE_PROVIDES`, `SELF_BILLING`.
+</ParamField>
+
+<ParamField body="invoice_prefix" type="string | null">
+  Invoice number prefix. Maximum 20 characters. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="require_tax_forms" type="boolean">
+  Require affiliates to submit tax forms before payout.
+</ParamField>
+
+<ParamField body="owner_company_name" type="string | null">
+  Company name for invoices. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="owner_address_line_1" type="string | null">
+  Address line 1. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="owner_address_line_2" type="string | null">
+  Address line 2. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="owner_city" type="string | null">
+  City. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="owner_postal_code" type="string | null">
+  Postal code. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="owner_country" type="string | null">
+  ISO 3166-1 alpha-2 country code (e.g. `US`, `DE`). Must be exactly 2 characters. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="owner_vat_id" type="string | null">
+  VAT ID. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="owner_vat_rate" type="number | null">
+  VAT rate percentage (0–100). Set to `null` to clear.
+</ParamField>
+
+## Response
+
+Returns the updated payment terms object. Same structure as the [Get Payment Terms](/api/endpoint/program/get-payment-terms) response.
+
+<RequestExample>
+```bash cURL
+curl -X PATCH "https://api.affonso.io/v1/program/payment-terms" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "commission_rate": 25,
+    "cookie_lifetime": 90,
+    "auto_payout": true,
+    "payment_frequency": "weekly"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "commission_type": "percentage",
+    "commission_rate": 25,
+    "commission_duration": "lifetime",
+    "commissions_limit": null,
+    "commissions_hold_days": 14,
+    "payment_threshold": 5000,
+    "payment_frequency": "weekly",
+    "payment_methods": ["paypal", "wise"],
+    "cookie_lifetime": 90,
+    "auto_payout": true,
+    "invoice_rule": "none",
+    "invoice_prefix": null,
+    "require_tax_forms": false,
+    "owner_company_name": "Acme Inc.",
+    "owner_address_line_1": "123 Main St",
+    "owner_address_line_2": null,
+    "owner_city": "San Francisco",
+    "owner_postal_code": "94105",
+    "owner_country": "US",
+    "owner_vat_id": null,
+    "owner_vat_rate": null
+  }
+}
+```
+</ResponseExample>

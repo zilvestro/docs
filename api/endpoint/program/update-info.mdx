@@ -1,0 +1,87 @@
+---
+title: "Update Program Info"
+api: "PATCH https://api.affonso.io/v1/program"
+description: "Update your affiliate program name, description, and other settings"
+---
+
+Update your affiliate program's basic information. All fields are optional — only include the fields you want to change.
+
+## Body Parameters
+
+<ParamField body="name" type="string">
+  Program name. Must be between 1 and 255 characters.
+</ParamField>
+
+<ParamField body="tagline" type="string | null">
+  Short tagline for the program. Maximum 100 characters. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="category" type="string | null">
+  Program category. Maximum 100 characters. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="description" type="string | null">
+  Program description. Set to `null` to clear.
+</ParamField>
+
+<ParamField body="website_url" type="string">
+  Website URL. Must be a valid URL, max 255 characters.
+</ParamField>
+
+<ParamField body="auto_approve" type="boolean">
+  Automatically approve new affiliate applications.
+</ParamField>
+
+<ParamField body="affiliate_links_enabled" type="boolean">
+  Enable or disable affiliate links.
+</ParamField>
+
+<ParamField body="logo_url" type="string | null">
+  URL to your program logo. Must be a valid URL. Set to `null` to clear.
+</ParamField>
+
+## Response
+
+Returns the updated program info object with plan features. Same structure as the [Get Program Info](/api/endpoint/program/get-info) response.
+
+<RequestExample>
+```bash cURL
+curl -X PATCH "https://api.affonso.io/v1/program" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Acme SaaS Pro",
+    "tagline": "The #1 project management tool",
+    "auto_approve": false
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "cm7xutqbb0001yfkcrnpextmp",
+    "name": "Acme SaaS Pro",
+    "slug": "acme-saas",
+    "tagline": "The #1 project management tool",
+    "category": "SaaS",
+    "description": "The best project management tool for teams",
+    "website_url": "https://acme.com",
+    "auto_approve": false,
+    "status": "active",
+    "affiliate_links_enabled": true,
+    "logo_url": "https://cdn.affonso.io/logos/acme.png",
+    "default_referral_parameter": "ref",
+    "created_at": "2024-01-10T08:00:00.000Z",
+    "updated_at": "2024-06-15T15:00:00.000Z",
+    "plan": {
+      "tier": "growth",
+      "postbacks": true,
+      "groups_limit": 5
+    }
+  }
+}
+```
+</ResponseExample>

@@ -1,0 +1,39 @@
+---
+title: "Delete Creative"
+api: "DELETE https://api.affonso.io/v1/program/creatives/{id}"
+description: "Delete a creative asset"
+---
+
+Permanently delete a creative asset. This action cannot be undone.
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the creative to delete.
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful deletion
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE "https://api.affonso.io/v1/program/creatives/creative_abc123" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "message": "Creative deleted successfully"
+}
+```
+</ResponseExample>

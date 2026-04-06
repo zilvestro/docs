@@ -1,0 +1,110 @@
+---
+title: "List Notification Settings"
+api: "GET https://api.affonso.io/v1/program/notifications"
+description: "Get all notification types with your team-specific settings"
+---
+
+Retrieve all available notification types along with your team-specific customizations. If you haven't customized a notification type yet, defaults are returned.
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of notification setting objects.
+
+<Expandable title="Notification Setting Properties">
+<ResponseField name="id" type="string | null">
+  Setting ID, or `null` if using defaults
+</ResponseField>
+
+<ResponseField name="email_type_id" type="string">
+  Notification type ID
+</ResponseField>
+
+<ResponseField name="is_active" type="boolean">
+  Whether this notification is enabled
+</ResponseField>
+
+<ResponseField name="custom_subject" type="string | null">
+  Custom email subject line
+</ResponseField>
+
+<ResponseField name="custom_body" type="string | null">
+  Custom email body content
+</ResponseField>
+
+<ResponseField name="type" type="object">
+  Notification type metadata.
+
+<Expandable title="Type Properties">
+<ResponseField name="name" type="string">
+  Notification type name
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Human-readable description
+</ResponseField>
+
+<ResponseField name="icon" type="string">
+  Icon identifier
+</ResponseField>
+
+<ResponseField name="is_customizable" type="boolean">
+  Whether the content can be customized
+</ResponseField>
+
+<ResponseField name="target_audience" type="string">
+  Who receives this notification (e.g. `affiliate`, `owner`)
+</ResponseField>
+</Expandable>
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/program/notifications" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": [
+    {
+      "id": "ns_abc123",
+      "email_type_id": "nt_welcome",
+      "is_active": true,
+      "custom_subject": "Welcome to our affiliate program!",
+      "custom_body": null,
+      "type": {
+        "name": "Welcome Email",
+        "description": "Sent when an affiliate is approved",
+        "icon": "mail",
+        "is_customizable": true,
+        "target_audience": "affiliate"
+      }
+    },
+    {
+      "id": null,
+      "email_type_id": "nt_payout",
+      "is_active": true,
+      "custom_subject": null,
+      "custom_body": null,
+      "type": {
+        "name": "Payout Notification",
+        "description": "Sent when a payout is processed",
+        "icon": "dollar-sign",
+        "is_customizable": true,
+        "target_audience": "affiliate"
+      }
+    }
+  ]
+}
+```
+</ResponseExample>

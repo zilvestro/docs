@@ -1,0 +1,47 @@
+---
+title: "Get Creative"
+api: "GET https://api.affonso.io/v1/program/creatives/{id}"
+description: "Get a single creative by ID"
+---
+
+Retrieve a single creative asset by its ID.
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the creative.
+</ParamField>
+
+## Response
+
+Returns a single creative object. Same structure as items in the [List Creatives](/api/endpoint/program/list-creatives) response.
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/program/creatives/creative_abc123" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "creative_abc123",
+    "name": "Summer Sale Banner",
+    "description": "728x90 leaderboard banner for summer promotion",
+    "category": "banner",
+    "subcategory": "leaderboard",
+    "url": "https://cdn.acme.com/banners/summer-728x90.png",
+    "content": null,
+    "tags": ["summer", "sale", "leaderboard"],
+    "dimensions": { "width": 728, "height": 90 },
+    "usage_notes": "Use on blog sidebars and headers",
+    "restrictions": null,
+    "created_at": "2024-05-01T10:00:00.000Z",
+    "updated_at": "2024-05-01T10:00:00.000Z"
+  }
+}
+```
+</ResponseExample>
