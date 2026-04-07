@@ -1,15 +1,23 @@
 ---
-title: "Get Marketplace Program"
-api: "GET https://api.affonso.io/v1/programs/{id}"
-description: "Get details for a program listed in the Affonso marketplace"
+title: "List Marketplace Programs"
+api: "GET https://api.affonso.io/v1/marketplace"
+description: "Get a paginated list of all programs listed in the Affonso marketplace"
 ---
 
-Retrieve a single program that is listed in the marketplace by ID. Only programs that have been published to the Affonso marketplace are available through this endpoint. This endpoint is **public** and does not require authentication.
+Returns all active affiliate programs that have been published to the Affonso marketplace. Only marketplace-listed programs are included — this does not return all programs on the platform. This endpoint is **public** and does not require authentication.
 
-## Path Parameters
+## Query Parameters
 
-<ParamField path="id" type="string" required>
-  The unique identifier of the program to retrieve.
+<ParamField query="page" type="integer" default="1">
+  Page number for pagination. Must be a positive integer.
+</ParamField>
+
+<ParamField query="limit" type="integer" default="50">
+  Number of results per page. Minimum 1, maximum 200. Default is 50.
+</ParamField>
+
+<ParamField query="category" type="string">
+  Filter programs by category. Maximum 100 characters.
 </ParamField>
 
 ## Response
@@ -18,8 +26,8 @@ Retrieve a single program that is listed in the marketplace by ID. Only programs
   Always `true` for successful responses
 </ResponseField>
 
-<ResponseField name="data" type="object">
-  The marketplace program object.
+<ResponseField name="data" type="array">
+  Array of marketplace program objects.
 
 <Expandable title="Data Object Properties">
 <ResponseField name="id" type="string">
@@ -104,9 +112,23 @@ Retrieve a single program that is listed in the marketplace by ID. Only programs
 </Expandable>
 </ResponseField>
 
+<ResponseField name="pagination" type="object">
+  Pagination metadata object containing:
+  - `page` (integer): Current page number
+  - `limit` (integer): Number of results per page
+  - `total` (integer): Total number of programs matching the filters
+  - `totalPages` (integer): Total number of pages
+  - `hasNextPage` (boolean): Whether there is a next page
+  - `hasPrevPage` (boolean): Whether there is a previous page
+</ResponseField>
+
 <RequestExample>
 ```bash cURL
-curl -X GET "https://api.affonso.io/v1/programs/prg_abc123"
+curl -X GET "https://api.affonso.io/v1/marketplace?limit=10"
+```
+
+```bash cURL with Filter
+curl -X GET "https://api.affonso.io/v1/marketplace?category=SaaS&limit=10"
 ```
 </RequestExample>
 
@@ -114,28 +136,38 @@ curl -X GET "https://api.affonso.io/v1/programs/prg_abc123"
 ```json Response
 {
   "success": true,
-  "data": {
-    "id": "prog_a1b2c3d4",
-    "name": "Acme SaaS",
-    "description": "The best project management tool for teams",
-    "tagline": "Manage projects effortlessly",
-    "category": "SaaS",
-    "website_url": "https://acme.com",
-    "logo_url": "https://cdn.affonso.io/logos/acme.png",
-    "auto_approve": true,
-    "currency": "USD",
-    "commission": {
-      "type": "COMMISSION",
-      "value": 30,
-      "is_percentage": true,
-      "apply_to": "FIRST_PAYMENT",
-      "has_multiple_tiers": false
-    },
-    "terms": {
-      "cookie_lifetime_days": 60,
-      "payment_frequency": "MONTHLY",
-      "payment_threshold": 50
+  "data": [
+    {
+      "id": "prog_a1b2c3d4",
+      "name": "Acme SaaS",
+      "description": "The best project management tool for teams",
+      "tagline": "Manage projects effortlessly",
+      "category": "SaaS",
+      "website_url": "https://acme.com",
+      "logo_url": "https://cdn.affonso.io/logos/acme.png",
+      "auto_approve": true,
+      "currency": "USD",
+      "commission": {
+        "type": "COMMISSION",
+        "value": 30,
+        "is_percentage": true,
+        "apply_to": "FIRST_PAYMENT",
+        "has_multiple_tiers": false
+      },
+      "terms": {
+        "cookie_lifetime_days": 60,
+        "payment_frequency": "MONTHLY",
+        "payment_threshold": 50
+      }
     }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1,
+    "totalPages": 1,
+    "hasNextPage": false,
+    "hasPrevPage": false
   }
 }
 ```
