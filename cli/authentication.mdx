@@ -1,0 +1,75 @@
+---
+title: 'Authentication'
+description: 'Authenticate the Affonso CLI with OAuth or an API key'
+---
+
+The Affonso CLI supports two authentication methods. You can use either one depending on your use case.
+
+## OAuth (recommended)
+
+OAuth is the recommended method for interactive use. It opens your browser for secure authentication via OAuth 2.1 with PKCE.
+
+```bash
+affonso login
+```
+
+After authenticating, tokens are stored locally in `~/.config/affonso/auth.json`. The CLI automatically refreshes expired tokens.
+
+```bash
+affonso whoami     # check your current session
+affonso logout     # revoke token and clear credentials
+```
+
+<Info>
+OAuth tokens are scoped to your account and automatically refreshed. You don't need to manage API keys.
+</Info>
+
+## API key
+
+For non-interactive use (scripts, CI/CD, AI agents), you can authenticate with an API key. There are three ways to provide it:
+
+<Tabs>
+<Tab title="Per-command flag">
+  ```bash
+  affonso affiliates list --api-key sk_live_...
+  ```
+</Tab>
+
+<Tab title="Environment variable">
+  ```bash
+  export AFFONSO_API_KEY=sk_live_...
+  affonso affiliates list
+  ```
+</Tab>
+
+<Tab title="Stored in config">
+  ```bash
+  affonso config set api-key sk_live_...
+  affonso affiliates list
+  ```
+
+  The key is stored in `~/.config/affonso/config.json`.
+</Tab>
+</Tabs>
+
+<Warning>
+Never commit API keys to version control or share them publicly. Use environment variables in CI/CD pipelines.
+</Warning>
+
+## Auth priority
+
+When multiple methods are configured, the CLI uses this priority order:
+
+1. `--api-key` flag (highest)
+2. `AFFONSO_API_KEY` environment variable
+3. Stored config (`affonso config set api-key`)
+4. OAuth token (lowest)
+
+## API key formats
+
+| Environment | Format |
+|-------------|--------|
+| Production  | `sk_live_` + 32 characters |
+| Development | `sk_dev_` + 32 characters  |
+
+You can create API keys in your [Affonso dashboard](https://affonso.io/app).

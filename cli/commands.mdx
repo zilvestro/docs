@@ -1,0 +1,172 @@
+---
+title: 'Commands'
+description: 'Full reference for all Affonso CLI commands'
+---
+
+## Global options
+
+These options are available on every command:
+
+| Option | Description |
+|--------|-------------|
+| `--json` | Output as JSON |
+| `--api-key <key>` | API key for this request |
+| `--base-url <url>` | Custom API base URL |
+| `--no-color` | Disable colored output |
+| `--version` | Show version |
+| `--help` | Show help |
+
+## Affiliates
+
+Manage your affiliate partners.
+
+```bash
+affonso affiliates list [--status pending|approved|rejected] [--search <query>] [--limit <n>] [--page <n>]
+affonso affiliates get <id>
+affonso affiliates create --name <name> --email <email> --program-id <id>
+affonso affiliates update <id> [--name <name>] [--status <status>] [--email <email>]
+affonso affiliates delete <id>
+```
+
+<AccordionGroup>
+<Accordion title="Example: List pending affiliates">
+```bash
+affonso affiliates list --status pending --json
+```
+</Accordion>
+<Accordion title="Example: Approve an affiliate">
+```bash
+affonso affiliates update aff_123 --status approved
+```
+</Accordion>
+</AccordionGroup>
+
+## Referrals
+
+Track clicks, leads, and conversions.
+
+```bash
+affonso referrals list [--affiliate-id <id>] [--status <status>] [--limit <n>]
+affonso referrals get <id>
+affonso referrals create --email <email> --affiliate-id <id>
+affonso referrals update <id> [--status <status>] [--email <email>]
+affonso referrals delete <id>
+```
+
+## Commissions
+
+Manage commission transactions.
+
+```bash
+affonso commissions list [--status <status>] [--affiliate-id <id>] [--limit <n>] [--page <n>]
+affonso commissions get <id>
+affonso commissions create --referral-id <id> --sale-amount <n> --sale-amount-currency <code> --commission-amount <n> --commission-currency <code>
+affonso commissions update <id> [--status <status>] [--sale-amount <n>]
+affonso commissions delete <id>
+```
+
+## Coupons
+
+Create and manage affiliate coupons.
+
+```bash
+affonso coupons list [--affiliate-id <id>] [--search <query>]
+affonso coupons get <id>
+affonso coupons create --affiliate-id <id> --code <code> --discount-type <type> --discount-value <n> --duration <dur>
+affonso coupons delete <id>
+```
+
+## Payouts
+
+Process and track affiliate payouts.
+
+```bash
+affonso payouts list [--status <status>] [--affiliate-id <id>]
+affonso payouts get <id>
+affonso payouts update <id> --status <status>
+```
+
+## Clicks
+
+Track affiliate link clicks.
+
+```bash
+affonso clicks create --program-id <id> --tracking-id <id> [--referrer <url>] [--utm-source <val>]
+```
+
+## Embed tokens
+
+Generate tokens for embedded affiliate dashboards.
+
+```bash
+affonso embed-tokens create [--affiliate-id <id>] [--email <email>]
+```
+
+## Program settings
+
+Configure your affiliate program.
+
+```bash
+affonso program get
+affonso program update [--name <name>] [--auto-approve] [--no-auto-approve]
+```
+
+### Sub-resources
+
+```bash
+# Payment terms
+affonso program payment-terms get
+affonso program payment-terms update [options]
+
+# Tracking
+affonso program tracking get
+affonso program tracking update [options]
+
+# Restrictions
+affonso program restrictions get
+affonso program restrictions update [options]
+
+# Fraud rules
+affonso program fraud-rules get
+affonso program fraud-rules update [options]
+
+# Portal
+affonso program portal get
+affonso program portal update [options]
+
+# Notifications
+affonso program notifications list
+affonso program notifications update <id> [options]
+
+# Groups
+affonso program groups list
+affonso program groups get <id>
+affonso program groups create [options]
+affonso program groups update <id> [options]
+affonso program groups delete <id>
+
+# Creatives
+affonso program creatives list
+affonso program creatives get <id>
+affonso program creatives create [options]
+affonso program creatives update <id> [options]
+affonso program creatives delete <id>
+```
+
+## Marketplace
+
+Browse public affiliate programs. No authentication required.
+
+```bash
+affonso marketplace list [--category <cat>] [--search <query>]
+affonso marketplace get <id>
+```
+
+## Config
+
+Manage local CLI configuration.
+
+```bash
+affonso config get <key>      # api-key, base-url
+affonso config set <key> <value>
+```

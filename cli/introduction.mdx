@@ -1,0 +1,83 @@
+---
+title: 'CLI Introduction'
+description: 'Manage your Affonso affiliate program from the terminal or through AI agents'
+---
+
+## What is the Affonso CLI?
+
+The **Affonso CLI** (`@affonso/cli`) is a command-line interface for the [Affonso](https://affonso.io) affiliate marketing platform. It gives you full control over affiliates, referrals, commissions, payouts, and program settings — directly from your terminal.
+
+<Info>
+Every command supports `--json` output, making the CLI a perfect tool for AI agents that need to parse responses and chain commands together.
+</Info>
+
+## Who is it for?
+
+<CardGroup cols={2}>
+  <Card title="Developers" icon="terminal">
+    Manage your affiliate program without leaving the terminal — list affiliates, approve applications, track commissions, and configure settings.
+  </Card>
+  <Card title="AI Agents" icon="robot">
+    Agents like OpenClaw, Paperclip, Claude, and GPT can use shell tools to build automated affiliate workflows with structured JSON output.
+  </Card>
+</CardGroup>
+
+## Installation
+
+```bash
+npm install -g @affonso/cli
+```
+
+Or run directly without installing:
+
+```bash
+npx @affonso/cli <command>
+```
+
+Verify the installation:
+
+```bash
+affonso --version
+```
+
+## Quick start
+
+<Steps>
+<Step title="Authenticate">
+  Log in with your Affonso account via OAuth:
+
+  ```bash
+  affonso login
+  ```
+
+  This opens your browser for secure authentication via OAuth 2.1 with PKCE. Tokens are stored locally in `~/.config/affonso/auth.json`.
+</Step>
+
+<Step title="Verify your session">
+  ```bash
+  affonso whoami
+  ```
+</Step>
+
+<Step title="Start managing affiliates">
+  ```bash
+  affonso affiliates list
+  affonso commissions list --status pending
+  affonso payouts list
+  ```
+</Step>
+</Steps>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/cli/authentication">
+    Set up OAuth login or API key authentication
+  </Card>
+  <Card title="Commands" icon="rectangle-terminal" href="/cli/commands">
+    Full reference for all available commands
+  </Card>
+  <Card title="AI Agents" icon="robot" href="/cli/ai-agents">
+    Use the CLI as a tool for AI agents
+  </Card>
+</CardGroup>
