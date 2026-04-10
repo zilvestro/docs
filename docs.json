@@ -168,6 +168,25 @@
         ]
       },
       {
+        "tab": "CLI",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "cli/introduction",
+              "cli/authentication"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "cli/commands",
+              "cli/ai-agents"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Webhooks",
         "groups": [
           {

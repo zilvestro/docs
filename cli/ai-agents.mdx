@@ -1,0 +1,100 @@
+---
+title: 'AI Agents'
+description: 'Use the Affonso CLI as a tool for AI agents to automate affiliate management'
+---
+
+The Affonso CLI works as a shell tool for any AI agent that can execute commands. Combined with `--json` output, agents can parse responses and build fully automated affiliate workflows.
+
+## Why use the CLI with agents?
+
+<CardGroup cols={2}>
+  <Card title="Structured output" icon="code">
+    Every command supports `--json` for machine-readable responses that agents can parse reliably.
+  </Card>
+  <Card title="Full coverage" icon="grid-2">
+    All Affonso API operations are available — affiliates, referrals, commissions, payouts, program settings, and more.
+  </Card>
+  <Card title="Simple auth" icon="key">
+    Set `AFFONSO_API_KEY` once in the agent's environment and every command is authenticated.
+  </Card>
+  <Card title="Composable" icon="link">
+    Agents can chain commands together to build complex workflows — approve affiliates, track conversions, process payouts.
+  </Card>
+</CardGroup>
+
+## Setup
+
+Set the API key in the agent's environment:
+
+```bash
+export AFFONSO_API_KEY=sk_live_...
+```
+
+The agent can now run any `affonso` command without additional authentication.
+
+## Example workflows
+
+### Auto-approve affiliates
+
+An agent can periodically check for pending affiliates and approve them based on criteria:
+
+```bash
+# List pending affiliates
+affonso affiliates list --status pending --json
+
+# Approve a specific affiliate
+affonso affiliates update aff_123 --status approved --json
+```
+
+### Commission tracking
+
+Monitor and manage commissions across your affiliate program:
+
+```bash
+# List pending commissions
+affonso commissions list --status pending --json
+
+# Get details for a specific commission
+affonso commissions get com_456 --json
+```
+
+### Payout management
+
+Process payouts for affiliates:
+
+```bash
+# List pending payouts
+affonso payouts list --status pending --json
+
+# Mark a payout as completed
+affonso payouts update pay_789 --status completed --json
+```
+
+### Program analytics
+
+Pull program data for analysis and reporting:
+
+```bash
+# Get program info
+affonso program get --json
+
+# List all affiliates with their status
+affonso affiliates list --limit 100 --json
+
+# List referrals for a specific affiliate
+affonso referrals list --affiliate-id aff_123 --json
+```
+
+## Compatible agents
+
+The CLI works with any agent that can execute shell commands, including:
+
+- **[OpenClaw](https://openclaw.com)** — open-source AI agent framework
+- **[Paperclip](https://paperclip.dev)** — AI-powered automation
+- **Claude** (via tool use or Claude Code)
+- **GPT** (via function calling)
+- **Custom agents** built with LangChain, CrewAI, or any framework that supports shell execution
+
+<Tip>
+When building agent tools, always use `--json` to get structured output. This makes it easier to extract specific fields and handle responses programmatically.
+</Tip>
