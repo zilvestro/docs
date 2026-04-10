@@ -33,6 +33,12 @@
             ]
           },
           {
+            "group": "SDK",
+            "pages": [
+              "api/sdk/typescript"
+            ]
+          },
+          {
             "group": "Affiliates",
             "pages": [
               "api/endpoint/affiliates/list",
@@ -157,17 +163,6 @@
               "mcp/tools/referrals",
               "mcp/tools/commissions",
               "mcp/tools/payouts"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "SDK",
-        "groups": [
-          {
-            "group": "SDK",
-            "pages": [
-              "sdk/typescript"
             ]
           }
         ]
