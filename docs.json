@@ -162,6 +162,17 @@
         ]
       },
       {
+        "tab": "SDK",
+        "groups": [
+          {
+            "group": "SDK",
+            "pages": [
+              "sdk/typescript"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Webhooks",
         "groups": [
           {

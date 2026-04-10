@@ -1,0 +1,202 @@
+---
+title: 'TypeScript'
+description: 'Official TypeScript SDK for the Affonso API'
+---
+
+## Installation
+
+The SDK can be installed with either npm, pnpm, bun, or yarn package managers.
+
+<CodeGroup>
+```bash npm
+npm install @affonso/sdk
+```
+```bash pnpm
+pnpm add @affonso/sdk
+```
+```bash yarn
+yarn add @affonso/sdk
+```
+```bash bun
+bun add @affonso/sdk
+```
+</CodeGroup>
+
+<Info>
+Requires Node.js 18+ or any runtime with native `fetch` support. Zero dependencies.
+</Info>
+
+## Quick Start
+
+```ts
+import Affonso from '@affonso/sdk';
+
+const affonso = new Affonso('sk_live_...');
+
+// List affiliates
+const page = await affonso.affiliates.list({ limit: 50 });
+console.log(page.data);
+```
+
+## Configuration
+
+```ts
+const affonso = new Affonso('sk_live_...', {
+  baseUrl: 'https://api.affonso.io/v1', // default
+  timeout: 30_000,                       // default: 30s
+  maxRetries: 2,                         // default: 2 (retries on 429/5xx)
+  fetch: customFetch,                    // custom fetch for testing/edge runtimes
+});
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `baseUrl` | `string` | `https://api.affonso.io/v1` | API base URL |
+| `timeout` | `number` | `30000` | Request timeout in milliseconds |
+| `maxRetries` | `number` | `2` | Retries on 429 and 5xx errors |
+| `fetch` | `function` | `globalThis.fetch` | Custom fetch implementation |
+
+## Resources
+
+| Resource | Methods |
+|----------|---------|
+| `affiliates` | `list`, `retrieve`, `create`, `update`, `del` |
+| `referrals` | `list`, `retrieve`, `create`, `update`, `del` |
+| `clicks` | `create` |
+| `commissions` | `list`, `retrieve`, `create`, `update`, `del` |
+| `coupons` | `list`, `retrieve`, `create`, `del` |
+| `payouts` | `list`, `retrieve`, `update` |
+| `program` | Settings, payment terms, tracking, restrictions, groups, creatives, notifications, portal, fraud rules |
+| `embedTokens` | `create` |
+| `marketplace` | `list`, `retrieve` |
+
+### Example: Affiliates CRUD
+
+```ts
+// Create
+const affiliate = await affonso.affiliates.create({
+  name: 'Max',
+  email: 'max@example.com',
+  program_id: 'prog_123',
+});
+
+// Retrieve
+const aff = await affonso.affiliates.retrieve(affiliate.id);
+
+// Update
+const updated = await affonso.affiliates.update(affiliate.id, {
+  name: 'Max M.',
+  status: 'approved',
+});
+
+// Delete
+await affonso.affiliates.del(affiliate.id);
+```
+
+## Pagination
+
+The SDK supports both offset and cursor-based pagination, depending on the resource.
+
+### Offset Pagination
+
+Used by affiliates, commissions, coupons, and payouts.
+
+```ts
+const page = await affonso.affiliates.list({ page: 1, limit: 25 });
+
+console.log(page.data);        // Affiliate[]
+console.log(page.pagination);  // { page, limit, total, total_pages, has_next_page, has_prev_page }
+
+// Get the next page
+const nextPage = await page.getNextPage(); // null if no more pages
+```
+
+### Cursor Pagination
+
+Used by referrals.
+
+```ts
+const page = await affonso.referrals.list({ limit: 25 });
+const nextPage = await page.getNextPage(); // uses starting_after cursor
+```
+
+### Auto-Pagination
+
+Both pagination types support iterating through all pages automatically:
+
+```ts
+const page = await affonso.affiliates.list({ limit: 50 });
+
+for await (const affiliate of page.autoPaginate()) {
+  console.log(affiliate.id);
+}
+```
+
+## Expandable Fields
+
+Some resources support expanding related data. Pass expand fields as comma-separated strings:
+
+```ts
+// Affiliates: promoCodes, commissionOverrides, invoiceDetails, payoutMethod, onboardingResponses
+const affiliate = await affonso.affiliates.retrieve('aff_123', {
+  expand: 'promoCodes,commissionOverrides',
+});
+
+// Referrals: expand=affiliate, include=stats
+const referral = await affonso.referrals.retrieve('ref_123', {
+  expand: 'affiliate',
+  include: 'stats',
+});
+
+// Commissions: affiliate, affiliate_program, referral
+const commissions = await affonso.commissions.list({
+  expand: 'affiliate,referral',
+});
+
+// Coupons: affiliate
+const coupons = await affonso.coupons.list({ expand: 'affiliate' });
+```
+
+## Error Handling
+
+The SDK provides typed error classes for each error type:
+
+```ts
+import {
+  AffonsoError,
+  AuthenticationError,
+  NotFoundError,
+  RateLimitError,
+  ValidationError,
+  DuplicateError,
+} from '@affonso/sdk';
+
+try {
+  await affonso.affiliates.retrieve('nonexistent');
+} catch (e) {
+  if (e instanceof NotFoundError) {
+    // 404
+  }
+  if (e instanceof RateLimitError) {
+    console.log(e.retryAfter); // seconds until reset
+  }
+  if (e instanceof ValidationError) {
+    console.log(e.details); // field-level errors
+  }
+}
+```
+
+### Error Types
+
+| Error | Status | Description |
+|-------|--------|-------------|
+| `AuthenticationError` | 401 | Invalid or missing API key |
+| `PermissionError` | 403 | Insufficient permissions |
+| `NotFoundError` | 404 | Resource not found |
+| `ValidationError` | 400 | Invalid request parameters (`.details[]` has field-level errors) |
+| `DuplicateError` | 409 | Conflicting resource (`.field` indicates the conflict) |
+| `RateLimitError` | 429 | Rate limit exceeded (`.retryAfter` in seconds) |
+| `InternalError` | 5xx | Server error |
+| `ConnectionError` | — | Network or timeout error |
+
+All errors extend `AffonsoError` and include `status`, `code`, `message`, `headers`, and optional `field` and `details`.
