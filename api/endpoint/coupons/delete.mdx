@@ -59,6 +59,12 @@ curl -X DELETE "https://api.affonso.io/v1/coupons/cpn_abc123" \
 
 <ResponseField name="404 Not Found">
   Returned when the coupon doesn't exist or has already been deleted.
+  Error code: `NOT_FOUND`
+</ResponseField>
+
+<ResponseField name="500 Internal Server Error">
+  Returned when the coupon is missing provider records. This indicates a data integrity issue.
+  Error code: `INTERNAL_ERROR`
 </ResponseField>
 
 <ResponseField name="502 Bad Gateway">

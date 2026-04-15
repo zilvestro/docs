@@ -40,6 +40,10 @@ Retrieve a single coupon by ID with optional expanded fields.
   The ID of the affiliate who owns this coupon
 </ResponseField>
 
+<ResponseField name="program_id" type="string">
+  The ID of the affiliate program this coupon belongs to
+</ResponseField>
+
 <ResponseField name="discount_type" type="string">
   Type of discount: `percentage` or `fixed`
 </ResponseField>
@@ -64,8 +68,32 @@ Retrieve a single coupon by ID with optional expanded fields.
   Array of product IDs this coupon is restricted to. Empty array means all products.
 </ResponseField>
 
+<ResponseField name="provider" type="string | null">
+  The primary payment provider for this coupon (e.g., `stripe`, `dodo`, `creem`).
+</ResponseField>
+
+<ResponseField name="provider_coupon_id" type="string | null">
+  The coupon ID at the primary payment provider.
+</ResponseField>
+
+<ResponseField name="provider_promo_code_id" type="string | null">
+  The promo code ID at the primary payment provider.
+</ResponseField>
+
+<ResponseField name="provider_records" type="array">
+  Array of provider-specific coupon records. Each record contains:
+  - `provider` (string): The payment provider name
+  - `provider_coupon_id` (string): The coupon ID at this provider
+  - `provider_promo_code_id` (string): The promo code ID at this provider
+  - `created_at` (string): ISO 8601 timestamp of when the provider record was created
+</ResponseField>
+
 <ResponseField name="created_at" type="string">
   ISO 8601 timestamp of when the coupon was created
+</ResponseField>
+
+<ResponseField name="updated_at" type="string | null">
+  ISO 8601 timestamp of when the coupon was last updated
 </ResponseField>
 </Expandable>
 </ResponseField>
@@ -90,13 +118,26 @@ curl -X GET "https://api.affonso.io/v1/coupons/cpn_abc123?expand=affiliate" \
     "id": "cpn_abc123",
     "code": "SAVE25",
     "affiliate_id": "aff_123",
+    "program_id": "prg_789ghi",
     "discount_type": "percentage",
     "discount_value": 25,
     "duration": "forever",
     "duration_in_months": null,
     "currency": null,
     "product_ids": [],
-    "created_at": "2024-01-15T10:30:00Z"
+    "provider": "stripe",
+    "provider_coupon_id": "promo_abc123",
+    "provider_promo_code_id": "pc_abc123",
+    "provider_records": [
+      {
+        "provider": "stripe",
+        "provider_coupon_id": "promo_abc123",
+        "provider_promo_code_id": "pc_abc123",
+        "created_at": "2024-01-15T10:30:00Z"
+      }
+    ],
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": null
   }
 }
 ```
@@ -108,19 +149,36 @@ curl -X GET "https://api.affonso.io/v1/coupons/cpn_abc123?expand=affiliate" \
     "id": "cpn_abc123",
     "code": "SAVE25",
     "affiliate_id": "aff_123",
+    "program_id": "prg_789ghi",
     "discount_type": "percentage",
     "discount_value": 25,
     "duration": "forever",
     "duration_in_months": null,
     "currency": null,
     "product_ids": [],
+    "provider": "stripe",
+    "provider_coupon_id": "promo_abc123",
+    "provider_promo_code_id": "pc_abc123",
+    "provider_records": [
+      {
+        "provider": "stripe",
+        "provider_coupon_id": "promo_abc123",
+        "provider_promo_code_id": "pc_abc123",
+        "created_at": "2024-01-15T10:30:00Z"
+      }
+    ],
     "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": null,
     "affiliate": {
       "id": "aff_123",
       "name": "John Doe",
       "email": "john@example.com",
       "tracking_id": "PARTNER123",
-      "partnership_status": "APPROVED"
+      "source": "api",
+      "onboarding_completed": true,
+      "program_id": "prg_789ghi",
+      "group_id": null,
+      "created_at": "2024-01-15T10:30:00Z"
     }
   }
 }
