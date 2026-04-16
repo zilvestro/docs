@@ -28,8 +28,8 @@ Update your affiliate program's basic information. All fields are optional — o
   Website URL. Must be a valid URL, max 255 characters.
 </ParamField>
 
-<ParamField body="auto_approve" type="boolean">
-  Automatically approve new affiliate applications.
+<ParamField body="access_mode" type="string">
+  Program access mode. One of `PUBLIC` (auto-approve all), `PRIVATE` (manual approval), or `INVITE` (invite-only, auto-approved).
 </ParamField>
 
 <ParamField body="affiliate_links_enabled" type="boolean">
@@ -52,7 +52,7 @@ curl -X PATCH "https://api.affonso.io/v1/program" \
   -d '{
     "name": "Acme SaaS Pro",
     "tagline": "The #1 project management tool",
-    "auto_approve": false
+    "access_mode": "PRIVATE"
   }'
 ```
 </RequestExample>
@@ -69,7 +69,7 @@ curl -X PATCH "https://api.affonso.io/v1/program" \
     "category": "SaaS",
     "description": "The best project management tool for teams",
     "website_url": "https://acme.com",
-    "auto_approve": false,
+    "access_mode": "private",
     "status": "active",
     "affiliate_links_enabled": true,
     "logo_url": "https://cdn.affonso.io/logos/acme.png",

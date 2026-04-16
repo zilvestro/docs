@@ -94,8 +94,9 @@ curl -X POST "https://api.affonso.io/v1/embed/token" \
 
 <Note>
   New users are automatically registered as affiliates. Their partnership status depends on your program's **Access Mode** setting:
-  - **Public** (auto-approve): `partnershipStatus` is `APPROVED` – affiliate can start referring immediately
-  - **Private** (manual approval): `partnershipStatus` is `PENDING` – requires manual approval in your dashboard
+  - **Public**: `partnershipStatus` is `APPROVED` – affiliate can start referring immediately
+  - **Private**: `partnershipStatus` is `PENDING` – requires manual approval in your dashboard
+  - **Invite**: `partnershipStatus` is `APPROVED` – but only pre-invited affiliates can join
 </Note>
 
 ## Step 2: Render the Dashboard

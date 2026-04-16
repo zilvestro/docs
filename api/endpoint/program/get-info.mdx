@@ -44,8 +44,8 @@ Retrieve your affiliate program settings including name, description, status, an
   The program's website URL
 </ResponseField>
 
-<ResponseField name="auto_approve" type="boolean">
-  Whether affiliate applications are automatically approved
+<ResponseField name="access_mode" type="string">
+  Program access mode: `public`, `private`, or `invite`
 </ResponseField>
 
 <ResponseField name="status" type="string">
@@ -111,7 +111,7 @@ curl -X GET "https://api.affonso.io/v1/program" \
     "category": "SaaS",
     "description": "The best project management tool for teams",
     "website_url": "https://acme.com",
-    "auto_approve": true,
+    "access_mode": "public",
     "status": "active",
     "affiliate_links_enabled": true,
     "logo_url": "https://cdn.affonso.io/logos/acme.png",
