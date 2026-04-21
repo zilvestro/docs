@@ -45,7 +45,8 @@
               "api/endpoint/affiliates/get",
               "api/endpoint/affiliates/create",
               "api/endpoint/affiliates/update",
-              "api/endpoint/affiliates/delete"
+              "api/endpoint/affiliates/delete",
+              "api/endpoint/affiliates/portal-token"
             ]
           },
           {

@@ -1,0 +1,86 @@
+---
+title: "Generate Portal Login Token"
+api: "POST https://api.affonso.io/v1/affiliates/{id}/portal-token"
+description: "Generate a short-lived token to automatically authenticate an affiliate into the hosted portal"
+---
+
+Generate a secure, single-use JWT token that allows an affiliate to be automatically signed into the hosted Affonso portal. This enables a seamless SSO-style experience where affiliates already authenticated in your application can access the portal without a second login step.
+
+## Use Case
+
+Your users are already authenticated in your app. When they click a button to view their affiliate dashboard, you generate a portal token and redirect them to the returned `portalUrl`. The affiliate is automatically signed in — no email input or login step required.
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The affiliate's unique identifier.
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses.
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  The portal login token data.
+
+<Expandable title="Data Object Properties">
+<ResponseField name="token" type="string">
+  Signed JWT login token (HS256). Valid for 5 minutes, single-use.
+</ResponseField>
+
+<ResponseField name="portalUrl" type="string">
+  Ready-to-use URL that authenticates the affiliate into the portal. Redirect the user to this URL. Uses the team's custom domain if configured, otherwise the subdomain (e.g., `https://yourcompany.affonso.io/auth/token?token=eyJ...`).
+</ResponseField>
+
+<ResponseField name="expiresAt" type="string">
+  ISO 8601 timestamp when the token expires.
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X POST "https://api.affonso.io/v1/affiliates/cmj8q1wau0003sb01lpvka478/portal-token" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+
+```javascript Node.js
+const response = await fetch(
+  "https://api.affonso.io/v1/affiliates/cmj8q1wau0003sb01lpvka478/portal-token",
+  {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer sk_live_your_api_key",
+    },
+  }
+);
+
+const { data } = await response.json();
+
+// Redirect the user to the portal
+res.redirect(data.portalUrl);
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "portalUrl": "https://yourcompany.affonso.io/auth/token?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "expiresAt": "2026-04-19T12:05:00.000Z"
+  }
+}
+```
+</ResponseExample>
+
+## Notes
+
+- **No request body required** — the team's program is resolved automatically from your API key.
+- The token expires after **5 minutes** and can only be used **once**. Generate a new token for each redirect.
+- The affiliate must be in **ACTIVE** status. Suspended, banned, or inactive affiliates cannot receive portal tokens.
+- Requires the `write:affiliates` permission on your API key.
+- The `portalUrl` automatically uses your custom domain if configured and verified, otherwise falls back to `{subdomain}.affonso.io`.
