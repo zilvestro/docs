@@ -13,8 +13,6 @@ Affiliate events are triggered when changes occur to affiliate accounts in your 
 | `affiliate.confirmed` | Affiliate confirms their email address |
 | `affiliate.updated` | Affiliate details or status are updated |
 | `affiliate.deleted` | Affiliate is removed from the program |
-| `affiliate.onboarding_response_submitted` | Affiliate submits or updates onboarding form answers |
-| `affiliate.onboarding_completed` | Affiliate completes the onboarding form for the first time |
 
 ## Payload
 
@@ -152,117 +150,6 @@ Affiliate events are triggered when changes occur to affiliate accounts in your 
     "metadata": {
       "plan": "pro"
     }
-  }
-}
-```
-
-## Onboarding events
-
-These events are emitted when affiliates fill out your team's [custom onboarding form](/api/endpoint/onboarding/get-form). Both events only fire when the affiliate has an active program partnership and at least one endpoint subscribes to the event.
-
-### affiliate.onboarding_response_submitted
-
-Fires on every successful call to `POST /v1/affiliates/{id}/onboarding-responses` that includes at least one answer. **Skipped** when the request body is `{ "responses": [], "mark_complete": true }` — that flow only finalizes a prior submission, so no new answers were saved. The payload is intentionally lean — fetch full responses via [`GET /v1/affiliates/{id}/onboarding-responses`](/api/endpoint/onboarding/get-responses) when you need them.
-
-<ResponseField name="data" type="object">
-<Expandable title="Data Object Properties">
-<ResponseField name="affiliateId" type="string">
-  Unique identifier for the affiliate
-</ResponseField>
-
-<ResponseField name="formId" type="string">
-  ID of the onboarding form the answers belong to
-</ResponseField>
-
-<ResponseField name="questionIds" type="array">
-  IDs of the questions touched in this submission (in payload order)
-</ResponseField>
-
-<ResponseField name="submittedAt" type="string">
-  ISO 8601 timestamp the submission was received
-</ResponseField>
-</Expandable>
-</ResponseField>
-
-```json affiliate.onboarding_response_submitted
-{
-  "id": "evt_abc123",
-  "type": "affiliate.onboarding_response_submitted",
-  "createdAt": "2024-04-22T17:31:55.000Z",
-  "data": {
-    "affiliateId": "aff_xyz789",
-    "formId": "cmf8onb0001p3010onbform1",
-    "questionIds": ["cmq1onb000onbq1", "cmq1onb000onbq2"],
-    "submittedAt": "2024-04-22T17:31:55.000Z"
-  }
-}
-```
-
-### affiliate.onboarding_completed
-
-Fires once — the first time `mark_complete: true` is accepted for an affiliate + form pair. Includes a snapshot of the form, its active questions, and all of the affiliate's saved responses, so consumers can store the completion artifact without an extra API call.
-
-<ResponseField name="data" type="object">
-<Expandable title="Data Object Properties">
-<ResponseField name="affiliateId" type="string">
-  Unique identifier for the affiliate
-</ResponseField>
-
-<ResponseField name="form" type="object">
-  Form snapshot at the moment of completion: `id`, `name`, `description`.
-</ResponseField>
-
-<ResponseField name="questions" type="array">
-  Active questions at the moment of completion. Each item contains `id`, `question`, `type` (lowercase), and `isRequired`.
-</ResponseField>
-
-<ResponseField name="responses" type="array">
-  All saved answers for this affiliate + form. Each item contains `questionId` and `answer` (string or array of strings depending on the question type).
-</ResponseField>
-
-<ResponseField name="completedAt" type="string">
-  ISO 8601 timestamp the affiliate completed onboarding
-</ResponseField>
-</Expandable>
-</ResponseField>
-
-```json affiliate.onboarding_completed
-{
-  "id": "evt_abc123",
-  "type": "affiliate.onboarding_completed",
-  "createdAt": "2024-04-22T17:32:11.000Z",
-  "data": {
-    "affiliateId": "aff_xyz789",
-    "form": {
-      "id": "cmf8onb0001p3010onbform1",
-      "name": "Affiliate Onboarding",
-      "description": "Tell us a bit about how you plan to promote our product."
-    },
-    "questions": [
-      {
-        "id": "cmq1onb000onbq1",
-        "question": "Which channels will you use to promote us?",
-        "type": "multiple_choice",
-        "isRequired": true
-      },
-      {
-        "id": "cmq1onb000onbq2",
-        "question": "Tell us about your audience",
-        "type": "textarea",
-        "isRequired": false
-      }
-    ],
-    "responses": [
-      {
-        "questionId": "cmq1onb000onbq1",
-        "answer": ["Newsletter", "Blog"]
-      },
-      {
-        "questionId": "cmq1onb000onbq2",
-        "answer": "Mostly indie SaaS founders and bootstrapped teams."
-      }
-    ],
-    "completedAt": "2024-04-22T17:32:11.000Z"
   }
 }
 ```

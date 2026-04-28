@@ -6,13 +6,6 @@ description: "Upsert one or more answers for an affiliate and optionally mark on
 
 Upserts one answer per question (existing answers are overwritten in place). Optionally pass `mark_complete: true` to record a completion — this fails with `400 VALIDATION_ERROR` if any required question is still unanswered after this submission.
 
-Triggers the following webhooks:
-
-- `affiliate.onboarding_response_submitted` — every successful call (when the affiliate has a program partnership and at least one matching webhook endpoint).
-- `affiliate.onboarding_completed` — fires **once**, the first time `mark_complete: true` succeeds for this affiliate + form.
-
-See [Affiliate Webhook Events](/webhooks/events/affiliate) for the payload shapes.
-
 ## Path Parameters
 
 <ParamField path="id" type="string" required>
@@ -24,7 +17,7 @@ See [Affiliate Webhook Events](/webhooks/events/affiliate) for the payload shape
 <ParamField body="responses" type="array" required>
   Up to 100 answers. Each answer must reference an active question by ID. Duplicate `question_id` values in the same payload are rejected.
 
-  May be empty (`[]`) **only when `mark_complete: true`** — useful for finalizing onboarding after answers were saved incrementally over earlier calls. An empty array with `mark_complete: false` is rejected with a `400 VALIDATION_ERROR`. When the array is empty, the `affiliate.onboarding_response_submitted` webhook is skipped (no answers were upserted).
+  May be empty (`[]`) **only when `mark_complete: true`** — useful for finalizing onboarding after answers were saved incrementally over earlier calls. An empty array with `mark_complete: false` is rejected with a `400 VALIDATION_ERROR`.
 
 <Expandable title="Response Properties">
 <ParamField body="question_id" type="string" required>
@@ -41,7 +34,7 @@ See [Affiliate Webhook Events](/webhooks/events/affiliate) for the payload shape
 </ParamField>
 
 <ParamField body="mark_complete" type="boolean" default="false">
-  When `true`, records an onboarding completion for this affiliate. The completion row is unique per affiliate + form, so subsequent calls with `mark_complete: true` are safe but only fire `affiliate.onboarding_completed` once.
+  When `true`, records an onboarding completion for this affiliate. The completion row is unique per affiliate + form, so subsequent calls with `mark_complete: true` are idempotent — `completed_at` is preserved from the first successful completion.
 
   If any required question is still unanswered after this submission, the request fails with `400 VALIDATION_ERROR` and the `missing_question_ids` list.
 </ParamField>
@@ -132,4 +125,3 @@ curl -X POST "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak/onb
 
 - Required permission: `write:affiliates`.
 - Answers are validated against the question's `type`, but **not** against the configured `options`. This matches the behavior of the hosted onboarding flow.
-- The `affiliate.onboarding_response_submitted` webhook is skipped silently if the affiliate has no program partnership or no active endpoint subscribes to the event. The HTTP response is unaffected.
