@@ -101,6 +101,17 @@
             ]
           },
           {
+            "group": "Onboarding",
+            "pages": [
+              "api/endpoint/onboarding/get-form",
+              "api/endpoint/onboarding/create-form",
+              "api/endpoint/onboarding/update-form",
+              "api/endpoint/onboarding/delete-form",
+              "api/endpoint/onboarding/get-responses",
+              "api/endpoint/onboarding/submit-responses"
+            ]
+          },
+          {
             "group": "Program Settings",
             "pages": [
               "api/endpoint/program/get-info",

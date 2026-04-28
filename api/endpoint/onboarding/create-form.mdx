@@ -1,0 +1,125 @@
+---
+title: "Create Onboarding Form"
+api: "POST https://api.affonso.io/v1/onboarding-form"
+description: "Atomically create your team's onboarding form along with its initial set of questions"
+---
+
+Each team may only have a single onboarding form. The form and its questions are created atomically: if any question fails validation, the entire operation is rejected.
+
+Returns `409 DUPLICATE_ERROR` if an onboarding form already exists for your team — use `PATCH /v1/onboarding-form` to modify it instead.
+
+## Body Parameters
+
+<ParamField body="name" type="string" required>
+  Form display name. Between 1 and 200 characters.
+</ParamField>
+
+<ParamField body="description" type="string | null">
+  Optional description shown above the form. Maximum 1000 characters.
+</ParamField>
+
+<ParamField body="questions" type="array" required>
+  Between 1 and 50 questions. Order is preserved by the `order` field on each question.
+
+<Expandable title="Question Properties">
+<ParamField body="question" type="string" required>
+  The question prompt shown to the affiliate. 1–500 characters.
+</ParamField>
+
+<ParamField body="type" type="string" required>
+  Question type. One of `single_choice`, `multiple_choice`, `text_input`, `textarea`.
+</ParamField>
+
+<ParamField body="is_required" type="boolean" default="false">
+  Whether an answer is required to complete onboarding.
+</ParamField>
+
+<ParamField body="options" type="array">
+  Available choices. **Required** for `single_choice` and `multiple_choice` types. Each option is 1–200 characters; up to 50 options per question. Ignored for text question types.
+</ParamField>
+
+<ParamField body="order" type="integer" required>
+  0-based position used to sort questions in the form.
+</ParamField>
+</Expandable>
+</ParamField>
+
+## Response
+
+Returns the created `OnboardingForm` object — same shape as `GET /v1/onboarding-form`.
+
+<RequestExample>
+```bash cURL
+curl -X POST "https://api.affonso.io/v1/onboarding-form" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Affiliate Onboarding",
+    "description": "Tell us about how you plan to promote our product.",
+    "questions": [
+      {
+        "question": "Which channels will you use to promote us?",
+        "type": "multiple_choice",
+        "is_required": true,
+        "options": ["YouTube", "Newsletter", "Blog", "Social"],
+        "order": 0
+      },
+      {
+        "question": "Tell us about your audience",
+        "type": "textarea",
+        "is_required": false,
+        "order": 1
+      }
+    ]
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response (201)
+{
+  "success": true,
+  "data": {
+    "id": "cmf8onb0001p3010onbform1",
+    "name": "Affiliate Onboarding",
+    "description": "Tell us about how you plan to promote our product.",
+    "created_at": "2024-04-10T08:00:00.000Z",
+    "updated_at": "2024-04-10T08:00:00.000Z",
+    "questions": [
+      {
+        "id": "cmq1onb000onbq1",
+        "question": "Which channels will you use to promote us?",
+        "type": "multiple_choice",
+        "is_required": true,
+        "options": ["YouTube", "Newsletter", "Blog", "Social"],
+        "order": 0
+      },
+      {
+        "id": "cmq1onb000onbq2",
+        "question": "Tell us about your audience",
+        "type": "textarea",
+        "is_required": false,
+        "options": [],
+        "order": 1
+      }
+    ]
+  }
+}
+```
+
+```json Response (409 — form already exists)
+{
+  "success": false,
+  "error": {
+    "code": "DUPLICATE_ERROR",
+    "message": "An onboarding form already exists for your team. Use PATCH /v1/onboarding-form to update it."
+  }
+}
+```
+</ResponseExample>
+
+## Notes
+
+- Required permission: `write:program`.
+- `single_choice` and `multiple_choice` questions must include a non-empty `options` array.
+- `order` does not need to be contiguous, but values are used as-is to sort the form.

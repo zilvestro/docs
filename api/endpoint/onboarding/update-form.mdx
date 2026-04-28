@@ -1,0 +1,116 @@
+---
+title: "Update Onboarding Form"
+api: "PATCH https://api.affonso.io/v1/onboarding-form"
+description: "Update form metadata and/or replace the question set atomically"
+---
+
+Provide at least one of `name`, `description`, or `questions`. The whole update runs in a single transaction.
+
+When `questions` is provided, the array **fully replaces** the existing question set:
+
+- Items with an existing `id` are **updated**.
+- Items without `id` are **created** as new questions.
+- Existing questions omitted from the array are **soft-deleted** (`status` set to `false`).
+
+Existing affiliate answers are preserved during soft-delete and remain queryable internally — orphan questions are cleaned up by a separate periodic job.
+
+<Warning>
+**Type changes are not migrated.** Changing a question's `type` (e.g. `single_choice` → `text_input`) does **not** transform existing answers. Re-shape your answer storage on the consumer side, or wipe responses for that question, before changing types.
+</Warning>
+
+## Body Parameters
+
+<ParamField body="name" type="string">
+  Form display name. 1–200 characters.
+</ParamField>
+
+<ParamField body="description" type="string | null">
+  Optional form description. Maximum 1000 characters. Pass `null` to clear it.
+</ParamField>
+
+<ParamField body="questions" type="array">
+  1–50 questions. When provided, this array fully replaces the active question set. See [Create Onboarding Form](/api/endpoint/onboarding/create-form) for the question schema.
+
+  Include `id` for an existing question to update it; omit `id` to create a new one. Duplicate `id` values in the same payload are rejected with a validation error.
+</ParamField>
+
+## Response
+
+Returns the updated `OnboardingForm` object — same shape as `GET /v1/onboarding-form`.
+
+<RequestExample>
+```bash cURL
+curl -X PATCH "https://api.affonso.io/v1/onboarding-form" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Updated Onboarding",
+    "questions": [
+      {
+        "id": "cmq1onb000onbq1",
+        "question": "Which channels will you use to promote us?",
+        "type": "multiple_choice",
+        "is_required": true,
+        "options": ["YouTube", "Newsletter", "Blog", "Social", "Podcast"],
+        "order": 0
+      },
+      {
+        "question": "What is your website URL?",
+        "type": "text_input",
+        "is_required": false,
+        "order": 1
+      }
+    ]
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "id": "cmf8onb0001p3010onbform1",
+    "name": "Updated Onboarding",
+    "description": "Tell us about how you plan to promote our product.",
+    "created_at": "2024-04-10T08:00:00.000Z",
+    "updated_at": "2024-04-20T10:15:00.000Z",
+    "questions": [
+      {
+        "id": "cmq1onb000onbq1",
+        "question": "Which channels will you use to promote us?",
+        "type": "multiple_choice",
+        "is_required": true,
+        "options": ["YouTube", "Newsletter", "Blog", "Social", "Podcast"],
+        "order": 0
+      },
+      {
+        "id": "cmq1onb000onbq3",
+        "question": "What is your website URL?",
+        "type": "text_input",
+        "is_required": false,
+        "options": [],
+        "order": 1
+      }
+    ]
+  }
+}
+```
+
+```json Response (400 — question not in this form)
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Question cmq1onb000onbqXX does not belong to this onboarding form",
+    "field": "questions"
+  }
+}
+```
+</ResponseExample>
+
+## Notes
+
+- Required permission: `write:program`.
+- Returns `404 NOT_FOUND` if no onboarding form exists yet — call `POST /v1/onboarding-form` first.
+- Question IDs that do not belong to your team's onboarding form return a `400 VALIDATION_ERROR`.

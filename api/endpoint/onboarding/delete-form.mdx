@@ -1,0 +1,50 @@
+---
+title: "Delete Onboarding Form"
+api: "DELETE https://api.affonso.io/v1/onboarding-form"
+description: "Permanently delete your team's onboarding form and all related data"
+---
+
+Permanently deletes your team's onboarding form. **All questions, affiliate responses, and completion records are removed by cascade.** This action cannot be undone.
+
+If you only want to remove individual questions, use `PATCH /v1/onboarding-form` instead — soft-deleted questions preserve existing affiliate answers.
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful deletion
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Confirmation message
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE "https://api.affonso.io/v1/onboarding-form" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "message": "Onboarding form deleted successfully"
+}
+```
+
+```json Response (404)
+{
+  "success": false,
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "No onboarding form found for your team"
+  }
+}
+```
+</ResponseExample>
+
+## Notes
+
+- Required permission: `delete:program`.
+- This deletes affiliate responses and completion records as well — exporting them beforehand is recommended if you may need them later.

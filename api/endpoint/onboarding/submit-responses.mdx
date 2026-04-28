@@ -1,0 +1,133 @@
+---
+title: "Submit Onboarding Responses"
+api: "POST https://api.affonso.io/v1/affiliates/{id}/onboarding-responses"
+description: "Upsert one or more answers for an affiliate and optionally mark onboarding as complete"
+---
+
+Upserts one answer per question (existing answers are overwritten in place). Optionally pass `mark_complete: true` to record a completion — this fails with `400 VALIDATION_ERROR` if any required question is still unanswered after this submission.
+
+Triggers the following webhooks:
+
+- `affiliate.onboarding_response_submitted` — every successful call (when the affiliate has a program partnership and at least one matching webhook endpoint).
+- `affiliate.onboarding_completed` — fires **once**, the first time `mark_complete: true` succeeds for this affiliate + form.
+
+See [Affiliate Webhook Events](/webhooks/events/affiliate) for the payload shapes.
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the affiliate
+</ParamField>
+
+## Body Parameters
+
+<ParamField body="responses" type="array" required>
+  1–100 answers. Each answer must reference an active question by ID. Duplicate `question_id` values in the same payload are rejected.
+
+<Expandable title="Response Properties">
+<ParamField body="question_id" type="string" required>
+  ID of an active question on your team's onboarding form.
+</ParamField>
+
+<ParamField body="answer" type="string | array" required>
+  - `string` for `single_choice`, `text_input`, `textarea` (max 5000 characters)
+  - `array of strings` for `multiple_choice` (max 100 entries; each entry max 5000 characters)
+
+  The runtime shape must match the question's `type` — submitting an array for a `text_input` (or vice versa) returns a `400 VALIDATION_ERROR`.
+</ParamField>
+</Expandable>
+</ParamField>
+
+<ParamField body="mark_complete" type="boolean" default="false">
+  When `true`, records an onboarding completion for this affiliate. The completion row is unique per affiliate + form, so subsequent calls with `mark_complete: true` are safe but only fire `affiliate.onboarding_completed` once.
+
+  If any required question is still unanswered after this submission, the request fails with `400 VALIDATION_ERROR` and the `missing_question_ids` list.
+</ParamField>
+
+## Response
+
+Returns the same payload shape as `GET /v1/affiliates/{id}/onboarding-responses` — the full active form with all of the affiliate's saved answers and the latest `completed_at` value.
+
+<RequestExample>
+```bash cURL
+curl -X POST "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak/onboarding-responses" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "responses": [
+      {
+        "question_id": "cmq1onb000onbq1",
+        "answer": ["Newsletter", "Blog"]
+      },
+      {
+        "question_id": "cmq1onb000onbq2",
+        "answer": "Mostly indie SaaS founders and bootstrapped teams."
+      }
+    ],
+    "mark_complete": true
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "form_id": "cmf8onb0001p3010onbform1",
+    "form_name": "Affiliate Onboarding",
+    "form_description": "Tell us a bit about how you plan to promote our product.",
+    "completed_at": "2024-04-22T17:32:11.000Z",
+    "questions": [
+      {
+        "id": "cmq1onb000onbq1",
+        "question": "Which channels will you use to promote us?",
+        "type": "multiple_choice",
+        "is_required": true,
+        "options": ["YouTube", "Newsletter", "Blog", "Social"],
+        "order": 0,
+        "answer": ["Newsletter", "Blog"]
+      },
+      {
+        "id": "cmq1onb000onbq2",
+        "question": "Tell us about your audience",
+        "type": "textarea",
+        "is_required": false,
+        "options": [],
+        "order": 1,
+        "answer": "Mostly indie SaaS founders and bootstrapped teams."
+      }
+    ]
+  }
+}
+```
+
+```json Response (400 — required questions missing)
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Cannot mark onboarding as complete — required questions are unanswered",
+    "field": "mark_complete",
+    "missing_question_ids": ["cmq1onb000onbq1"]
+  }
+}
+```
+
+```json Response (400 — wrong answer shape)
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Answer for multiple_choice must be an array of strings",
+    "field": "responses[0].answer"
+  }
+}
+```
+</ResponseExample>
+
+## Notes
+
+- Required permission: `write:affiliates`.
+- Answers are validated against the question's `type`, but **not** against the configured `options`. This matches the behavior of the hosted onboarding flow.
+- The `affiliate.onboarding_response_submitted` webhook is skipped silently if the affiliate has no program partnership or no active endpoint subscribes to the event. The HTTP response is unaffected.

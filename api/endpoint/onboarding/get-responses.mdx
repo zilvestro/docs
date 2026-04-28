@@ -1,0 +1,135 @@
+---
+title: "Get Affiliate Onboarding Responses"
+api: "GET https://api.affonso.io/v1/affiliates/{id}/onboarding-responses"
+description: "Retrieve an affiliate's saved answers to the onboarding form along with completion status"
+---
+
+Returns the active onboarding form joined with the affiliate's saved answers. Questions the affiliate has not yet answered are returned with `answer: null`. `completed_at` is `null` until the affiliate (or your integration) marks the onboarding complete.
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the affiliate
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Always `true` for successful responses
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Onboarding responses payload.
+
+<Expandable title="Data Object Properties">
+<ResponseField name="form_id" type="string">
+  The active form's ID
+</ResponseField>
+
+<ResponseField name="form_name" type="string">
+  The active form's name
+</ResponseField>
+
+<ResponseField name="form_description" type="string | null">
+  The active form's description, if set
+</ResponseField>
+
+<ResponseField name="completed_at" type="string | null">
+  ISO 8601 timestamp the affiliate completed onboarding, or `null` when not completed
+</ResponseField>
+
+<ResponseField name="questions" type="array">
+  Active questions in display order, with the affiliate's answer attached.
+
+<Expandable title="Question Properties">
+<ResponseField name="id" type="string">
+  Question identifier
+</ResponseField>
+
+<ResponseField name="question" type="string">
+  The question prompt
+</ResponseField>
+
+<ResponseField name="type" type="string">
+  One of `single_choice`, `multiple_choice`, `text_input`, `textarea`
+</ResponseField>
+
+<ResponseField name="is_required" type="boolean">
+  Whether the question is required
+</ResponseField>
+
+<ResponseField name="options" type="array">
+  Available choices for choice-based questions
+</ResponseField>
+
+<ResponseField name="order" type="integer">
+  0-based position in the form
+</ResponseField>
+
+<ResponseField name="answer" type="string | array | null">
+  The affiliate's saved answer.
+  - `string` for `single_choice`, `text_input`, and `textarea`
+  - `array of strings` for `multiple_choice`
+  - `null` if the question has not been answered
+</ResponseField>
+</Expandable>
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.affonso.io/v1/affiliates/cmj8pptm10002p3010z8mk9ak/onboarding-responses" \
+  -H "Authorization: Bearer sk_live_your_api_key"
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "success": true,
+  "data": {
+    "form_id": "cmf8onb0001p3010onbform1",
+    "form_name": "Affiliate Onboarding",
+    "form_description": "Tell us a bit about how you plan to promote our product.",
+    "completed_at": "2024-04-22T17:32:11.000Z",
+    "questions": [
+      {
+        "id": "cmq1onb000onbq1",
+        "question": "Which channels will you use to promote us?",
+        "type": "multiple_choice",
+        "is_required": true,
+        "options": ["YouTube", "Newsletter", "Blog", "Social"],
+        "order": 0,
+        "answer": ["Newsletter", "Blog"]
+      },
+      {
+        "id": "cmq1onb000onbq2",
+        "question": "Tell us about your audience",
+        "type": "textarea",
+        "is_required": false,
+        "options": [],
+        "order": 1,
+        "answer": "Mostly indie SaaS founders and bootstrapped teams."
+      }
+    ]
+  }
+}
+```
+
+```json Response (404 — no form configured)
+{
+  "success": false,
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "No onboarding form configured for your team"
+  }
+}
+```
+</ResponseExample>
+
+## Notes
+
+- Required permission: `read:affiliates`.
+- Returns `404 NOT_FOUND` with `Affiliate not found` if the affiliate does not belong to your team.
+- Soft-deleted questions are excluded; previously stored answers for soft-deleted questions are not returned by this endpoint.
