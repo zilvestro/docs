@@ -162,7 +162,7 @@ These events are emitted when affiliates fill out your team's [custom onboarding
 
 ### affiliate.onboarding_response_submitted
 
-Fires on every successful call to `POST /v1/affiliates/{id}/onboarding-responses`. The payload is intentionally lean — fetch full responses via [`GET /v1/affiliates/{id}/onboarding-responses`](/api/endpoint/onboarding/get-responses) when you need them.
+Fires on every successful call to `POST /v1/affiliates/{id}/onboarding-responses` that includes at least one answer. **Skipped** when the request body is `{ "responses": [], "mark_complete": true }` — that flow only finalizes a prior submission, so no new answers were saved. The payload is intentionally lean — fetch full responses via [`GET /v1/affiliates/{id}/onboarding-responses`](/api/endpoint/onboarding/get-responses) when you need them.
 
 <ResponseField name="data" type="object">
 <Expandable title="Data Object Properties">

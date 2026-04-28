@@ -22,7 +22,9 @@ See [Affiliate Webhook Events](/webhooks/events/affiliate) for the payload shape
 ## Body Parameters
 
 <ParamField body="responses" type="array" required>
-  1–100 answers. Each answer must reference an active question by ID. Duplicate `question_id` values in the same payload are rejected.
+  Up to 100 answers. Each answer must reference an active question by ID. Duplicate `question_id` values in the same payload are rejected.
+
+  May be empty (`[]`) **only when `mark_complete: true`** — useful for finalizing onboarding after answers were saved incrementally over earlier calls. An empty array with `mark_complete: false` is rejected with a `400 VALIDATION_ERROR`. When the array is empty, the `affiliate.onboarding_response_submitted` webhook is skipped (no answers were upserted).
 
 <Expandable title="Response Properties">
 <ParamField body="question_id" type="string" required>
