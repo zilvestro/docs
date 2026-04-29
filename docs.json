@@ -24,120 +24,145 @@
         "tab": "API Reference",
         "groups": [
           {
-            "group": "Overview",
+            "group": "Getting Started",
             "pages": [
               "api/introduction",
               "api/authentication",
               "api/rate-limits",
-              "api/embedded-dashboard"
-            ]
-          },
-          {
-            "group": "SDK",
-            "pages": [
+              "api/embedded-dashboard",
               "api/sdk/typescript"
             ]
           },
           {
-            "group": "Affiliates",
+            "group": "Core Resources",
             "pages": [
-              "api/endpoint/affiliates/list",
-              "api/endpoint/affiliates/get",
-              "api/endpoint/affiliates/create",
-              "api/endpoint/affiliates/update",
-              "api/endpoint/affiliates/delete",
-              "api/endpoint/affiliates/portal-token"
+              {
+                "group": "Affiliates",
+                "pages": [
+                  "api/endpoint/affiliates/list",
+                  "api/endpoint/affiliates/get",
+                  "api/endpoint/affiliates/create",
+                  "api/endpoint/affiliates/update",
+                  "api/endpoint/affiliates/delete",
+                  "api/endpoint/affiliates/portal-token"
+                ]
+              },
+              {
+                "group": "Referrals",
+                "pages": [
+                  "api/endpoint/referrals/list",
+                  "api/endpoint/referrals/get",
+                  "api/endpoint/referrals/create",
+                  "api/endpoint/referrals/update",
+                  "api/endpoint/referrals/delete"
+                ]
+              },
+              {
+                "group": "Clicks",
+                "pages": [
+                  "api/endpoint/clicks/create"
+                ]
+              },
+              {
+                "group": "Commissions",
+                "pages": [
+                  "api/endpoint/commissions/list",
+                  "api/endpoint/commissions/get",
+                  "api/endpoint/commissions/create",
+                  "api/endpoint/commissions/update",
+                  "api/endpoint/commissions/delete"
+                ]
+              },
+              {
+                "group": "Payouts",
+                "pages": [
+                  "api/endpoint/payouts/list",
+                  "api/endpoint/payouts/get",
+                  "api/endpoint/payouts/update"
+                ]
+              },
+              {
+                "group": "Coupons",
+                "pages": [
+                  "api/endpoint/coupons/list",
+                  "api/endpoint/coupons/get",
+                  "api/endpoint/coupons/create",
+                  "api/endpoint/coupons/delete"
+                ]
+              },
+              {
+                "group": "Embed",
+                "pages": [
+                  "api/endpoint/embed/create-token",
+                  "api/endpoint/embed/get-data",
+                  "api/endpoint/embed/create-coupon"
+                ]
+              }
             ]
           },
           {
-            "group": "Referrals",
+            "group": "Program Management",
             "pages": [
-              "api/endpoint/referrals/list",
-              "api/endpoint/referrals/get",
-              "api/endpoint/referrals/create",
-              "api/endpoint/referrals/update",
-              "api/endpoint/referrals/delete"
-            ]
-          },
-          {
-            "group": "Commissions",
-            "pages": [
-              "api/endpoint/commissions/list",
-              "api/endpoint/commissions/get",
-              "api/endpoint/commissions/create",
-              "api/endpoint/commissions/update",
-              "api/endpoint/commissions/delete"
-            ]
-          },
-          {
-            "group": "Payouts",
-            "pages": [
-              "api/endpoint/payouts/list",
-              "api/endpoint/payouts/get",
-              "api/endpoint/payouts/update"
-            ]
-          },
-          {
-            "group": "Embed",
-            "pages": [
-              "api/endpoint/embed/create-token",
-              "api/endpoint/embed/get-data",
-              "api/endpoint/embed/create-coupon"
-            ]
-          },
-          {
-            "group": "Coupons",
-            "pages": [
-              "api/endpoint/coupons/list",
-              "api/endpoint/coupons/get",
-              "api/endpoint/coupons/create",
-              "api/endpoint/coupons/delete"
-            ]
-          },
-          {
-            "group": "Clicks",
-            "pages": [
-              "api/endpoint/clicks/create"
-            ]
-          },
-          {
-            "group": "Onboarding",
-            "pages": [
-              "api/endpoint/onboarding/get-form",
-              "api/endpoint/onboarding/create-form",
-              "api/endpoint/onboarding/update-form",
-              "api/endpoint/onboarding/delete-form",
-              "api/endpoint/onboarding/get-responses",
-              "api/endpoint/onboarding/submit-responses"
-            ]
-          },
-          {
-            "group": "Program Settings",
-            "pages": [
-              "api/endpoint/program/get-info",
-              "api/endpoint/program/update-info",
-              "api/endpoint/program/get-payment-terms",
-              "api/endpoint/program/update-payment-terms",
-              "api/endpoint/program/get-tracking",
-              "api/endpoint/program/update-tracking",
-              "api/endpoint/program/get-restrictions",
-              "api/endpoint/program/update-restrictions",
-              "api/endpoint/program/list-groups",
-              "api/endpoint/program/get-group",
-              "api/endpoint/program/create-group",
-              "api/endpoint/program/update-group",
-              "api/endpoint/program/delete-group",
-              "api/endpoint/program/list-creatives",
-              "api/endpoint/program/get-creative",
-              "api/endpoint/program/create-creative",
-              "api/endpoint/program/update-creative",
-              "api/endpoint/program/delete-creative",
-              "api/endpoint/program/list-notifications",
-              "api/endpoint/program/update-notification",
-              "api/endpoint/program/get-portal",
-              "api/endpoint/program/update-portal",
-              "api/endpoint/program/get-fraud-rules",
-              "api/endpoint/program/update-fraud-rules"
+              {
+                "group": "Program Settings",
+                "pages": [
+                  {
+                    "group": "General",
+                    "pages": [
+                      "api/endpoint/program/get-info",
+                      "api/endpoint/program/update-info",
+                      "api/endpoint/program/get-payment-terms",
+                      "api/endpoint/program/update-payment-terms",
+                      "api/endpoint/program/get-tracking",
+                      "api/endpoint/program/update-tracking",
+                      "api/endpoint/program/get-restrictions",
+                      "api/endpoint/program/update-restrictions",
+                      "api/endpoint/program/get-portal",
+                      "api/endpoint/program/update-portal",
+                      "api/endpoint/program/get-fraud-rules",
+                      "api/endpoint/program/update-fraud-rules"
+                    ]
+                  },
+                  {
+                    "group": "Notifications",
+                    "pages": [
+                      "api/endpoint/program/list-notifications",
+                      "api/endpoint/program/update-notification"
+                    ]
+                  },
+                  {
+                    "group": "Affiliate Groups",
+                    "pages": [
+                      "api/endpoint/program/list-groups",
+                      "api/endpoint/program/get-group",
+                      "api/endpoint/program/create-group",
+                      "api/endpoint/program/update-group",
+                      "api/endpoint/program/delete-group"
+                    ]
+                  },
+                  {
+                    "group": "Creatives",
+                    "pages": [
+                      "api/endpoint/program/list-creatives",
+                      "api/endpoint/program/get-creative",
+                      "api/endpoint/program/create-creative",
+                      "api/endpoint/program/update-creative",
+                      "api/endpoint/program/delete-creative"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Onboarding",
+                "pages": [
+                  "api/endpoint/onboarding/get-form",
+                  "api/endpoint/onboarding/create-form",
+                  "api/endpoint/onboarding/update-form",
+                  "api/endpoint/onboarding/delete-form",
+                  "api/endpoint/onboarding/get-responses",
+                  "api/endpoint/onboarding/submit-responses"
+                ]
+              }
             ]
           },
           {
