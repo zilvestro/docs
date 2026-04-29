@@ -178,7 +178,7 @@
                 ]
               },
               {
-                "group": "Onboarding",
+                "group": "Affiliate Onboarding",
                 "pages": [
                   "api/endpoint/onboarding/get-form",
                   "api/endpoint/onboarding/create-form",
