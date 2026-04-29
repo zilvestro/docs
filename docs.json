@@ -107,18 +107,43 @@
                 "group": "Program Settings",
                 "pages": [
                   {
-                    "group": "General",
+                    "group": "Info",
                     "pages": [
                       "api/endpoint/program/get-info",
-                      "api/endpoint/program/update-info",
+                      "api/endpoint/program/update-info"
+                    ]
+                  },
+                  {
+                    "group": "Payment Terms",
+                    "pages": [
                       "api/endpoint/program/get-payment-terms",
-                      "api/endpoint/program/update-payment-terms",
+                      "api/endpoint/program/update-payment-terms"
+                    ]
+                  },
+                  {
+                    "group": "Tracking",
+                    "pages": [
                       "api/endpoint/program/get-tracking",
-                      "api/endpoint/program/update-tracking",
+                      "api/endpoint/program/update-tracking"
+                    ]
+                  },
+                  {
+                    "group": "Restrictions",
+                    "pages": [
                       "api/endpoint/program/get-restrictions",
-                      "api/endpoint/program/update-restrictions",
+                      "api/endpoint/program/update-restrictions"
+                    ]
+                  },
+                  {
+                    "group": "Portal",
+                    "pages": [
                       "api/endpoint/program/get-portal",
-                      "api/endpoint/program/update-portal",
+                      "api/endpoint/program/update-portal"
+                    ]
+                  },
+                  {
+                    "group": "Fraud Rules",
+                    "pages": [
                       "api/endpoint/program/get-fraud-rules",
                       "api/endpoint/program/update-fraud-rules"
                     ]
