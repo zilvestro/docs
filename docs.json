@@ -64,6 +64,12 @@
                 ]
               },
               {
+                "group": "Signups",
+                "pages": [
+                  "api/endpoint/signups/create"
+                ]
+              },
+              {
                 "group": "Commissions",
                 "pages": [
                   "api/endpoint/commissions/list",

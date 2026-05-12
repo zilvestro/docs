@@ -1,0 +1,205 @@
+---
+title: "Record Lead Signup"
+api: "POST /v1/signups"
+description: "Convert a previously tracked click into a lead. Server-side equivalent of the pixel.js `Affonso.signup()` call."
+---
+
+Use this endpoint when you want to record a lead signup from your own backend instead of relying on the browser pixel. The typical flow is:
+
+1. Track the click with [`POST /v1/clicks`](/api/endpoint/clicks/create) — store the returned `id` as your `clickId`.
+2. Once the visitor signs up in your application, call `POST /v1/signups` with that `clickId` plus their email and/or your internal user ID.
+
+The endpoint is **idempotent**: calling it twice with the same `clickId` returns the existing referral without creating duplicates.
+
+If the affiliate's program has a lead incentive configured, this call also creates the commission transaction and fires the `transaction.created` webhook in addition to `referral.lead`.
+
+## Body Parameters
+
+<ParamField body="click_id" type="string" required>
+  The click ID returned by `POST /v1/clicks`. Must belong to your team.
+</ParamField>
+
+<ParamField body="email" type="string">
+  The lead's email address. Either `email` or `external_user_id` must be provided. Silently ignored when the program has email tracking disabled.
+</ParamField>
+
+<ParamField body="external_user_id" type="string">
+  Your internal identifier for the lead (e.g. database user ID). Either `email` or `external_user_id` must be provided.
+</ParamField>
+
+<ParamField body="name" type="string">
+  The lead's display name. Maximum 255 characters. Silently ignored when the program has name tracking disabled.
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  `true` on success. Returns `false` only on validation, auth, or not-found errors.
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  The referral object after conversion.
+
+  <Expandable title="Data Object Properties">
+    <ResponseField name="id" type="string">
+      Referral ID. Equal to the `click_id` you passed — the same row is transitioned from `click` to `lead`.
+    </ResponseField>
+    <ResponseField name="affiliate_id" type="string">
+      The affiliate user who owns this lead.
+    </ResponseField>
+    <ResponseField name="program_id" type="string">
+      The affiliate program ID.
+    </ResponseField>
+    <ResponseField name="email" type="string | null">
+      The lead's email (omitted when the program disables email tracking).
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      `lead` after successful conversion. `rejected` if a fraud check (self-referral, disposable email, paid traffic) blocked the signup.
+    </ResponseField>
+    <ResponseField name="created_at" type="string">
+      ISO 8601 timestamp of when the click was originally recorded.
+    </ResponseField>
+    <ResponseField name="converted_at" type="string | null">
+      ISO 8601 timestamp of when the click was converted to a lead. `null` for `lead` status (set later when status moves to `customer`/`active`).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Status codes
+
+| Code | Meaning |
+| ---- | ------- |
+| `201 Created` | Click successfully converted to a lead. |
+| `200 OK` | Idempotent re-call — the click was already converted. Returns the existing referral. |
+| `400 Bad Request` | Validation error (missing `click_id`, neither `email` nor `external_user_id` provided, invalid email format). |
+| `401 Unauthorized` | Missing or invalid API key. |
+| `404 Not Found` | The `click_id` does not exist or belongs to a different team. |
+| `429 Too Many Requests` | Per-API-key rate limit exceeded. |
+
+<RequestExample>
+```bash cURL
+curl -X POST "https://api.affonso.io/v1/signups" \
+  -H "Authorization: Bearer sk_live_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "click_id": "ref_clk_xyz789",
+    "email": "jane@example.com",
+    "external_user_id": "user_42",
+    "name": "Jane Doe"
+  }'
+```
+
+```ts Node.js
+const response = await fetch("https://api.affonso.io/v1/signups", {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${process.env.AFFONSO_API_KEY}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    click_id: clickId,
+    email: "jane@example.com",
+    external_user_id: user.id,
+  }),
+});
+const { data } = await response.json();
+console.log("Lead created:", data.id);
+```
+
+```python Python
+import os, requests
+
+resp = requests.post(
+    "https://api.affonso.io/v1/signups",
+    headers={"Authorization": f"Bearer {os.environ['AFFONSO_API_KEY']}"},
+    json={
+        "click_id": click_id,
+        "email": "jane@example.com",
+        "external_user_id": str(user.id),
+    },
+)
+resp.raise_for_status()
+print("Lead created:", resp.json()["data"]["id"])
+```
+</RequestExample>
+
+<ResponseExample>
+```json 201 Created
+{
+  "success": true,
+  "data": {
+    "id": "ref_clk_xyz789",
+    "affiliate_id": "aff_abc123",
+    "program_id": "prg_456def",
+    "email": "jane@example.com",
+    "customer_id": null,
+    "subscription_id": null,
+    "status": "lead",
+    "name": "Jane Doe",
+    "metadata": null,
+    "created_at": "2026-01-25T11:55:00Z",
+    "converted_at": null
+  }
+}
+```
+
+```json 200 OK (idempotent re-call)
+{
+  "success": true,
+  "data": {
+    "id": "ref_clk_xyz789",
+    "affiliate_id": "aff_abc123",
+    "program_id": "prg_456def",
+    "email": "jane@example.com",
+    "status": "lead",
+    "name": "Jane Doe",
+    "created_at": "2026-01-25T11:55:00Z",
+    "converted_at": null
+  }
+}
+```
+
+```json 400 Validation
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "At least one of email or external_user_id is required",
+    "issues": {
+      "email": ["At least one of email or external_user_id is required"]
+    }
+  }
+}
+```
+
+```json 404 Click not found
+{
+  "success": false,
+  "error": {
+    "code": "CLICK_NOT_FOUND",
+    "message": "Click not found or does not belong to your team"
+  }
+}
+```
+</ResponseExample>
+
+## Fraud checks
+
+The same fraud checks that run for browser-side signups (self-referral, disposable email, paid traffic) also apply here. If any check is configured in BLOCK mode and rejects the signup:
+
+- The referral status is set to `rejected` instead of `lead`.
+- The `referral.lead` webhook is **not** emitted.
+- No lead-incentive commission is created.
+- The endpoint still returns `201 Created` with the rejected referral object — inspect `data.status` to detect blocks.
+
+## Webhooks fired
+
+| Event | When |
+| ----- | ---- |
+| `referral.lead` | Conversion succeeded and was not blocked by fraud checks. |
+| `transaction.created` | Conversion succeeded, was not blocked, and the program has a lead incentive configured for this affiliate (via group incentive or override). |
+
+## Related endpoints
+
+- [`POST /v1/clicks`](/api/endpoint/clicks/create) — track the click that you'll later convert.
+- [`POST /v1/referrals`](/api/endpoint/referrals/create) — alternative endpoint when you want to skip the click stage and record a referral directly.
