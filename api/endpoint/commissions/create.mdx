@@ -12,6 +12,12 @@ description: "Create a new commission transaction manually"
   instead.
 </Info>
 
+<Info>
+  Every create requires `referral_id`, a positive `sale_amount`, and
+  `commission_amount` (may be `0`). There is no standalone non-sale cash bonus
+  endpoint. Currencies default to `USD`.
+</Info>
+
 ## Body Parameters
 
 <ParamField body="referral_id" type="string" required>
