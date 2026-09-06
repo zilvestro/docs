@@ -188,32 +188,56 @@ Commission approved after 30-day refund window.
 
 ## affonso_create_commission
 
-Create a new commission transaction manually.
+Create a new commission record for a referral. Same required fields as `POST /v1/commissions`: a referral, a positive sale amount, and a commission amount.
+
+<Info>
+  There is no standalone non-sale cash bonus path. Every create needs `referral_id`, a positive `sale_amount`, and `commission_amount` (which may be `0`).
+</Info>
 
 ### Parameters
 
-<ParamField body="affiliateId" type="string" required>
-  The affiliate ID for this commission
+<ParamField body="referral_id" type="string" required>
+  ID of the referral this commission belongs to
 </ParamField>
 
-<ParamField body="amount" type="number" required>
-  Commission amount in cents
+<ParamField body="sale_amount" type="number" required>
+  Total sale/transaction amount (not the commission amount). Must be a positive number
 </ParamField>
 
-<ParamField body="saleAmount" type="number">
-  Original sale amount in cents
+<ParamField body="commission_amount" type="number" required>
+  Commission amount earned. Must be a non-negative number (can be `0`)
 </ParamField>
 
-<ParamField body="referralId" type="string">
-  Associated referral ID
+<ParamField body="sale_amount_currency" type="string" default="USD">
+  Currency code for the sale (3 letters, e.g. `USD`, `EUR`). Defaults to `USD`
 </ParamField>
 
-<ParamField body="status" type="string" default="PENDING">
-  Initial status: `PENDING`, `APPROVED`
+<ParamField body="commission_currency" type="string" default="USD">
+  Currency code for the commission (3 letters). Defaults to `USD`
 </ParamField>
 
-<ParamField body="description" type="string">
-  Description or notes
+<ParamField body="is_subscription" type="boolean" default="false">
+  Whether this is a recurring subscription commission
+</ParamField>
+
+<ParamField body="status" type="string" default="pending">
+  Initial status: `pending`, `pending_manual_approval`, `ready_for_payment`, `paid`, `declined`
+</ParamField>
+
+<ParamField body="sales_status" type="string" default="complete">
+  Purchase status: `open`, `complete`, `trialing`, `failed`, `refunded`, `partial_refunded`
+</ParamField>
+
+<ParamField body="payment_intent_id" type="string">
+  Payment provider intent ID. If set, must be unique across commissions
+</ParamField>
+
+<ParamField body="hold_period_days" type="number">
+  Days to hold the commission before payout. Non-negative integer. Uses program default if omitted
+</ParamField>
+
+<ParamField body="created_at" type="string">
+  Optional ISO 8601 created timestamp
 </ParamField>
 
 <ParamField body="response_format" type="string" default="markdown">
@@ -223,10 +247,10 @@ Create a new commission transaction manually.
 ### Example Prompts
 
 ```
-Create a $50 commission for affiliate aff_abc123
-Add a commission of $25.50 for aff_xyz from sale of $255
-Create an approved commission for aff_123 with amount $100
-Record a bonus commission of $50 for affiliate aff_top with description "Q1 bonus"
+Create a commission for referral ref_abc123 with sale amount 99 and commission amount 9.90
+Record commission_amount 25.50 on referral ref_xyz from sale_amount 255
+Create a pending commission for ref_123 with sale_amount 100 and commission_amount 10 in USD
+Create a commission for referral ref_top with sale_amount 500 and commission_amount 50
 ```
 
 ### Response
@@ -237,12 +261,13 @@ Record a bonus commission of $50 for affiliate aff_top with description "Q1 bonu
 | Field | Value |
 |-------|-------|
 | ID | txn_new123 |
-| Affiliate | John Smith (aff_abc123) |
-| Commission | $50.00 |
-| Status | PENDING |
+| Referral | ref_abc123 |
+| Sale Amount | $99.00 |
+| Commission | $9.90 |
+| Status | pending |
 | Created | Jan 15, 2024 |
 
-The commission is pending approval.
+The commission is pending.
 ```
 
 ---
